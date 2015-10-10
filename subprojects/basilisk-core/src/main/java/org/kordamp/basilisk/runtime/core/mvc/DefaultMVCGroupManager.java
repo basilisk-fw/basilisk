@@ -69,8 +69,6 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultMVCGroupManager.class);
     private static final String CONFIG_KEY_COMPONENT = "component";
     private static final String CONFIG_KEY_EVENTS_LIFECYCLE = "events.lifecycle";
-    private static final String CONFIG_KEY_EVENTS_INSTANTIATION = "events.instantiation";
-    private static final String CONFIG_KEY_EVENTS_DESTRUCTION = "events.destruction";
     private static final String CONFIG_KEY_EVENTS_LISTENER = "events.listener";
     private static final String KEY_PARENT_GROUP = "parentGroup";
 
@@ -108,14 +106,8 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
             selectClassesPerMember(memberType, memberClassName, classMap);
         }
 
-        boolean isEventPublishingEnabled = getApplication().getEventRouter().isEventPublishingEnabled();
-        getApplication().getEventRouter().setEventPublishingEnabled(isConfigFlagEnabled(configuration, CONFIG_KEY_EVENTS_INSTANTIATION));
         Map<String, Object> instances = new LinkedHashMap<>();
-        try {
-            instances.putAll(instantiateMembers(classMap, argsCopy));
-        } finally {
-            getApplication().getEventRouter().setEventPublishingEnabled(isEventPublishingEnabled);
-        }
+        instances.putAll(instantiateMembers(classMap, argsCopy));
 
         MVCGroup group = newMVCGroup(configuration, mvcId, instances, (MVCGroup) args.get(KEY_PARENT_GROUP));
         adjustMvcArguments(group, argsCopy);
@@ -372,9 +364,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
             }
         }
 
-        boolean fireDestructionEvents = isConfigFlagEnabled(group.getConfiguration(), CONFIG_KEY_EVENTS_DESTRUCTION);
-
-        destroyMembers(group, fireDestructionEvents);
+        destroyMembers(group);
 
         doRemoveGroup(group);
         group.destroy();
@@ -384,22 +374,19 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         }
     }
 
-    protected void destroyMembers(@Nonnull MVCGroup group, boolean fireDestructionEvents) {
+    protected void destroyMembers(@Nonnull MVCGroup group) {
         for (Map.Entry<String, Object> memberEntry : group.getMembers().entrySet()) {
             if (memberEntry.getValue() instanceof BasiliskArtifact) {
-                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) memberEntry.getValue(), fireDestructionEvents);
+                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) memberEntry.getValue());
             } else {
-                destroyNonArtifactMember(memberEntry.getKey(), memberEntry.getValue(), fireDestructionEvents);
+                destroyNonArtifactMember(memberEntry.getKey(), memberEntry.getValue());
             }
         }
     }
 
-    protected void destroyArtifactMember(@Nonnull String type, @Nonnull BasiliskArtifact member, boolean fireDestructionEvents) {
+    protected void destroyArtifactMember(@Nonnull String type, @Nonnull BasiliskArtifact member) {
         if (member instanceof BasiliskMvcArtifact) {
             BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
-            if (fireDestructionEvents) {
-                getApplication().getEventRouter().publishEvent(ApplicationEvent.DESTROY_INSTANCE.getName(), asList(member.getClass(), artifact));
-            }
             artifact.mvcGroupDestroy();
 
             // clear all parent* references
@@ -424,7 +411,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         }
     }
 
-    protected void destroyNonArtifactMember(@Nonnull String type, @Nonnull Object member, boolean fireDestructionEvents) {
+    protected void destroyNonArtifactMember(@Nonnull String type, @Nonnull Object member) {
         // empty
     }
 
