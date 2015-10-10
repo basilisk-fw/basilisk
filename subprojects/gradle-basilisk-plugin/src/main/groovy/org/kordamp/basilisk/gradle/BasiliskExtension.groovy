@@ -21,11 +21,7 @@ import org.gradle.api.Project
  * @author Andres Almiray
  */
 class BasiliskExtension {
-    static final List<String> TOOLKIT_NAMES = ['javafx']
-
     String version = '0.1.0-SNAPSHOT'
-
-    String toolkit
 
     boolean disableDependencyResolution
 

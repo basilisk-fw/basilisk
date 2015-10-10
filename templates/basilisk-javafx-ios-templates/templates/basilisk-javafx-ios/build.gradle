@@ -27,7 +27,6 @@ repositories {
 basilisk {
     disableDependencyResolution = false
     version = '${basilisk_version}'
-    toolkit = 'javafx'
 }
 
 ext {

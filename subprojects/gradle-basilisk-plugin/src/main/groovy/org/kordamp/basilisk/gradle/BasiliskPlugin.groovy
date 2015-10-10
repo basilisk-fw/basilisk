@@ -216,15 +216,6 @@ class BasiliskPlugin implements Plugin<Project> {
         }
     }
 
-    private void validateToolkit(Project project, BasiliskExtension extension) {
-        if (extension.toolkit) {
-            if (!BasiliskExtension.TOOLKIT_NAMES.contains(extension.toolkit)) {
-                throw new BuildException("The value of basilisk.toolkit can only be one of ${BasiliskExtension.TOOLKIT_NAMES.join(',')}",
-                    new IllegalStateException(extension.toolkit))
-            }
-        }
-    }
-
     private void registerBuildListener(
         final Project project, final BasiliskExtension extension) {
         project.gradle.addBuildListener(new BuildAdapter() {
@@ -236,14 +227,10 @@ class BasiliskPlugin implements Plugin<Project> {
                 appendDependency('core')
                 appendDependency('core-compile')
                 appendDependency('core-test')
+                appendDependency('javafx')
 
-                validateToolkit(project, extension)
                 project.plugins.withId('application') { plugin ->
                     configureApplicationSettings(project, extension)
-                }
-
-                if (extension.toolkit) {
-                    appendDependency(extension.toolkit)
                 }
 
                 processMainResources(project, extension)

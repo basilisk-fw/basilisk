@@ -79,10 +79,6 @@ class BasiliskPluginResolutionStrategy {
 
         @Override
         void execute(ResolvableDependencies resolvableDependencies) {
-            String toolkit = basiliskExtension.toolkit
-            project.logger.info("UI toolkit for project {} is {}", project.name, toolkit)
-            String toolkitRegex = (BasiliskExtension.TOOLKIT_NAMES - toolkit).join('|')
-
             resolvableDependencies.dependencies.each { Dependency dependency ->
                 String pluginName = dependency.name
                 if (pluginName.startsWith(PLUGIN_PREFIX) && pluginName.endsWith(PLUGIN_SUFFIX)) {
@@ -110,15 +106,7 @@ class BasiliskPluginResolutionStrategy {
                         String dependencyCoordinates = [groupId, artifactId, version].join(':')
                         project.logger.info("Processing {} in scope {}", dependencyCoordinates, scope)
 
-                        if (toolkit) {
-                            if (artifactId =~ /$toolkitRegex/) {
-                                return
-                            } else {
-                                appendDependency(artifactId, scope, dependencyCoordinates)
-                            }
-                        } else {
-                            appendDependency(artifactId, scope, dependencyCoordinates)
-                        }
+                        appendDependency(artifactId, scope, dependencyCoordinates)
                     }
                 } else {
                     project.logger.warn("Dependency {}:{}:{} does not appear to be a valid Basilisk plugin!",
