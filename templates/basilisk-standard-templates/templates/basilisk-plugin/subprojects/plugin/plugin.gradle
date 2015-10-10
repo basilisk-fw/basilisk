@@ -1,0 +1,15 @@
+apply plugin: 'groovy'
+apply plugin: 'org.kordamp.basilisk.basilisk'
+
+basilisk {
+    disableDependencyResolution = false
+    includeGroovyDependencies = false
+    version = rootProject.basiliskVersion
+}
+
+apply from: rootProject.file('gradle/code-coverage.gradle')
+
+dependencies {
+    testRuntime "org.kordamp.basilisk:basilisk-guice:${basilisk.version}"
+    testRuntime "org.kordamp.basilisk:basilisk-groovy:${basilisk.version}"
+}

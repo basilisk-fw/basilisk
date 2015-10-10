@@ -1,0 +1,3 @@
+org.kordamp.basilisk.compile.core.processor.annotation.AnnotationHandlerProcessor
+org.kordamp.basilisk.compile.core.processor.artifact.ArtifactProviderProcessor
+org.kordamp.basilisk.compile.core.processor.editor.PropertyEditorProcessor

@@ -1,0 +1,84 @@
+/*
+ * Copyright 2008-2015 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply from: rootProject.file('gradle/javafx-plugin.gradle')
+apply from: rootProject.file('gradle/integration-test.gradle')
+apply from: rootProject.file('gradle/functional-test.gradle')
+
+mainClassName = 'sample.javafx.java.Launcher'
+
+ext.hasIntegrationTests = true
+ext.hasFunctionalTests = true
+ext.depProjects = [
+    ':basilisk-core',
+    ':basilisk-javafx',
+    ':basilisk-guice',
+    ':basilisk-core-test',
+    ':basilisk-javafx-test'
+]
+
+ext.depProjects.each { evaluationDependsOn it }
+apply from: rootProject.file('gradle/coverage-samples.gradle')
+
+dependencies {
+    compileOnly project(':basilisk-core-compile')
+
+    compile project(':basilisk-javafx')
+    compile project(':basilisk-guice')
+
+    runtime "org.slf4j:slf4j-simple:$slf4jVersion"
+
+    testCompile project(':basilisk-core-test')
+    testCompile project(':basilisk-javafx-test')
+
+    functionalTestCompile project(':basilisk-javafx-test')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [
+                'basilisk-app/conf',
+                'basilisk-app/controllers',
+                'basilisk-app/models',
+                'basilisk-app/views',
+                'basilisk-app/services',
+                'basilisk-app/lifecycle',
+                'src/main/java'
+            ]
+        }
+        resources {
+            srcDirs = [
+                'basilisk-app/resources',
+                'basilisk-app/i18n',
+                'src/main/resources'
+            ]
+        }
+    }
+}
+
+javafx {
+    mainClass = mainClassName
+}
+
+gradle.taskGraph.whenReady {
+    sourceSets.main.java.srcDirs.each { it.mkdirs() }
+    sourceSets.main.resources.srcDirs.each { it.mkdirs() }
+}
+
+compileGroovy.enabled = false

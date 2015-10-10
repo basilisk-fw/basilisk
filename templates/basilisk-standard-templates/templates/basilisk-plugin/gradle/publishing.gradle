@@ -1,0 +1,76 @@
+if (!publishJars.toBoolean()) return
+
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+def pomConfig = {
+    name project.name
+    description project.projectDescription
+    url project.projectWebsiteUrl
+    inceptionYear project.projectInceptionYear
+    licenses {
+        license([:]) {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            from components.java
+            artifact sourceJar
+
+            pom.withXml {
+                // all dependencies should use the default scope (compile) but
+                // Gradle insists in using runtime as default
+                asNode().dependencies.dependency.each { dep ->
+                    if (dep.scope.text() == 'runtime') {
+                        dep.remove(dep.scope)
+                    }
+                }
+                asNode().children().last() + pomConfig
+            }
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Built-By': System.properties['user.name'],
+            'Created-By': "\${System.properties['java.version']} (\${System.properties['java.vendor']} \${System.properties['java.vm.version']})".toString(),
+            'Build-Date': buildDate,
+            'Build-Time': buildTime,
+            'Specification-Title': project.name,
+            'Specification-Version': project.version,
+            'Specification-Vendor': 'basilisk-framework.org',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'basilisk-framework.org'
+        )
+    }
+}
+
+if (!project.hasProperty('bintrayUsername')) ext.bintrayUsername = ''
+if (!project.hasProperty('bintrayApiKey')) ext.bintrayApiKey = ''
+
+bintray {
+    user = project.bintrayUsername
+    key = project.bintrayApiKey
+    publications = ['mavenCustom']
+    pkg {
+        repo = 'basilisk-plugins'
+        userOrg = 'basilisk'
+        name = rootProject.name
+        desc = rootProject.projectDescription
+        licenses = ['Apache-2.0']
+        labels = ((rootProject.projectLabels.split(',') + project.projectLabels.split(',')) as List).unique()
+        websiteUrl = project.projectWebsiteUrl
+        issueTrackerUrl = project.projectIssueTrackerUrl
+        vcsUrl = project.projectVcsUrl
+        publicDownloadNumbers = true
+    }
+}
