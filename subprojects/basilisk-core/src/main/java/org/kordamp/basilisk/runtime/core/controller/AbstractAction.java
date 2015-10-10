@@ -18,7 +18,10 @@ package org.kordamp.basilisk.runtime.core.controller;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionManager;
-import org.kordamp.basilisk.runtime.core.AbstractObservable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,9 +32,13 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Andres Almiray
  */
-public abstract class AbstractAction extends AbstractObservable implements Action {
-    private String name;
-    private boolean enabled = true;
+public abstract class AbstractAction implements Action {
+    public static final String KEY_NAME = "name";
+    public static final String KEY_ENABLED = "enabled";
+
+    private StringProperty name;
+    private BooleanProperty enabled;
+
     private final ActionManager actionManager;
     private final BasiliskController controller;
     private final String actionName;
@@ -65,24 +72,38 @@ public abstract class AbstractAction extends AbstractObservable implements Actio
         return getController().getClass().getName() + "." + getActionName();
     }
 
-    @Override
-    public boolean isEnabled() {
+    @Nonnull
+    public BooleanProperty enabledProperty() {
+        if (enabled == null) {
+            enabled = new SimpleBooleanProperty(this, "enabled", true);
+        }
         return enabled;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        firePropertyChange(KEY_ENABLED, this.enabled, this.enabled = enabled);
-    }
-
-    @Nullable
-    public String getName() {
+    @Nonnull
+    public StringProperty nameProperty() {
+        if (name == null) {
+            name = new SimpleStringProperty(this, "name");
+        }
         return name;
     }
 
+    @Nullable
     @Override
+    public String getName() {
+        return nameProperty().get();
+    }
+
     public void setName(@Nullable String name) {
-        firePropertyChange(KEY_NAME, this.name, this.name = name);
+        nameProperty().set(name);
+    }
+
+    public boolean isEnabled() {
+        return enabledProperty().get();
+    }
+
+    public void setEnabled(boolean enabled) {
+        enabledProperty().set(enabled);
     }
 
     @Override

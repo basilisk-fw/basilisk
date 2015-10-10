@@ -15,7 +15,6 @@
  */
 package org.kordamp.basilisk.runtime.core.artifact;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskView;
 import basilisk.core.artifact.BasiliskViewClass;
@@ -23,7 +22,6 @@ import basilisk.core.controller.Action;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 /**
  * Base implementation of the BasiliskView interface.
@@ -31,22 +29,6 @@ import javax.inject.Inject;
  * @author Andres Almiray
  */
 public abstract class AbstractBasiliskView extends AbstractBasiliskMvcArtifact implements BasiliskView {
-    public AbstractBasiliskView() {
-
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractBasiliskView(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
-
     @Nonnull
     @Override
     protected String getArtifactType() {

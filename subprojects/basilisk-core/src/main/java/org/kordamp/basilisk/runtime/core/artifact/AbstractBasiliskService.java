@@ -15,12 +15,10 @@
  */
 package org.kordamp.basilisk.runtime.core.artifact;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskService;
 import basilisk.core.artifact.BasiliskServiceClass;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 /**
  * Base implementation of the BasiliskService interface.
@@ -28,22 +26,6 @@ import javax.inject.Inject;
  * @author Andres Almiray
  */
 public abstract class AbstractBasiliskService extends AbstractBasiliskArtifact implements BasiliskService {
-    public AbstractBasiliskService() {
-
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractBasiliskService(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
-
     @Nonnull
     @Override
     protected String getArtifactType() {

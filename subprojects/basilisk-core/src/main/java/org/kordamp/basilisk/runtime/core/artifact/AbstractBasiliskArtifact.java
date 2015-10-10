@@ -58,19 +58,6 @@ public abstract class AbstractBasiliskArtifact implements BasiliskArtifact {
         log = LoggerFactory.getLogger("basilisk.app." + getArtifactType() + "." + getClass().getName());
     }
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractBasiliskArtifact(@Nonnull BasiliskApplication application) {
-        this();
-        this.application = application;
-    }
-
     @Nonnull
     public BasiliskApplication getApplication() {
         return application;

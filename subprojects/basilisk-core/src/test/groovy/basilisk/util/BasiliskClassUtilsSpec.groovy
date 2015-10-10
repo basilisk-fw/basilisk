@@ -15,7 +15,6 @@
  */
 package basilisk.util
 
-import basilisk.core.Vetoable
 import basilisk.core.artifact.BasiliskArtifact
 import basilisk.core.artifact.BasiliskMvcArtifact
 import basilisk.core.event.EventPublisher
@@ -129,16 +128,6 @@ class BasiliskClassUtilsSpec extends Specification {
         [result, method] << methodsOf(ThreadingHandler, true).plus(methodsOf(ResourceHandler, false))
     }
 
-    void "isObservableMethod() returns #result for '#method' (java.lang.reflect.Method)"() {
-        expect:
-        assert result == BasiliskClassUtils.isObservableMethod(method, true)
-
-        where:
-        [result, method] << methodsOf(basilisk.core.Observable, true)
-            .plus(methodsOf(Vetoable, true))
-            .plus(methodsOf(ResourceHandler, false))
-    }
-
     void "isArtifactMethod() returns #result for '#method' (java.lang.reflect.Method)"() {
         expect:
         assert result == BasiliskClassUtils.isArtifactMethod(method, true)
@@ -227,16 +216,6 @@ class BasiliskClassUtilsSpec extends Specification {
 
         where:
         [result, method] << methodDescriptorsOf(ThreadingHandler, true).plus(methodDescriptorsOf(ResourceHandler, false))
-    }
-
-    void "isObservableMethod() returns #result for '#method'"() {
-        expect:
-        assert result == BasiliskClassUtils.isObservableMethod(method)
-
-        where:
-        [result, method] << methodDescriptorsOf(basilisk.core.Observable, true)
-            .plus(methodDescriptorsOf(Vetoable, true))
-            .plus(methodDescriptorsOf(ResourceHandler, false))
     }
 
     void "isArtifactMethod() returns #result for '#method'"() {

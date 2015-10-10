@@ -15,7 +15,6 @@
  */
 package org.kordamp.basilisk.runtime.core.artifact;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskControllerClass;
 import basilisk.core.controller.Action;
@@ -23,7 +22,6 @@ import basilisk.core.controller.ActionManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 
@@ -33,22 +31,6 @@ import static basilisk.util.BasiliskNameUtils.requireNonBlank;
  * @author Andres Almiray
  */
 public abstract class AbstractBasiliskController extends AbstractBasiliskMvcArtifact implements BasiliskController {
-    public AbstractBasiliskController() {
-
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractBasiliskController(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
-
     @Nonnull
     @Override
     protected String getArtifactType() {

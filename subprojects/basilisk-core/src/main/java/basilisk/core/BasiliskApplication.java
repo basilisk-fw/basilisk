@@ -42,7 +42,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.0.0
  */
-public interface BasiliskApplication extends Observable {
+public interface BasiliskApplication {
     String PROPERTY_LOCALE = "locale";
     String PROPERTY_PHASE = "phase";
 

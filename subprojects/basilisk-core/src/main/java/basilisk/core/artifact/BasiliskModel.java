@@ -15,13 +15,10 @@
  */
 package basilisk.core.artifact;
 
-import basilisk.core.Vetoable;
-
 /**
  * Identifies a Model artifact.<p>
- * Models should always be {@code Observable}.
  *
  * @author Andres Almiray
  */
-public interface BasiliskModel extends BasiliskMvcArtifact, Vetoable {
+public interface BasiliskModel extends BasiliskMvcArtifact {
 }

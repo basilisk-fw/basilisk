@@ -41,6 +41,10 @@ import basilisk.core.resources.ResourceInjector;
 import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +68,7 @@ import static java.util.Objects.requireNonNull;
  * @author Danno Ferrin
  * @author Andres Almiray
  */
-public abstract class AbstractBasiliskApplication extends AbstractObservable implements BasiliskApplication {
+public abstract class AbstractBasiliskApplication implements BasiliskApplication {
     public static final String[] EMPTY_ARGS = new String[0];
     private static final String ERROR_SHUTDOWN_HANDLER_NULL = "Argument 'shutdownHandler' must not be null";
     private static final Class<?>[] CTOR_ARGS = new Class<?>[]{String[].class};
@@ -73,9 +77,12 @@ public abstract class AbstractBasiliskApplication extends AbstractObservable imp
     private final String[] startupArgs;
     private final Object shutdownLock = new Object();
     private final Logger log;
-    private Locale locale = Locale.getDefault();
-    private ApplicationPhase phase = ApplicationPhase.INITIALIZE;
+    //private Locale locale = Locale.getDefault();
+    //private ApplicationPhase phase = ApplicationPhase.INITIALIZE;
     private Injector<?> injector;
+
+    private ObjectProperty<Locale> locale;
+    private ReadOnlyObjectWrapper<ApplicationPhase> phase;
 
     public AbstractBasiliskApplication() {
         this(EMPTY_ARGS);
@@ -100,15 +107,46 @@ public abstract class AbstractBasiliskApplication extends AbstractObservable imp
     }
 
     @Nonnull
-    public Locale getLocale() {
+    public ObjectProperty<Locale> localeProperty() {
+        if (locale == null) {
+            locale = new SimpleObjectProperty<>(this, "locale", Locale.getDefault());
+        }
         return locale;
     }
 
+    @Nonnull
+    public ReadOnlyObjectProperty<ApplicationPhase> phaseProperty() {
+        if (phase == null) {
+            phase = new ReadOnlyObjectWrapper<>(this, "phase", ApplicationPhase.INITIALIZE);
+        }
+        return phase.getReadOnlyProperty();
+    }
+
+
+    @Nonnull
+    @Override
+    public Locale getLocale() {
+        return localeProperty().get();
+    }
+
+
     public void setLocale(@Nonnull Locale locale) {
-        Locale oldValue = this.locale;
-        this.locale = locale;
-        Locale.setDefault(locale);
-        firePropertyChange(PROPERTY_LOCALE, oldValue, locale);
+        requireNonNull(locale, "Argument 'locale' must not be null");
+        localeProperty().set(locale);
+    }
+
+    @Nonnull
+    @Override
+    public ApplicationPhase getPhase() {
+        return phaseProperty().get();
+    }
+
+    protected void setPhase(@Nonnull ApplicationPhase phase) {
+        requireNonNull(phase, "Argument 'phase' must not be null");
+        synchronized (lock) {
+            phaseProperty();
+            this.phase.set(phase);
+        }
     }
 
     @Nonnull
@@ -133,20 +171,6 @@ public abstract class AbstractBasiliskApplication extends AbstractObservable imp
     public void removeShutdownHandler(@Nonnull ShutdownHandler handler) {
         requireNonNull(handler, ERROR_SHUTDOWN_HANDLER_NULL);
         shutdownHandlers.remove(handler);
-    }
-
-    @Nonnull
-    public ApplicationPhase getPhase() {
-        synchronized (lock) {
-            return this.phase;
-        }
-    }
-
-    protected void setPhase(@Nonnull ApplicationPhase phase) {
-        requireNonNull(phase, "Argument 'phase' must not be null");
-        synchronized (lock) {
-            firePropertyChange(PROPERTY_PHASE, this.phase, this.phase = phase);
-        }
     }
 
     @Nonnull

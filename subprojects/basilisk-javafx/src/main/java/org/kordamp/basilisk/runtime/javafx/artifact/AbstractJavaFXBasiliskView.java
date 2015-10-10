@@ -15,7 +15,6 @@
  */
 package org.kordamp.basilisk.runtime.javafx.artifact;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskClass;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
@@ -30,7 +29,6 @@ import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 
@@ -45,22 +43,6 @@ import static basilisk.util.ConfigUtils.stripFilenameExtension;
  */
 public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
     private static final String FXML_SUFFIX = ".fxml";
-
-    public AbstractJavaFXBasiliskView() {
-
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractJavaFXBasiliskView(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
 
     @Nullable
     protected Node loadFromFXML() {

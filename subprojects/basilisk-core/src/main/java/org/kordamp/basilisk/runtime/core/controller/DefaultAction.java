@@ -18,8 +18,6 @@ package org.kordamp.basilisk.runtime.core.controller;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.threading.UIThreadManager;
-import com.googlecode.openbeans.PropertyChangeEvent;
-import com.googlecode.openbeans.PropertyChangeListener;
 
 import javax.annotation.Nonnull;
 
@@ -35,21 +33,8 @@ public class DefaultAction extends AbstractAction {
         super(actionManager, controller, actionName);
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
-        toolkitAction = new DefaultToolkitAction(new Runnable() {
-            @Override
-            public void run() {
-                actionManager.invokeAction(controller, actionName);
-            }
-        });
-        addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(final PropertyChangeEvent evt) {
-                uiThreadManager.runInsideUIAsync(new Runnable() {
-                    public void run() {
-                        toolkitAction.setName(String.valueOf(evt.getNewValue()));
-                    }
-                });
-            }
-        });
+        toolkitAction = new DefaultToolkitAction(() -> actionManager.invokeAction(controller, actionName));
+        nameProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setName(n)));
     }
 
     @Nonnull

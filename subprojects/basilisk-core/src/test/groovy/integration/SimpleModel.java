@@ -15,29 +15,41 @@
  */
 package integration;
 
-import com.googlecode.openbeans.PropertyChangeEvent;
-import com.googlecode.openbeans.PropertyVetoException;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskModel;
 
 public class SimpleModel extends AbstractBasiliskModel {
-    private String value1;
-    private String value2;
+    private StringProperty value1;
+    private StringProperty value2;
 
     public String getValue1() {
-        return this.value1;
+        return value1Property().get();
     }
 
-    public void setValue1(String value1) throws PropertyVetoException {
-        fireVetoableChange("value1", this.value1, value1);
-        firePropertyChange("value1", this.value1, this.value1 = value1);
+    public StringProperty value1Property() {
+        if (value1 == null) {
+            value1 = new SimpleStringProperty(this, "value1");
+        }
+        return value1;
+    }
+
+    public void setValue1(String value1) {
+        value1Property().set(value1);
     }
 
     public String getValue2() {
-        return this.value2;
+        return value2Property().get();
     }
 
-    public void setValue2(String value2) throws PropertyVetoException {
-        fireVetoableChange(new PropertyChangeEvent(this, "value2", this.value2, value2));
-        firePropertyChange(new PropertyChangeEvent(this, "value2", this.value2, this.value2 = value2));
+    public StringProperty value2Property() {
+        if (value2 == null) {
+            value2 = new SimpleStringProperty(this, "value2");
+        }
+        return value2;
+    }
+
+    public void setValue2(String value2) {
+        value2Property().set(value2);
     }
 }

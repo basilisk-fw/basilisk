@@ -15,7 +15,6 @@
  */
 package org.kordamp.basilisk.runtime.core.artifact;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskModel;
 import basilisk.core.artifact.BasiliskMvcArtifact;
@@ -25,7 +24,6 @@ import basilisk.core.mvc.MVCGroup;
 import basilisk.core.mvc.MVCGroupFunction;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -38,22 +36,6 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class AbstractBasiliskMvcArtifact extends AbstractBasiliskArtifact implements BasiliskMvcArtifact {
     private MVCGroup group;
-
-    public AbstractBasiliskMvcArtifact() {
-
-    }
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param application the BasiliskApplication that holds this artifact.
-     * @deprecated Basilisk prefers field injection over constructor injector for artifacts as of 2.1.0
-     */
-    @Inject
-    @Deprecated
-    public AbstractBasiliskMvcArtifact(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
 
     public void setMvcGroup(@Nonnull MVCGroup group) {
         this.group = requireNonNull(group, "Argument 'group' must not be null");

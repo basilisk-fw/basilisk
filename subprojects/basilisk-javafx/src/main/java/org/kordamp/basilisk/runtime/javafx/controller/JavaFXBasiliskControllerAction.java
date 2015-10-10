@@ -19,8 +19,13 @@ import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.javafx.support.JavaFXAction;
-import com.googlecode.openbeans.PropertyChangeEvent;
 import com.googlecode.openbeans.PropertyEditor;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -31,7 +36,6 @@ import javax.annotation.Nullable;
 
 import static basilisk.core.editors.PropertyEditorResolver.findEditor;
 import static basilisk.util.BasiliskNameUtils.isBlank;
-import static basilisk.util.TypeUtils.castToBoolean;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -47,14 +51,15 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
     public static final String KEY_ACCELERATOR = "accelerator";
     public static final String KEY_STYLECLASS = "styleClass";
     private final JavaFXAction toolkitAction;
-    private String description;
-    private String icon;
-    private String image;
-    private Node graphic;
-    private String accelerator;
-    private String styleClass;
-    private boolean selected;
-    private boolean visible = true;
+
+    private StringProperty description;
+    private StringProperty icon;
+    private StringProperty image;
+    private ObjectProperty<Node> graphic;
+    private StringProperty accelerator;
+    private StringProperty styleClass;
+    private BooleanProperty selected;
+    private BooleanProperty visible;
 
     public JavaFXBasiliskControllerAction(final @Nonnull UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
         super(actionManager, controller, actionName);
@@ -63,112 +68,161 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         toolkitAction = createAction(actionManager, controller, actionName);
         toolkitAction.setOnAction(actionEvent -> actionManager.invokeAction(controller, actionName, actionEvent));
 
-        addPropertyChangeListener(evt -> uiThreadManager.runInsideUIAsync(() -> handlePropertyChange(evt)));
+        nameProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setName(n)));
+        enabledProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setEnabled(n)));
+        descriptionProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setDescription(n)));
+        iconProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setIcon(n)));
+        imageProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setImage(convertImage(n))));
+        graphicProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setGraphic(n)));
+        acceleratorProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setAccelerator(n)));
+        styleClassProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setStyleClass(n)));
+        selectedProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setSelected(n)));
+        visibleProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setVisible(n)));
     }
 
     protected JavaFXAction createAction(final @Nonnull ActionManager actionManager, final @Nonnull BasiliskController controller, final @Nonnull String actionName) {
         return new JavaFXAction();
     }
 
-    protected void handlePropertyChange(@Nonnull PropertyChangeEvent evt) {
-        if (KEY_NAME.equals(evt.getPropertyName())) {
-            toolkitAction.setName(String.valueOf(evt.getNewValue()));
-        } else if (KEY_DESCRIPTION.equals(evt.getPropertyName())) {
-            toolkitAction.setDescription(String.valueOf(evt.getNewValue()));
-        } else if (KEY_ENABLED.equals(evt.getPropertyName())) {
-            toolkitAction.setEnabled(castToBoolean(evt.getNewValue()));
-        } else if (KEY_SELECTED.equals(evt.getPropertyName())) {
-            toolkitAction.setSelected(castToBoolean(evt.getNewValue()));
-        } else if (KEY_VISIBLE.equals(evt.getPropertyName())) {
-            toolkitAction.setVisible(castToBoolean(evt.getNewValue()));
-        } else if (KEY_ACCELERATOR.equals(evt.getPropertyName())) {
-            String accelerator = (String) evt.getNewValue();
-            if (!isBlank(accelerator)) toolkitAction.setAccelerator(accelerator);
-        } else if (KEY_STYLECLASS.equals(evt.getPropertyName())) {
-            String styleClass = (String) evt.getNewValue();
-            if (!isBlank(styleClass)) toolkitAction.setStyleClass(styleClass);
-        } else if (KEY_ICON.equals(evt.getPropertyName())) {
-            String icon = (String) evt.getNewValue();
-            if (!isBlank(icon)) toolkitAction.setIcon(icon);
-        } else if (KEY_IMAGE.equals(evt.getPropertyName())) {
-            Image image = (Image) evt.getNewValue();
-            if (null != image) toolkitAction.setImage(image);
-        } else if (KEY_GRAPHIC.equals(evt.getPropertyName())) {
-            Node graphic = (Node) evt.getNewValue();
-            if (null != graphic) toolkitAction.setGraphic(graphic);
+    @Nonnull
+    public StringProperty descriptionProperty() {
+        if (description == null) {
+            description = new SimpleStringProperty(this, "description");
         }
+        return description;
     }
 
-    @Nullable
-    public String getStyleClass() {
-        return styleClass;
+    @Nonnull
+    public StringProperty iconProperty() {
+        if (icon == null) {
+            icon = new SimpleStringProperty(this, "icon");
+        }
+        return icon;
     }
 
-    public void setStyleClass(@Nullable String styleClass) {
-        firePropertyChange(KEY_STYLECLASS, this.styleClass, this.styleClass = styleClass);
+    @Nonnull
+    public StringProperty imageProperty() {
+        if (image == null) {
+            image = new SimpleStringProperty(this, "image");
+        }
+        return image;
     }
 
-    @Nullable
-    public String getAccelerator() {
+    @Nonnull
+    public ObjectProperty<Node> graphicProperty() {
+        if (graphic == null) {
+            graphic = new SimpleObjectProperty<>(this, "graphic");
+        }
+        return graphic;
+    }
+
+    @Nonnull
+    public StringProperty acceleratorProperty() {
+        if (accelerator == null) {
+            accelerator = new SimpleStringProperty(this, "accelerator");
+        }
         return accelerator;
     }
 
-    public void setAccelerator(@Nullable String accelerator) {
-        firePropertyChange(KEY_ACCELERATOR, this.accelerator, this.accelerator = accelerator);
+    @Nonnull
+    public StringProperty styleClassProperty() {
+        if (styleClass == null) {
+            styleClass = new SimpleStringProperty(this, "styleClass");
+        }
+        return styleClass;
     }
 
-    public boolean isSelected() {
+    @Nonnull
+    public BooleanProperty selectedProperty() {
+        if (selected == null) {
+            selected = new SimpleBooleanProperty(this, "selected");
+        }
         return selected;
     }
 
-    public void setSelected(boolean selected) {
-        firePropertyChange(KEY_SELECTED, this.selected, this.selected = selected);
-    }
-
-    public boolean isVisible() {
+    @Nonnull
+    public BooleanProperty visibleProperty() {
+        if (visible == null) {
+            visible = new SimpleBooleanProperty(this, "visible", true);
+        }
         return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        firePropertyChange(KEY_SELECTED, this.visible, this.visible = visible);
     }
 
     @Nullable
     public String getDescription() {
-        return description;
+        return descriptionProperty().get();
     }
 
     public void setDescription(@Nullable String description) {
-        firePropertyChange(KEY_DESCRIPTION, this.description, this.description = description);
+        descriptionProperty().set(description);
     }
 
     @Nullable
     public String getIcon() {
-        return icon;
+        return iconProperty().get();
     }
 
     public void setIcon(@Nullable String icon) {
-        firePropertyChange(KEY_ICON, this.icon, this.icon = icon);
+        iconProperty().set(icon);
     }
 
     @Nullable
-    public Image getImage() {
+    public String getImage() {
+        return imageProperty().get();
+    }
+
+    @Nullable
+    protected Image convertImage(@Nullable String image) {
         PropertyEditor editor = findEditor(Image.class);
         editor.setValue(image);
         return (Image) editor.getValue();
     }
 
     public void setImage(@Nullable String image) {
-        firePropertyChange(KEY_IMAGE, this.image, this.image = image);
+        imageProperty().set(image);
     }
 
     @Nullable
     public Node getGraphic() {
-        return graphic;
+        return graphicProperty().get();
     }
 
     public void setGraphic(@Nullable Node graphic) {
-        firePropertyChange(KEY_ICON, this.graphic, this.graphic = graphic);
+        graphicProperty().set(graphic);
+    }
+
+    @Nullable
+    public String getAccelerator() {
+        return acceleratorProperty().get();
+    }
+
+    public void setAccelerator(@Nullable String accelerator) {
+        acceleratorProperty().set(accelerator);
+    }
+
+    @Nullable
+    public String getStyleClass() {
+        return styleClassProperty().get();
+    }
+
+    public void setStyleClass(@Nullable String styleClass) {
+        styleClassProperty().set(styleClass);
+    }
+
+    public boolean isSelected() {
+        return selectedProperty().get();
+    }
+
+    public void setSelected(boolean selected) {
+        selectedProperty().set(selected);
+    }
+
+    public boolean isVisible() {
+        return visibleProperty().get();
+    }
+
+    public void setVisible(boolean visible) {
+        visibleProperty().set(visible);
     }
 
     @Nonnull
@@ -193,10 +247,10 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         toolkitAction.setVisible(isVisible());
         String accelerator = getAccelerator();
         if (!isBlank(accelerator)) toolkitAction.setAccelerator(accelerator);
-        if (!isBlank(styleClass)) toolkitAction.setStyleClass(styleClass);
+        if (!isBlank(getStyleClass())) toolkitAction.setStyleClass(getStyleClass());
         String icon = getIcon();
         if (!isBlank(icon)) toolkitAction.setIcon(icon);
-        if (null != getImage()) toolkitAction.setImage(getImage());
+        if (null != getImage()) toolkitAction.setImage(convertImage(getImage()));
         if (null != getGraphic()) toolkitAction.setGraphic(getGraphic());
     }
 }

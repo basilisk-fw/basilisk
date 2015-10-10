@@ -15,8 +15,6 @@
  */
 package basilisk.util;
 
-import basilisk.core.Observable;
-import basilisk.core.Vetoable;
 import basilisk.core.artifact.BasiliskArtifact;
 import basilisk.core.artifact.BasiliskMvcArtifact;
 import basilisk.core.event.EventPublisher;
@@ -89,7 +87,6 @@ public class BasiliskClassUtils {
     private static final Set<MethodDescriptor> MVC_METHODS = new TreeSet<>();
     private static final Set<MethodDescriptor> THREADING_METHODS = new TreeSet<>();
     private static final Set<MethodDescriptor> EVENT_PUBLISHER_METHODS = new TreeSet<>();
-    private static final Set<MethodDescriptor> OBSERVABLE_METHODS = new TreeSet<>();
     private static final Set<MethodDescriptor> RESOURCE_HANDLER_METHODS = new TreeSet<>();
     private static final Set<MethodDescriptor> MESSAGE_SOURCE_METHODS = new TreeSet<>();
     private static final Set<MethodDescriptor> RESOURCE_RESOLVER_METHODS = new TreeSet<>();
@@ -199,19 +196,6 @@ public class BasiliskClassUtils {
             MethodDescriptor md = MethodDescriptor.forMethod(method, true);
             if (!EVENT_PUBLISHER_METHODS.contains(md)) {
                 EVENT_PUBLISHER_METHODS.add(md);
-            }
-        }
-
-        for (Method method : Observable.class.getMethods()) {
-            MethodDescriptor md = MethodDescriptor.forMethod(method, true);
-            if (!OBSERVABLE_METHODS.contains(md)) {
-                OBSERVABLE_METHODS.add(md);
-            }
-        }
-        for (Method method : Vetoable.class.getMethods()) {
-            MethodDescriptor md = MethodDescriptor.forMethod(method, true);
-            if (!OBSERVABLE_METHODS.contains(md)) {
-                OBSERVABLE_METHODS.add(md);
             }
         }
 
@@ -1202,63 +1186,6 @@ public class BasiliskClassUtils {
 
     /**
      * Finds out if the given {@code Method} belongs to the set of
-     * predefined observable methods by convention.
-     * <p>
-     * <pre>
-     * // assuming getMethod() returns an appropriate Method reference
-     * isObservableMethod(getMethod("addPropertyChangeListener"))  = true
-     * isObservableMethod(getMethod("getPropertyChangeListeners")) = true
-     * isObservableMethod(getMethod("foo"))                        = false
-     * </pre>
-     *
-     * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
-     */
-    public static boolean isObservableMethod(@Nonnull Method method) {
-        return isObservableMethod(method, false);
-    }
-
-    /**
-     * Finds out if the given {@code Method} belongs to the set of
-     * predefined observable methods by convention.
-     * <p>
-     * <pre>
-     * // assuming getMethod() returns an appropriate Method reference
-     * isObservableMethod(getMethod("addPropertyChangeListener"))  = true
-     * isObservableMethod(getMethod("getPropertyChangeListeners")) = true
-     * isObservableMethod(getMethod("foo"))                        = false
-     * </pre>
-     *
-     * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
-     */
-    public static boolean isObservableMethod(@Nonnull Method method, boolean removeAbstractModifier) {
-        requireNonNull(method, ERROR_METHOD_NULL);
-        return isObservableMethod(MethodDescriptor.forMethod(method, removeAbstractModifier));
-    }
-
-    /**
-     * Finds out if the given {@code MethodDescriptor} belongs to the set of
-     * predefined observable methods by convention.
-     * <p>
-     * <pre>
-     * // assuming getMethod() returns an appropriate MethodDescriptor reference
-     * isObservableMethod(getMethod("addPropertyChangeListener"))  = true
-     * isObservableMethod(getMethod("getPropertyChangeListeners")) = true
-     * isObservableMethod(getMethod("foo"))                        = false
-     * </pre>
-     *
-     * @param method a MethodDescriptor reference
-     * @return true if the method is an Observable method, false otherwise.
-     */
-    public static boolean isObservableMethod(@Nonnull MethodDescriptor method) {
-        requireNonNull(method, ERROR_METHOD_NULL);
-        return isInstanceMethod(method) &&
-            OBSERVABLE_METHODS.contains(method);
-    }
-
-    /**
-     * Finds out if the given {@code Method} belongs to the set of
      * predefined resources methods by convention.
      * <p>
      * <pre>
@@ -1269,7 +1196,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceHandler method, false otherwise.
      */
     public static boolean isResourceHandlerMethod(@Nonnull Method method) {
         return isResourceHandlerMethod(method, false);
@@ -1287,7 +1214,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceHandler method, false otherwise.
      */
     public static boolean isResourceHandlerMethod(@Nonnull Method method, boolean removeAbstractModifier) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1306,7 +1233,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a MethodDescriptor reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceHandler method, false otherwise.
      */
     public static boolean isResourceHandlerMethod(@Nonnull MethodDescriptor method) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1325,7 +1252,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an MessageSource method, false otherwise.
      */
     public static boolean isMessageSourceMethod(@Nonnull Method method) {
         return isMessageSourceMethod(method, false);
@@ -1342,7 +1269,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an MessageSource method, false otherwise.
      */
     public static boolean isMessageSourceMethod(@Nonnull Method method, boolean removeAbstractModifier) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1360,7 +1287,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a MethodDescriptor reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an MessageSource method, false otherwise.
      */
     public static boolean isMessageSourceMethod(@Nonnull MethodDescriptor method) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1379,7 +1306,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceResolver method, false otherwise.
      */
     public static boolean isResourceResolverMethod(@Nonnull Method method) {
         return isResourceResolverMethod(method, false);
@@ -1396,7 +1323,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a Method reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceResolver method, false otherwise.
      */
     public static boolean isResourceResolverMethod(@Nonnull Method method, boolean removeAbstractModifier) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1414,7 +1341,7 @@ public class BasiliskClassUtils {
      * </pre>
      *
      * @param method a MethodDescriptor reference
-     * @return true if the method is an Observable method, false otherwise.
+     * @return true if the method is an ResourceResolver method, false otherwise.
      */
     public static boolean isResourceResolverMethod(@Nonnull MethodDescriptor method) {
         requireNonNull(method, ERROR_METHOD_NULL);
@@ -1470,7 +1397,6 @@ public class BasiliskClassUtils {
      * <li>! isMvcMethod(method)</li>
      * <li>! isServiceMethod(method)</li>
      * <li>! isEventPublisherMethod(method)</li>
-     * <li>! isObservableMethod(method)</li>
      * <li>! isResourceHandlerMethod(method)</li>
      * <li>! isGetterMethod(method)</li>
      * <li>! isSetterMethod(method)</li>
@@ -1494,7 +1420,6 @@ public class BasiliskClassUtils {
      * <li>! isMvcMethod(method)</li>
      * <li>! isServiceMethod(method)</li>
      * <li>! isEventPublisherMethod(method)</li>
-     * <li>! isObservableMethod(method)</li>
      * <li>! isResourceHandlerMethod(method)</li>
      * <li>! isGetterMethod(method)</li>
      * <li>! isSetterMethod(method)</li>
@@ -1519,7 +1444,6 @@ public class BasiliskClassUtils {
      * <li>! isMvcMethod(method)</li>
      * <li>! isServiceMethod(method)</li>
      * <li>! isEventPublisherMethod(method)</li>
-     * <li>! isObservableMethod(method)</li>
      * <li>! isResourceHandlerMethod(method)</li>
      * <li>! isGetterMethod(method)</li>
      * <li>! isSetterMethod(method)</li>
@@ -1538,7 +1462,6 @@ public class BasiliskClassUtils {
             !isArtifactMethod(method) &&
             !isMvcMethod(method) &&
             !isEventPublisherMethod(method) &&
-            !isObservableMethod(method) &&
             !isResourceHandlerMethod(method) &&
             !isGetterMethod(method) &&
             !isSetterMethod(method) &&

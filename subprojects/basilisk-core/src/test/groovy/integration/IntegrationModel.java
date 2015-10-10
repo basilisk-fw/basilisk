@@ -15,25 +15,41 @@
  */
 package integration;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskModel;
 
 public class IntegrationModel extends AbstractBasiliskModel {
-    private String input;
-    private String output;
+    private StringProperty input;
+    private StringProperty output;
 
     public String getInput() {
+        return inputProperty().get();
+    }
+
+    public StringProperty inputProperty() {
+        if (input == null) {
+            input = new SimpleStringProperty(this, "input");
+        }
         return input;
     }
 
     public void setInput(String input) {
-        firePropertyChange("input", this.input, this.input = input);
+        this.inputProperty().set(input);
     }
 
     public String getOutput() {
+        return outputProperty().get();
+    }
+
+    public StringProperty outputProperty() {
+        if (output == null) {
+            output = new SimpleStringProperty(this, "output");
+        }
         return output;
     }
 
     public void setOutput(String output) {
-        firePropertyChange("output", this.output, this.output = output);
+        this.outputProperty().set(output);
     }
 }
