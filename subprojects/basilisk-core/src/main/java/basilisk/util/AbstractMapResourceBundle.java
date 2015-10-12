@@ -59,6 +59,11 @@ public abstract class AbstractMapResourceBundle extends ResourceBundle {
     }
 
     @Override
+    public Set<String> keySet() {
+        return keys;
+    }
+
+    @Override
     protected Set<String> handleKeySet() {
         return keys;
     }

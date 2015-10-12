@@ -22,7 +22,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
-import org.gradle.tooling.BuildException
 
 /**
  * @author Andres Almiray

@@ -23,7 +23,7 @@ apply plugin: 'idea'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'build-dashboard'
 apply from: 'gradle/idea.gradle'
-apply plugin: 'org.kordamp.basilisk.basilisk-build'
+apply plugin: 'org.kordamp.basilisk-build'
 apply from: 'gradle/bom.gradle'
 apply plugin: 'org.ajoberstar.github-pages'
 

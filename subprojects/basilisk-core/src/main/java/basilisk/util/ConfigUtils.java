@@ -17,12 +17,11 @@ package basilisk.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static basilisk.util.TypeUtils.castToBoolean;
@@ -31,7 +30,7 @@ import static basilisk.util.TypeUtils.castToFloat;
 import static basilisk.util.TypeUtils.castToInt;
 import static basilisk.util.TypeUtils.castToLong;
 import static basilisk.util.TypeUtils.castToNumber;
-import static java.util.Collections.unmodifiableSortedSet;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -630,22 +629,21 @@ public final class ConfigUtils {
         return path.substring(0, extIndex);
     }
 
-    @Nonnull
     public static Set<String> collectKeys(@Nonnull Map<String, Object> map) {
         requireNonNull(map, "Argument 'map' must not be null");
 
-        SortedSet<String> keys = new TreeSet<>();
+        Set<String> keys = new LinkedHashSet<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             doCollectKeys(key, value, keys);
         }
 
-        return unmodifiableSortedSet(keys);
+        return unmodifiableSet(keys);
     }
 
     @SuppressWarnings("unchecked")
-    private static void doCollectKeys(String key, Object value, SortedSet<String> keys) {
+    private static void doCollectKeys(String key, Object value, Set<String> keys) {
         if (value instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) value;
             for (Map.Entry<String, Object> entry : map.entrySet()) {
