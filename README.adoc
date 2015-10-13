@@ -30,7 +30,7 @@ allowing you to concentrate on getting the code right.
 
 == Quickstart
 
-The recommended way to get started with a Griffon project is to use a Lazybones project template and Gradle. You can install these tools with SDKMAN.
+The recommended way to get started with a Basilisk project is to use a Lazybones project template and Gradle. You can install these tools with SDKMAN.
 
     $ curl -s http://get.sdkman.io | bash
     $ sdk install lazybones
