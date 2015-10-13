@@ -25,7 +25,7 @@
 .Usage
 
  * You must specify a version number that matches the version you just built, for example
-  `lazybones create basilisk-javafx-ios 0.1.0-SNAPSHOT sample`.
+  `lazybones create basilisk-javafx-ios 0.0.0-SNAPSHOT sample`.
 
 == Sample Applications
 
