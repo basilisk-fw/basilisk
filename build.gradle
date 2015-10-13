@@ -184,7 +184,6 @@ subprojects { subproj ->
                 subproj.apply plugin: 'org.kordamp.gradle.clirr'
 
                 subproj.clirr {
-                    enabled = false
                     failOnErrors = false
                 }
 
@@ -223,11 +222,7 @@ subprojects { subproj ->
                                  'http://docs.oracle.com/javase/8/docs/api/',
                                  'http://docs.oracle.com/javase/8/javafx/api/',
                                  'http://google.github.io/guice/api-docs/4.0/javadoc/',
-                                 'http://mabe02.github.io/lanterna/apidocs/2.1/',
-                                 'http://pivot.apache.org/2.0.4/docs/api/',
-                                 'http://docs.groovy-lang.org/latest/html/api/',
-                                 'http://aalmiray.github.io/jipsy/apidocs/',
-                                 'http://aalmiray.github.io/gipsy/apidocs/']
+                                 'http://aalmiray.github.io/jipsy/apidocs/']
 
                 doLast { task ->
                     copy {
