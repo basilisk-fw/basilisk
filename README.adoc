@@ -27,6 +27,42 @@ Seasoned Java developers will also be able to pick up the pace quickly, as the
 framework relieves you of the burden of maintaining an application structure,
 allowing you to concentrate on getting the code right.
 
+
+== Quickstart
+
+The recommended way to get started with a Griffon project is to use a Lazybones project template and Gradle. You can install these tools with SDKMAN.
+
+    $ curl -s http://get.sdkman.io | bash
+    $ sdk install lazybones
+    $ sdk install gradle
+
+Next register the basilisk-lazybones-templates repository with Lazybones' config file. Edit $USER_HOME/.lazybones/config.groovy
+
+    bintrayRepositories = [
+        "basilisk/basilisk-lazybones-templates",
+        "pledbrook/lazybones-templates"
+    ]
+
+List all available templates by invoking the following command
+
+    $ lazybones list
+    Available templates in basilisk/basilisk-lazybones-templates
+
+        basilisk-javafx-ios
+        basilisk-plugin
+
+Select a starting template from the list and invoke the create command
+
+    $ lazybones create basilisk-javafx-ios sample
+
+Compile, run and test the project with any of these commands
+
+    $ gradle build
+    $ gradle test
+    $ gradle run
+    $ gradle launchIPhoneSimulator
+
+
 == Links
 
 - https://github.com/basilisk-fw/basilisk[Home]
