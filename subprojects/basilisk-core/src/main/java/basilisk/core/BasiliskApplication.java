@@ -40,7 +40,6 @@ import java.util.Map;
  *
  * @author Danno Ferrin
  * @author Andres Almiray
- * @since 0.0.0
  */
 public interface BasiliskApplication {
     String PROPERTY_LOCALE = "locale";

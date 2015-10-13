@@ -25,20 +25,8 @@
 .Usage
 
  * You must specify a version number that matches the version you just built, for example
-  `lazybones create basilisk-javafx-ios 0.0.0-SNAPSHOT sample`.
+  `lazybones create basilisk-javafx-ios 0.0.0 sample`.
 
 == Sample Applications
 
  * Change into the desired application directory (under `samples`) and execute `gradle run`.
-
-== Guide
-
- * Change into `docs/basilisk.guide`.
- * Create a new version of the guide by invoking `gradle guide`.
-
-== Site
-
- * Change into `docs/basilisk-site`.
- * Create a new version of the site by invoking `gradle site`.
- * Run the site on an embedded HTTP server with `gradle siteRun`.
- * Browse to `http://localhost:8080/`.

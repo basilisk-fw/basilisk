@@ -12,14 +12,12 @@ props.project_name = transformText(props.project_class_name, from: NameType.CAME
 props.project_group = ask("Define value for 'group' [org.example]: ", "org.example", "group")
 props.project_name = ask("Define value for 'artifactId' [" + props.project_name + "]: ", props.project_name, "artifactId")
 props.project_version = ask("Define value for 'version' [0.1.0-SNAPSHOT]: ", "0.1.0-SNAPSHOT", "version")
-props.basilisk_version = ask("Define value for 'basiliskVersion' [0.0.0-SNAPSHOT]: ", "0.0.0-SNAPSHOT", "basiliskVersion")
+props.basilisk_version = ask("Define value for 'basiliskVersion' [0.0.0]: ", "0.0.0", "basiliskVersion")
 props.project_package = ask("Define value for 'package' [" + props.project_group + "]: ", props.project_group, "package")
 props.project_class_name = ask("Define value for 'className' [" + props.project_class_name + "]: ", props.project_class_name, "className").capitalize()
 props.project_property_name = transformText(props.project_class_name, from: NameType.CAMEL_CASE, to: NameType.PROPERTY)
 props.project_capitalized_name = props.project_property_name.capitalize()
 String packagePath = props.project_package.replace('.' as char, '/' as char)
-
-props.each{k,v-> println "$k = $v"}
 
 processTemplates 'build.gradle', props
 processTemplates 'settings.gradle', props
@@ -31,14 +29,12 @@ processTemplates 'src/main/resources/*.properties', props
 processTemplates 'src/integration-test/java/*.java', props
 processTemplates 'src/functional-test/java/*.java', props
 processTemplates 'basilisk-app/*/*.java', props
-processTemplates 'maven/distribution/bin/*', props
 
 File mainSources = new File(projectDir, 'src/main/java')
 File mainResources = new File(projectDir, 'src/main/resources')
 File testSources = new File(projectDir, 'src/test/java')
 File integrationTestSources = new File(projectDir, 'src/integration-test/java')
 File functionalTestSources = new File(projectDir, 'src/functional-test/java')
-File binSources = new File(projectDir, 'maven/distribution/bin')
 
 File mainSourcesPath = new File(mainSources, packagePath)
 mainSourcesPath.mkdirs()
@@ -74,9 +70,6 @@ integrationTestSources.eachFile { File file ->
 functionalTestSources.eachFile { File file ->
     renameFile(file, functionalTestSourcesPath.absolutePath + '/' + props.project_capitalized_name + file.name)
 }
-
-renameFile(new File(binSources, 'run-app'), binSources.absolutePath + '/' + props.project_name)
-renameFile(new File(binSources, 'run-app.bat'), binSources.absolutePath + '/' + props.project_name + '.bat')
 
 ['controllers', 'models', 'services', 'views'].each { String category ->
     File artifactDir = new File(projectDir, "basilisk-app/$category")

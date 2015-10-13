@@ -9,9 +9,9 @@
     <children>
         <Label fx:id="clickLabel"
                text="0"
-               GridPane.columnIndex="0" GridPane.rowIndex="0" />
+               GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Button fx:id="clickActionTarget"
-                GridPane.columnIndex="0" GridPane.rowIndex="1"
+                GridPane.columnIndex="0" GridPane.rowIndex="0"
                 mnemonicParsing="false"
                 prefWidth="200.0"
                 prefHeight="200.0"

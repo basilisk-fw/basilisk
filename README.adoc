@@ -29,8 +29,8 @@ allowing you to concentrate on getting the code right.
 
 == Links
 
-- http://basilisk-framework.org[Home]
-- http://basilisk-framework.org/documentation.html[Documentation]
+- https://github.com/basilisk-fw/basilisk[Home]
+- https://github.com/basilisk-fw/basilisk[Documentation]
 - https://github.com/basilisk-fw/basilisk[Source]
 - https://github.com/basilisk-fw/basilisk/issues[Issue Tracker]
 - http://basilisk-user.1128066.n5.nabble.com/[Mailing Lists]
