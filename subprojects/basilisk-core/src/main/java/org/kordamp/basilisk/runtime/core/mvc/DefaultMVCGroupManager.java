@@ -386,8 +386,19 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
 
     protected void destroyArtifactMember(@Nonnull String type, @Nonnull BasiliskArtifact member) {
         if (member instanceof BasiliskMvcArtifact) {
-            BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
-            artifact.mvcGroupDestroy();
+            final BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
+
+            if (artifact instanceof BasiliskView) {
+                getApplication().getUIThreadManager().runInsideUISync(() -> {
+                    try {
+                        artifact.mvcGroupDestroy();
+                    } catch (RuntimeException e) {
+                        throw (RuntimeException) sanitize(e);
+                    }
+                });
+            } else {
+                artifact.mvcGroupDestroy();
+            }
 
             // clear all parent* references
             for (String parentMemberName : new String[]{"parentModel", "parentView", "parentController", "parentGroup"}) {
