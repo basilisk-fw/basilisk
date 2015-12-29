@@ -44,7 +44,7 @@ license {
         java = 'SLASHSTAR_STYLE'
         groovy = 'SLASHSTAR_STYLE'
     }
-    ext.year = '2015'
+    ext.year = '2016'
     exclude '**/*.png'
 }
 
