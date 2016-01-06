@@ -21,8 +21,11 @@ import basilisk.core.controller.ActionManager;
 import basilisk.core.editors.ValueConversionException;
 import basilisk.exceptions.InstanceMethodInvocationException;
 import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -48,6 +51,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Window;
 
 import javax.annotation.Nonnull;
@@ -142,21 +146,36 @@ public final class JavaFXUtils {
     public static void configure(final @Nonnull ToggleButton control, final @Nonnull JavaFXAction action) {
         configure((ButtonBase) control, action);
 
-        action.selectedProperty().addListener((observableValue, oldValue, newValue) -> control.setSelected(newValue));
+        action.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setSelected(newValue);
+            }
+        });
         control.setSelected(action.isSelected());
     }
 
     public static void configure(final @Nonnull CheckBox control, final @Nonnull JavaFXAction action) {
         configure((ButtonBase) control, action);
 
-        action.selectedProperty().addListener((observableValue, oldValue, newValue) -> control.setSelected(newValue));
+        action.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setSelected(newValue);
+            }
+        });
         control.setSelected(action.isSelected());
     }
 
     public static void configure(final @Nonnull RadioButton control, final @Nonnull JavaFXAction action) {
         configure((ButtonBase) control, action);
 
-        action.selectedProperty().addListener((observableValue, oldValue, newValue) -> control.setSelected(newValue));
+        action.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setSelected(newValue);
+            }
+        });
         control.setSelected(action.isSelected());
     }
 
@@ -164,39 +183,82 @@ public final class JavaFXUtils {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonNull(action, ERROR_ACTION_NULL);
 
-        action.onActionProperty().addListener((observableValue, oldValue, newValue) -> control.setOnAction(newValue));
+        action.onActionProperty().addListener(new ChangeListener<EventHandler<ActionEvent>>() {
+            @Override
+            public void changed(ObservableValue<? extends EventHandler<ActionEvent>> observableValue, EventHandler<ActionEvent> oldValue, EventHandler<ActionEvent> newValue) {
+                control.setOnAction(newValue);
+            }
+        });
         control.setOnAction(action.getOnAction());
 
-        action.nameProperty().addListener((observableValue, oldValue, newValue) -> control.setText(newValue));
+        action.nameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                control.setText(newValue);
+            }
+        });
         control.setText(action.getName());
 
-        action.descriptionProperty().addListener((observableValue, oldValue, newValue) -> setTooltip(control, newValue));
+        action.descriptionProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                setTooltip(control, newValue);
+            }
+        });
         setTooltip(control, action.getDescription());
 
-        action.iconProperty().addListener((observableValue, oldValue, newValue) -> setIcon(control, newValue));
+        action.iconProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                setIcon(control, newValue);
+            }
+        });
         if (!isBlank(action.getIcon())) {
             setIcon(control, action.getIcon());
         }
 
-        action.imageProperty().addListener((observableValue, oldValue, newValue) -> setGraphic(control, newValue));
+        action.imageProperty().addListener(new ChangeListener<Image>() {
+            @Override
+            public void changed(ObservableValue<? extends Image> observableValue, Image oldValue, Image newValue) {
+                setGraphic(control, newValue);
+            }
+        });
         if (null != action.getImage()) {
             setGraphic(control, action.getImage());
         }
 
-        action.graphicProperty().addListener((observableValue, oldValue, newValue) -> setGraphic(control, newValue));
+        action.graphicProperty().addListener(new ChangeListener<Node>() {
+            @Override
+            public void changed(ObservableValue<? extends Node> observableValue, Node oldValue, Node newValue) {
+                setGraphic(control, newValue);
+            }
+        });
         if (null != action.getGraphic()) {
             setGraphic(control, action.getGraphic());
         }
 
-        action.enabledProperty().addListener((observableValue, oldValue, newValue) -> control.setDisable(!newValue));
+        action.enabledProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setDisable(!newValue);
+            }
+        });
         control.setDisable(!action.isEnabled());
 
-        action.visibleProperty().addListener((observableValue, oldValue, newValue) -> control.setVisible(newValue));
+        action.visibleProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setVisible(newValue);
+            }
+        });
         control.setVisible(action.isVisible());
 
-        action.styleClassProperty().addListener((observableValue, oldValue, newValue) -> {
-            setStyleClass(control, oldValue, true);
-            setStyleClass(control, newValue);
+        action.styleClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                setStyleClass(control, oldValue, true);
+                setStyleClass(control, newValue);
+            }
         });
         setStyleClass(control, action.getStyleClass());
     }
@@ -204,14 +266,24 @@ public final class JavaFXUtils {
     public static void configure(final @Nonnull CheckMenuItem control, final @Nonnull JavaFXAction action) {
         configure((MenuItem) control, action);
 
-        action.selectedProperty().addListener((observableValue, oldValue, newValue) -> control.setSelected(newValue));
+        action.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setSelected(newValue);
+            }
+        });
         control.setSelected(action.isSelected());
     }
 
     public static void configure(final @Nonnull RadioMenuItem control, final @Nonnull JavaFXAction action) {
         configure((MenuItem) control, action);
 
-        action.selectedProperty().addListener((observableValue, oldValue, newValue) -> control.setSelected(newValue));
+        action.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setSelected(newValue);
+            }
+        });
         control.setSelected(action.isSelected());
     }
 
@@ -219,39 +291,82 @@ public final class JavaFXUtils {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonNull(action, ERROR_ACTION_NULL);
 
-        action.onActionProperty().addListener((observableValue, oldValue, newValue) -> control.setOnAction(newValue));
+        action.onActionProperty().addListener(new ChangeListener<EventHandler<ActionEvent>>() {
+            @Override
+            public void changed(ObservableValue<? extends EventHandler<ActionEvent>> observableValue, EventHandler<ActionEvent> oldValue, EventHandler<ActionEvent> newValue) {
+                control.setOnAction(newValue);
+            }
+        });
         control.setOnAction(action.getOnAction());
 
-        action.nameProperty().addListener((observableValue, oldValue, newValue) -> control.setText(newValue));
+        action.nameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                control.setText(newValue);
+            }
+        });
         control.setText(action.getName());
 
-        action.iconProperty().addListener((observableValue, oldValue, newValue) -> setIcon(control, newValue));
+        action.iconProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                setIcon(control, newValue);
+            }
+        });
         if (!isBlank(action.getIcon())) {
             setIcon(control, action.getIcon());
         }
 
-        action.imageProperty().addListener((observableValue, oldValue, newValue) -> setGraphic(control, newValue));
+        action.imageProperty().addListener(new ChangeListener<Image>() {
+            @Override
+            public void changed(ObservableValue<? extends Image> observableValue, Image oldValue, Image newValue) {
+                setGraphic(control, newValue);
+            }
+        });
         if (null != action.getImage()) {
             setGraphic(control, action.getImage());
         }
 
-        action.graphicProperty().addListener((observableValue, oldValue, newValue) -> setGraphic(control, newValue));
+        action.graphicProperty().addListener(new ChangeListener<Node>() {
+            @Override
+            public void changed(ObservableValue<? extends Node> observableValue, Node oldValue, Node newValue) {
+                setGraphic(control, newValue);
+            }
+        });
         if (null != action.getGraphic()) {
             setGraphic(control, action.getGraphic());
         }
 
-        action.enabledProperty().addListener((observableValue, oldValue, newValue) -> control.setDisable(!newValue));
+        action.enabledProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setDisable(!newValue);
+            }
+        });
         control.setDisable(!action.getEnabled());
 
-        action.acceleratorProperty().addListener((observableValue, oldValue, newValue) -> control.setAccelerator(newValue));
+        action.acceleratorProperty().addListener(new ChangeListener<KeyCombination>() {
+            @Override
+            public void changed(ObservableValue<? extends KeyCombination> observableValue, KeyCombination oldValue, KeyCombination newValue) {
+                control.setAccelerator(newValue);
+            }
+        });
         control.setAccelerator(action.getAccelerator());
 
-        action.visibleProperty().addListener((observableValue, oldValue, newValue) -> control.setVisible(newValue));
+        action.visibleProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                control.setVisible(newValue);
+            }
+        });
         control.setVisible(action.isVisible());
 
-        action.styleClassProperty().addListener((observableValue, oldValue, newValue) -> {
-            setStyleClass(control, oldValue, true);
-            setStyleClass(control, newValue);
+        action.styleClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                setStyleClass(control, oldValue, true);
+                setStyleClass(control, newValue);
+            }
         });
         setStyleClass(control, action.getStyleClass());
     }

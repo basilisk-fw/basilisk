@@ -26,7 +26,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import org.kordamp.basilisk.runtime.core.controller.AbstractAction;
@@ -66,18 +69,123 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
         toolkitAction = createAction(actionManager, controller, actionName);
-        toolkitAction.setOnAction(actionEvent -> actionManager.invokeAction(controller, actionName, actionEvent));
+        toolkitAction.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                actionManager.invokeAction(controller, actionName, actionEvent);
+            }
+        });
 
-        nameProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setName(n)));
-        enabledProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setEnabled(n)));
-        descriptionProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setDescription(n)));
-        iconProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setIcon(n)));
-        imageProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setImage(convertImage(n))));
-        graphicProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setGraphic(n)));
-        acceleratorProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setAccelerator(n)));
-        styleClassProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setStyleClass(n)));
-        selectedProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setSelected(n)));
-        visibleProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setVisible(n)));
+        nameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setName(n);
+                    }
+                });
+            }
+        });
+        enabledProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setEnabled(n);
+                    }
+                });
+            }
+        });
+        descriptionProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setDescription(n);
+                    }
+                });
+            }
+        });
+        iconProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setIcon(n);
+                    }
+                });
+            }
+        });
+        imageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setImage(JavaFXBasiliskControllerAction.this.convertImage(n));
+                    }
+                });
+            }
+        });
+        graphicProperty().addListener(new ChangeListener<Node>() {
+            @Override
+            public void changed(ObservableValue<? extends Node> v, Node o, Node n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setGraphic(n);
+                    }
+                });
+            }
+        });
+        acceleratorProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setAccelerator(n);
+                    }
+                });
+            }
+        });
+        styleClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setStyleClass(n);
+                    }
+                });
+            }
+        });
+        selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setSelected(n);
+                    }
+                });
+            }
+        });
+        visibleProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setVisible(n);
+                    }
+                });
+            }
+        });
     }
 
     protected JavaFXAction createAction(final @Nonnull ActionManager actionManager, final @Nonnull BasiliskController controller, final @Nonnull String actionName) {

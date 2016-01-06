@@ -28,6 +28,7 @@ import org.kordamp.basilisk.runtime.javafx.TestJavaFXBasiliskApplication;
 import org.testfx.api.FxToolkit;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
 import static basilisk.javafx.test.TestContext.getTestContext;
@@ -75,7 +76,12 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
             WindowShownHandler startingWindow = new WindowShownHandler(windowName);
             application.getEventRouter().addEventListener(ApplicationEvent.WINDOW_SHOWN.getName(), startingWindow);
 
-            await().until(() -> startingWindow.isShowing());
+            await().until(new Callable<Boolean>() {
+                @Override
+                public Boolean call() throws Exception {
+                    return startingWindow.isShowing();
+                }
+            });
         } catch (TimeoutException e) {
             throw new BasiliskException("An error occurred while starting up the application", e);
         }

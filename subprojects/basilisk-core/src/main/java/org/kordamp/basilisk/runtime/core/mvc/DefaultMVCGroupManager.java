@@ -389,11 +389,14 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
             final BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
 
             if (artifact instanceof BasiliskView) {
-                getApplication().getUIThreadManager().runInsideUISync(() -> {
-                    try {
-                        artifact.mvcGroupDestroy();
-                    } catch (RuntimeException e) {
-                        throw (RuntimeException) sanitize(e);
+                getApplication().getUIThreadManager().runInsideUISync(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            artifact.mvcGroupDestroy();
+                        } catch (RuntimeException e) {
+                            throw (RuntimeException) sanitize(e);
+                        }
                     }
                 });
             } else {
