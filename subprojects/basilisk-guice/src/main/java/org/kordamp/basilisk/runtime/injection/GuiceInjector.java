@@ -25,13 +25,10 @@ import basilisk.core.injection.TargetBinding;
 import basilisk.exceptions.ClosedInjectorException;
 import basilisk.exceptions.InstanceNotFoundException;
 import basilisk.exceptions.MembersInjectionException;
-import basilisk.exceptions.TypeNotFoundException;
 import basilisk.util.AnnotationUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.ProvisionException;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
@@ -39,7 +36,6 @@ import com.google.inject.binder.ScopedBindingBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.PreDestroy;
 import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
@@ -49,26 +45,26 @@ import java.util.List;
 
 import static com.google.inject.util.Providers.guicify;
 import static java.util.Objects.requireNonNull;
-import static org.kordamp.basilisk.runtime.injection.MethodUtils.invokeAnnotatedMethod;
 
 /**
  * @author Andres Almiray
  */
 public class GuiceInjector implements Injector<com.google.inject.Injector> {
     private static final String ERROR_TYPE_NULL = "Argument 'type' must not be null";
-    private static final String ERROR_BINDINGS_NULL = "Argument 'bindings' must not be null";
     private static final String ERROR_DELEGATE_NULL = "Argument 'delegate' must not be null";
+    private static final String ERROR_INSTANCE_TRACKER_NULL = "Argument 'instanceTracker' must not be null";
     private static final String ERROR_QUALIFIER_NULL = "Argument 'qualifier' must not be null";
     private static final String ERROR_INSTANCE_NULL = "Argument 'instance' must not be null";
-    private static final String ERROR_NAME_BLANK = "Argument 'name' must not be blank";
 
+    private final InstanceTracker instanceTracker;
     private final com.google.inject.Injector delegate;
     private final Object lock = new Object[0];
     @GuardedBy("lock")
     private boolean closed;
 
-    public GuiceInjector(@Nonnull com.google.inject.Injector delegate) {
-        this.delegate = requireNonNull(delegate, ERROR_DELEGATE_NULL);
+    public GuiceInjector(@Nonnull InstanceTracker instanceTracker) {
+        this.instanceTracker = requireNonNull(instanceTracker, ERROR_INSTANCE_TRACKER_NULL);
+        this.delegate = requireNonNull(instanceTracker.getInjector(), ERROR_DELEGATE_NULL);
     }
 
     static Module moduleFromBindings(final @Nonnull Iterable<Binding<?>> bindings) {
@@ -266,24 +262,17 @@ public class GuiceInjector implements Injector<com.google.inject.Injector> {
     }
 
     @Override
+    public void release(@Nonnull Object instance) {
+        instanceTracker.release(instance);
+    }
+
+    @Override
     public void close() {
         if (isClosed()) {
             throw new ClosedInjectorException(this);
         }
 
-        for (Key<?> key : delegate.getAllBindings().keySet()) {
-            try {
-                com.google.inject.Binding<?> binding = delegate.getExistingBinding(key);
-                if (!Scopes.isSingleton(binding)) {
-                    continue;
-                }
-                invokeAnnotatedMethod(binding.getProvider().get(), PreDestroy.class);
-            } catch (ProvisionException pe) {
-                if (!(pe.getCause() instanceof TypeNotFoundException)) {
-                    pe.printStackTrace();
-                }
-            }
-        }
+        instanceTracker.releaseAll();
 
         synchronized (lock) {
             closed = true;

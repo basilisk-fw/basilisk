@@ -376,11 +376,14 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
 
     protected void destroyMembers(@Nonnull MVCGroup group) {
         for (Map.Entry<String, Object> memberEntry : group.getMembers().entrySet()) {
-            if (memberEntry.getValue() instanceof BasiliskArtifact) {
-                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) memberEntry.getValue());
+            Object member = memberEntry.getValue();
+            if (member instanceof BasiliskArtifact) {
+                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) member);
             } else {
-                destroyNonArtifactMember(memberEntry.getKey(), memberEntry.getValue());
+                destroyNonArtifactMember(memberEntry.getKey(), member);
             }
+
+            getApplication().getInjector().release(member);
         }
     }
 
