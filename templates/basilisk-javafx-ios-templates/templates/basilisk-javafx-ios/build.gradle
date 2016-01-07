@@ -56,7 +56,7 @@ dependencies {
 
     functionalTestCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.6'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.1.0'
 }
 
 compileGroovy.enabled = false
