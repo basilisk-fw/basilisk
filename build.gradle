@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'net.saliman:gradle-cobertura-plugin:2.2.8'
+        classpath 'net.saliman:gradle-cobertura-plugin:2.3.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
-        classpath 'org.ajoberstar:gradle-git:1.3.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+        classpath 'org.ajoberstar:gradle-git:1.3.2'
         classpath 'uk.co.cacoethes:lazybones-gradle:1.2.4'
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
@@ -106,7 +106,7 @@ subprojects { subproj ->
                 }
             }
             testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
-            testCompile 'cglib:cglib-nodep:3.1'
+            testCompile 'cglib:cglib-nodep:3.2.0'
         }
 
         sourceSets {
@@ -184,7 +184,6 @@ subprojects { subproj ->
                 subproj.apply plugin: 'org.kordamp.gradle.clirr'
 
                 subproj.clirr {
-                    enabled = false
                     failOnErrors = false
                 }
 
@@ -223,11 +222,7 @@ subprojects { subproj ->
                                  'http://docs.oracle.com/javase/8/docs/api/',
                                  'http://docs.oracle.com/javase/8/javafx/api/',
                                  'http://google.github.io/guice/api-docs/4.0/javadoc/',
-                                 'http://mabe02.github.io/lanterna/apidocs/2.1/',
-                                 'http://pivot.apache.org/2.0.4/docs/api/',
-                                 'http://docs.groovy-lang.org/latest/html/api/',
-                                 'http://aalmiray.github.io/jipsy/apidocs/',
-                                 'http://aalmiray.github.io/gipsy/apidocs/']
+                                 'http://aalmiray.github.io/jipsy/apidocs/']
 
                 doLast { task ->
                     copy {
@@ -289,6 +284,5 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 task clirrRootReport(type: org.kordamp.gradle.clirr.ClirrReportTask) {
     dependsOn = projectsWithClirr.tasks.clirr
     reports = files(projectsWithClirr.findAll { it.extensions.clirr.enabled }.tasks.clirr.xmlReport)
-    filter = { difference -> !(difference?.classname?.text() =~ /basilisk/)
-    }
+    filter = { difference -> !(difference?.classname?.text() =~ /basilisk/) }
 }

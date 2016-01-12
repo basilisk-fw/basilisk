@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.gradle.api.Project
  * @author Andres Almiray
  */
 class BasiliskExtension {
-    String version = '0.0.0'
+    String version = '0.1.0-SNAPSHOT'
 
     boolean disableDependencyResolution
 

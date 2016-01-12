@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,11 @@ class GuiceInjectorSpec extends Specification {
             }
         }
         com.google.inject.Injector gi = Guice.createInjector(module)
+        InstanceTracker instanceTracker = new InstanceTracker()
+        instanceTracker.injector = gi
 
         when:
-        Injector injector = new GuiceInjector(gi)
+        Injector injector = new GuiceInjector(instanceTracker)
         Car car = injector.getInstance(Car)
 
         then:
@@ -60,9 +62,11 @@ class GuiceInjectorSpec extends Specification {
             }
         }
         com.google.inject.Injector gi = Guice.createInjector(module)
+        InstanceTracker instanceTracker = new InstanceTracker()
+        instanceTracker.injector = gi
 
         when:
-        Injector injector = new GuiceInjector(gi)
+        Injector injector = new GuiceInjector(instanceTracker)
         Engine engine = injector.getInstance(Engine, named('efficient'))
 
         then:
@@ -79,9 +83,11 @@ class GuiceInjectorSpec extends Specification {
             }
         }
         com.google.inject.Injector gi = Guice.createInjector(module)
+        InstanceTracker instanceTracker = new InstanceTracker()
+        instanceTracker.injector = gi
 
         when:
-        Injector injector = new GuiceInjector(gi)
+        Injector injector = new GuiceInjector(instanceTracker)
         injector.getInstance(Vehicle)
 
         then:
@@ -98,9 +104,11 @@ class GuiceInjectorSpec extends Specification {
             }
         }
         com.google.inject.Injector gi = Guice.createInjector(module)
+        InstanceTracker instanceTracker = new InstanceTracker()
+        instanceTracker.injector = gi
 
         when:
-        Injector injector = new GuiceInjector(gi)
+        Injector injector = new GuiceInjector(instanceTracker)
         injector.getInstance(Car, named("foo"))
 
         then:
@@ -115,9 +123,11 @@ class GuiceInjectorSpec extends Specification {
             }
         }
         com.google.inject.Injector gi = Guice.createInjector(module)
+        InstanceTracker instanceTracker = new InstanceTracker()
+        instanceTracker.injector = gi
 
         when:
-        Injector injector = new GuiceInjector(gi)
+        Injector injector = new GuiceInjector(instanceTracker)
         injector.injectMembers(new Garage())
 
         then:

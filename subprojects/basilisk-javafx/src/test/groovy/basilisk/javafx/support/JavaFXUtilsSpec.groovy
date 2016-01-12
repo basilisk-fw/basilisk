@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 package basilisk.javafx.support
 
 import javafx.application.Platform
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.embed.swing.JFXPanel
 import javafx.scene.control.Accordion
 import javafx.scene.control.Button
@@ -37,11 +40,37 @@ import spock.lang.Unroll
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 
+import static com.jayway.awaitility.Awaitility.await
+
 @Unroll
 class JavaFXUtilsSpec extends Specification {
     static {
         // initialize UI toolkit
         new JFXPanel()
+    }
+
+    void "Trigger list events inside UI thread"() {
+        given:
+        ObservableList<String> source = FXCollections.observableArrayList()
+        ObservableList<String> target = JavaFXUtils.createJavaFXThreadProxyList(source)
+        ListChangeListener<String> witness = new ListChangeListener<String>() {
+            boolean changed
+            boolean changedInsideUIThread
+
+            @Override
+            void onChanged(ListChangeListener.Change<? extends String> c) {
+                changed = true
+                changedInsideUIThread = Platform.isFxApplicationThread()
+            }
+        }
+        target.addListener(witness)
+
+        when:
+        source << 'change'
+        await().until { witness.changed }
+
+        then:
+        witness.changedInsideUIThread
     }
 
     void "Find the button on #container.class using findNode method"() {

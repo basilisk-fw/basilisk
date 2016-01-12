@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.ProvisionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import org.kordamp.basilisk.runtime.core.injection.InjectorProvider;
@@ -88,6 +89,8 @@ public class GuiceInjectorFactory implements InjectorFactory {
             }
         };
 
+
+        final InstanceTracker instanceTracker = new InstanceTracker();
         Module injectorModule = new AbstractModule() {
             @Override
             protected void configure() {
@@ -117,6 +120,13 @@ public class GuiceInjectorFactory implements InjectorFactory {
                         encounter.register(postConstructorInjectorListener);
                     }
                 });
+
+                bindListener(Matchers.any(), new ProvisionListener() {
+                    @Override
+                    public <T> void onProvision(ProvisionInvocation<T> provision) {
+                        instanceTracker.track(provision.getBinding(), provision.provision());
+                    }
+                });
             }
         };
 
@@ -134,6 +144,7 @@ public class GuiceInjectorFactory implements InjectorFactory {
         modules.addAll(sortedModules.values());
 
         com.google.inject.Injector injector = Guice.createInjector(modules);
-        return new GuiceInjector(injector);
+        instanceTracker.setInjector(injector);
+        return new GuiceInjector(instanceTracker);
     }
 }

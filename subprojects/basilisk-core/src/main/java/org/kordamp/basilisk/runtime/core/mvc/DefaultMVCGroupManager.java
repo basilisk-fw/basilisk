@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import basilisk.exceptions.NewInstanceException;
 import basilisk.inject.Contextual;
 import basilisk.util.CollectionUtils;
 import com.googlecode.openbeans.PropertyDescriptor;
+import org.kordamp.basilisk.runtime.core.injection.InjectionUnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,9 @@ import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static basilisk.core.BasiliskExceptionHandler.sanitize;
@@ -107,7 +110,23 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         }
 
         Map<String, Object> instances = new LinkedHashMap<>();
-        instances.putAll(instantiateMembers(classMap, argsCopy));
+        List<Object> injectedInstances = new ArrayList<>();
+
+        try {
+            InjectionUnitOfWork.start();
+        } catch (IllegalStateException ise) {
+            throw new MVCGroupInstantiationException("Can not instantiate MVC group '" + configuration.getMvcType() + "' with id '" + mvcId + "'", configuration.getMvcType(), mvcId, ise);
+        }
+
+        try {
+            instances.putAll(instantiateMembers(classMap, argsCopy));
+        } finally {
+            try {
+                injectedInstances.addAll(InjectionUnitOfWork.finish());
+            } catch (IllegalStateException ise) {
+                throw new MVCGroupInstantiationException("Can not instantiate MVC group '" + configuration.getMvcType() + "' with id '" + mvcId + "'", configuration.getMvcType(), mvcId, ise);
+            }
+        }
 
         MVCGroup group = newMVCGroup(configuration, mvcId, instances, (MVCGroup) args.get(KEY_PARENT_GROUP));
         adjustMvcArguments(group, argsCopy);
@@ -131,6 +150,9 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         doAddGroup(group);
 
         initializeMembers(group, argsCopy);
+        if (group instanceof AbstractMVCGroup) {
+            ((AbstractMVCGroup) group).getInjectedInstances().addAll(injectedInstances);
+        }
 
         if (fireEvents) {
             getApplication().getEventRouter().publishEvent(ApplicationEvent.CREATE_MVC_GROUP.getName(), asList(group));
@@ -198,10 +220,10 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         if (findGroup(mvcId) != null) {
             String action = getApplication().getConfiguration().getAsString("basilisk.mvcid.collision", "exception");
             if ("warning".equalsIgnoreCase(action)) {
-                LOG.warn("A previous instance of MVC group '{}' with name '{}' exists. Destroying the old instance first.", configuration.getMvcType(), mvcId);
+                LOG.warn("A previous instance of MVC group '{}' with id '{}' exists. Destroying the old instance first.", configuration.getMvcType(), mvcId);
                 destroyMVCGroup(mvcId);
             } else {
-                throw new MVCGroupInstantiationException("Can not instantiate MVC group '" + configuration.getMvcType() + "' with name '" + mvcId + "' because a previous instance with that name exists and was not disposed off properly.", configuration.getMvcType(), mvcId);
+                throw new MVCGroupInstantiationException("Can not instantiate MVC group '" + configuration.getMvcType() + "' with id '" + mvcId + "' because a previous instance with that name exists and was not disposed off properly.", configuration.getMvcType(), mvcId);
             }
         }
     }
@@ -376,18 +398,42 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
 
     protected void destroyMembers(@Nonnull MVCGroup group) {
         for (Map.Entry<String, Object> memberEntry : group.getMembers().entrySet()) {
-            if (memberEntry.getValue() instanceof BasiliskArtifact) {
-                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) memberEntry.getValue());
+            Object member = memberEntry.getValue();
+            if (member instanceof BasiliskArtifact) {
+                destroyArtifactMember(memberEntry.getKey(), (BasiliskArtifact) member);
             } else {
-                destroyNonArtifactMember(memberEntry.getKey(), memberEntry.getValue());
+                destroyNonArtifactMember(memberEntry.getKey(), member);
             }
+
+        }
+
+        if (group instanceof AbstractMVCGroup) {
+            List<Object> injectedInstances = ((AbstractMVCGroup) group).getInjectedInstances();
+            for (Object instance : injectedInstances) {
+                getApplication().getInjector().release(instance);
+            }
+            injectedInstances.clear();
         }
     }
 
     protected void destroyArtifactMember(@Nonnull String type, @Nonnull BasiliskArtifact member) {
         if (member instanceof BasiliskMvcArtifact) {
-            BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
-            artifact.mvcGroupDestroy();
+            final BasiliskMvcArtifact artifact = (BasiliskMvcArtifact) member;
+
+            if (artifact instanceof BasiliskView) {
+                getApplication().getUIThreadManager().runInsideUISync(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            artifact.mvcGroupDestroy();
+                        } catch (RuntimeException e) {
+                            throw (RuntimeException) sanitize(e);
+                        }
+                    }
+                });
+            } else {
+                artifact.mvcGroupDestroy();
+            }
 
             // clear all parent* references
             for (String parentMemberName : new String[]{"parentModel", "parentView", "parentController", "parentGroup"}) {

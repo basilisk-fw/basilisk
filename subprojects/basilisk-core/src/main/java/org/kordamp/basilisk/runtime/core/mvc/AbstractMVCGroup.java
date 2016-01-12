@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
     private final Object[] lock = new Object[0];
     protected MVCGroup parentGroup;
     private boolean alive;
+    private final List<Object> injectedInstances = new ArrayList<>();
 
     public AbstractMVCGroup(@Nonnull MVCGroupManager mvcGroupManager, @Nonnull MVCGroupConfiguration configuration, @Nullable String mvcId, @Nonnull Map<String, Object> members, @Nullable MVCGroup parentGroup) {
         super(mvcGroupManager);
@@ -74,6 +75,11 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
                 setPropertyOrFieldValue(o, "mvcGroup", this);
             }
         }
+    }
+
+    @Nonnull
+    public List<Object> getInjectedInstances() {
+        return injectedInstances;
     }
 
     @Nonnull

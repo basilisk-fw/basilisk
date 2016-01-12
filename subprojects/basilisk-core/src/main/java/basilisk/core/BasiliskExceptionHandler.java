@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package basilisk.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,11 @@ public class BasiliskExceptionHandler implements ExceptionHandler {
     public BasiliskExceptionHandler(BasiliskApplication application) {
         this.application = application;
         Thread.setDefaultUncaughtExceptionHandler(this);
+    }
+
+    @Nullable
+    protected BasiliskApplication getApplication() {
+        return application;
     }
 
     @Override

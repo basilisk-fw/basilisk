@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.util.Callback;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
 
 import javax.annotation.Nonnull;
@@ -68,7 +69,12 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
         fxmlLoader.setResources(getApplication().getMessageSource().asResourceBundle());
         fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory(getApplication().getApplicationClassLoader().get()));
         fxmlLoader.setClassLoader(getApplication().getApplicationClassLoader().get());
-        fxmlLoader.setControllerFactory(klass -> getMvcGroup().getView());
+        fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
+            @Override
+            public Object call(Class<?> klass) {
+                return AbstractJavaFXBasiliskView.this.getMvcGroup().getView();
+            }
+        });
 
         try {
             fxmlLoader.load();

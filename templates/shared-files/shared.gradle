@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ lazybones {
 tasks.withType(Zip) { task ->
     task.doFirst {
         File destDir = task.source.files.iterator().next().parentFile
+        while (destDir?.parentFile?.name != 'templates') destDir = destDir.parentFile
         copy {
             into destDir
             if (destDir.name.startsWith('subtmpl-')) {
@@ -35,7 +36,6 @@ tasks.withType(Zip) { task ->
             } else if (destDir.name == 'basilisk-plugin') {
                 from(rootProject.file('templates/shared-files/sources')) {
                     exclude 'src'
-                    exclude 'maven'
                     exclude 'settings.gradle'
                     exclude 'gradle/package.gradle'
                     filter(org.apache.tools.ant.filters.ReplaceTokens,

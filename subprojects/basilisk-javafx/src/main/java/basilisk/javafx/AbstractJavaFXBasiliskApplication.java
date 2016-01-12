@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import basilisk.core.BasiliskApplication;
 import basilisk.core.Configuration;
 import basilisk.core.Context;
 import basilisk.core.ExecutorServiceManager;
+import basilisk.core.RunnableWithArgs;
 import basilisk.core.ShutdownHandler;
 import basilisk.core.addon.AddonManager;
 import basilisk.core.addon.BasiliskAddon;
@@ -42,7 +43,9 @@ import com.googlecode.openbeans.PropertyChangeEvent;
 import com.googlecode.openbeans.PropertyChangeListener;
 import com.googlecode.openbeans.PropertyChangeSupport;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.kordamp.basilisk.runtime.core.MVCGroupExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +98,12 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setOnHidden(t -> shutdown());
+        stage.setOnHidden(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                AbstractJavaFXBasiliskApplication.this.shutdown();
+            }
+        });
     }
 
     @Override
@@ -363,7 +371,12 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
         log.debug("Shutdown stage 1: notify all event listeners");
         if (getEventRouter().isEventPublishingEnabled()) {
             final CountDownLatch latch = new CountDownLatch(getUIThreadManager().isUIThread() ? 1 : 0);
-            getEventRouter().addEventListener(ApplicationEvent.SHUTDOWN_START.getName(), (Object... args) -> latch.countDown());
+            getEventRouter().addEventListener(ApplicationEvent.SHUTDOWN_START.getName(), new RunnableWithArgs() {
+                @Override
+                public void run(@Nullable Object... args) {
+                    latch.countDown();
+                }
+            });
             event(ApplicationEvent.SHUTDOWN_START, asList(this));
             try {
                 latch.await();

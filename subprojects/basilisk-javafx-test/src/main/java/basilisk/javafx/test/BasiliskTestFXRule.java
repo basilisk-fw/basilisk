@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.kordamp.basilisk.runtime.javafx.TestJavaFXBasiliskApplication;
 import org.testfx.api.FxToolkit;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
 import static basilisk.javafx.test.TestContext.getTestContext;
@@ -77,7 +78,12 @@ public class BasiliskTestFXRule extends TestFX implements MethodRule {
                 application.getEventRouter().addEventListener(ApplicationEvent.WINDOW_SHOWN.getName(), startingWindow);
                 application.getInjector().injectMembers(target);
 
-                await().until(() -> startingWindow.isShowing());
+                await().until(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return startingWindow.isShowing();
+                    }
+                });
 
                 before(application, target);
                 try {

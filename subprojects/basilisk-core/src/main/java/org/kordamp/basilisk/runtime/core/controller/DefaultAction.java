@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 the original author or authors.
+ * Copyright 2008-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.kordamp.basilisk.runtime.core.controller;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.threading.UIThreadManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +35,23 @@ public class DefaultAction extends AbstractAction {
         super(actionManager, controller, actionName);
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
-        toolkitAction = new DefaultToolkitAction(() -> actionManager.invokeAction(controller, actionName));
-        nameProperty().addListener((v, o, n) -> uiThreadManager.runInsideUIAsync(() -> toolkitAction.setName(n)));
+        toolkitAction = new DefaultToolkitAction(new Runnable() {
+            @Override
+            public void run() {
+                actionManager.invokeAction(controller, actionName);
+            }
+        });
+        nameProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setName(n);
+                    }
+                });
+            }
+        });
     }
 
     @Nonnull

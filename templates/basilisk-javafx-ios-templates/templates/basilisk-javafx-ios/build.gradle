@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.kordamp.basilisk:gradle-basilisk-plugin:0.0.0'
+        classpath 'org.kordamp.basilisk:gradle-basilisk-plugin:0.1.0-SNAPSHOT'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'org.gradle.api.plugins:gradle-izpack-plugin:0.2.3'
         classpath 'com.github.cr0:gradle-macappbundle-plugin:3.1.0'
@@ -48,7 +48,7 @@ apply plugin: 'com.github.ben-manes.versions'
 dependencies {
     compile "org.kordamp.basilisk:basilisk-guice:\${basilisk.version}"
 
-    runtime 'org.slf4j:slf4j-simple:1.7.12'
+    runtime 'org.slf4j:slf4j-simple:1.7.13'
 
     testCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
     testCompile "org.codehaus.groovy:groovy-all:\${groovyVersion}"
@@ -56,7 +56,7 @@ dependencies {
 
     functionalTestCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.0.6'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.1.0'
 }
 
 compileGroovy.enabled = false
