@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.6.0
+ * @since 0.1.0
  */
 public abstract class DelegatingObservableList<E> extends ObservableListBase<E> implements ObservableList<E> {
     private final ObservableList<E> delegate;
