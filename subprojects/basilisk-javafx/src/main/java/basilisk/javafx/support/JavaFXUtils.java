@@ -94,8 +94,9 @@ public final class JavaFXUtils {
 
     /**
      * Wraps an <tt>ObservableList</tt>, publishing updates inside the UI thread.
+     *
      * @param source the <tt>ObservableList</tt> to be wrapped
-     * @param <E> the list's paramter type.
+     * @param <E>    the list's paramter type.
      * @return a new  <tt>ObservableList</tt>
      * @since 0.1.0
      */
@@ -112,7 +113,11 @@ public final class JavaFXUtils {
 
         @Override
         protected void sourceChanged(@Nonnull final ListChangeListener.Change<? extends E> c) {
-            Platform.runLater(() -> fireChange(c));
+            if (Platform.isFxApplicationThread()) {
+                fireChange(c);
+            } else {
+                Platform.runLater(() -> fireChange(c));
+            }
         }
     }
 
