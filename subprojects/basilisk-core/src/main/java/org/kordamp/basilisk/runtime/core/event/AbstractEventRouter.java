@@ -42,7 +42,6 @@ import static basilisk.util.BasiliskNameUtils.capitalize;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
 
