@@ -15,6 +15,7 @@
  */
 package basilisk.util
 
+import basilisk.core.addon.BasiliskAddon
 import basilisk.core.artifact.BasiliskArtifact
 import basilisk.core.artifact.BasiliskMvcArtifact
 import basilisk.core.event.EventPublisher
@@ -43,7 +44,7 @@ class BasiliskClassUtilsSpec extends Specification {
         assert result == BasiliskClassUtils.isEventHandler(method)
 
         where:
-        [result, method] << [[true, 'onSomething'], [false, 'something']]
+        [result, method] << [[true, 'onSomething'], [false, 'something'], [false, 'onShutdown']]
     }
 
     void "isSetterMethod() returns #result for '#method' (java.lang.reflect.Method)"() {
@@ -75,7 +76,7 @@ class BasiliskClassUtilsSpec extends Specification {
         assert result == BasiliskClassUtils.isEventHandler(method, true)
 
         where:
-        [result, method] << methodsOf(MyEventHandler, true).plus(methodsOf(MyContributor, false))
+        [result, method] << methodsOf(MyEventHandler, true).plus(methodsOf(MyContributor, false)).plus(methodsOf(MyAddon, false))
     }
 
     void "isResourceResolverMethod() returns #result for '#method' (java.lang.reflect.Method)"() {
@@ -165,7 +166,7 @@ class BasiliskClassUtilsSpec extends Specification {
         assert result == BasiliskClassUtils.isEventHandler(method)
 
         where:
-        [result, method] << methodDescriptorsOf(MyEventHandler, true).plus(methodDescriptorsOf(MyContributor, false))
+        [result, method] << methodDescriptorsOf(MyEventHandler, true).plus(methodDescriptorsOf(MyContributor, false)).plus(methodsOf(MyAddon, false))
     }
 
     void "isResourceResolverMethod() returns #result for '#method'"() {
@@ -456,6 +457,10 @@ class BasiliskClassUtilsSpec extends Specification {
 
     static interface MyContributor {
         void withSomething()
+    }
+
+    static interface MyAddon extends BasiliskAddon {
+
     }
 
     static interface MyGetter {
