@@ -77,6 +77,10 @@ jfxmobile {
     }
 }
 
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
+}
+
 // The following task is needed because Retrolambda places META-INF files at
 // build/retrolambda/main but they should be at build/classes/main
 // hardcoding paths for now

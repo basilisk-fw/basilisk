@@ -116,7 +116,12 @@ public final class JavaFXUtils {
             if (Platform.isFxApplicationThread()) {
                 fireChange(c);
             } else {
-                Platform.runLater(() -> fireChange(c));
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        fireChange(c);
+                    }
+                });
             }
         }
     }
@@ -572,7 +577,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setTooltip(@Nonnull Control control, @Nullable String text) {
+    public static void setTooltip(final @Nonnull Control control, final @Nullable String text) {
         if (isBlank(text)) {
             return;
         }
@@ -610,7 +615,7 @@ public final class JavaFXUtils {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonBlank(iconUrl, ERROR_ICON_BLANK);
 
-        Node graphicNode = resolveIcon(iconUrl);
+        final Node graphicNode = resolveIcon(iconUrl);
         if (graphicNode != null) {
             runInsideUIThread(new Runnable() {
                 @Override

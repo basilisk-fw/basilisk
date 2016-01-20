@@ -73,7 +73,7 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
             FxToolkit.registerPrimaryStage();
 
             application = (JavaFXBasiliskApplication) FxToolkit.setupApplication(applicationClass);
-            WindowShownHandler startingWindow = new WindowShownHandler(windowName);
+            final WindowShownHandler startingWindow = new WindowShownHandler(windowName);
             application.getEventRouter().addEventListener(ApplicationEvent.WINDOW_SHOWN.getName(), startingWindow);
 
             await().until(new Callable<Boolean>() {
@@ -99,7 +99,7 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
     }
 
     @Override
-    public Statement apply(Statement base, Description description) {
+    public Statement apply(final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {

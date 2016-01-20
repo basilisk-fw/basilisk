@@ -78,7 +78,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
 
         nameProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -89,7 +89,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         enabledProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, final Boolean n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -100,7 +100,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         descriptionProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -111,7 +111,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         iconProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -122,7 +122,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         imageProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -133,7 +133,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         graphicProperty().addListener(new ChangeListener<Node>() {
             @Override
-            public void changed(ObservableValue<? extends Node> v, Node o, Node n) {
+            public void changed(ObservableValue<? extends Node> v, Node o, final Node n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -144,7 +144,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         acceleratorProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -155,7 +155,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         styleClassProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -166,7 +166,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, final Boolean n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {
@@ -177,7 +177,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
         visibleProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> v, Boolean o, Boolean n) {
+            public void changed(ObservableValue<? extends Boolean> v, Boolean o, final Boolean n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {

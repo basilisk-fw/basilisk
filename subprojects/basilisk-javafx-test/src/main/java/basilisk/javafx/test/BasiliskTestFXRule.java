@@ -74,7 +74,7 @@ public class BasiliskTestFXRule extends TestFX implements MethodRule {
                 FxToolkit.registerPrimaryStage();
 
                 JavaFXBasiliskApplication application = (JavaFXBasiliskApplication) FxToolkit.setupApplication(applicationClass);
-                WindowShownHandler startingWindow = new WindowShownHandler(windowName);
+                final WindowShownHandler startingWindow = new WindowShownHandler(windowName);
                 application.getEventRouter().addEventListener(ApplicationEvent.WINDOW_SHOWN.getName(), startingWindow);
                 application.getInjector().injectMembers(target);
 

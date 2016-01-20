@@ -43,7 +43,7 @@ public class DefaultAction extends AbstractAction {
         });
         nameProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> v, String o, String n) {
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
                 uiThreadManager.runInsideUIAsync(new Runnable() {
                     @Override
                     public void run() {

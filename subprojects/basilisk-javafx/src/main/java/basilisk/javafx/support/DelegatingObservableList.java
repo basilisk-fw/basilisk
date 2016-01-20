@@ -56,7 +56,12 @@ public abstract class DelegatingObservableList<E> extends ObservableListBase<E> 
 
     private ListChangeListener<E> getListener() {
         if (sourceListener == null) {
-            sourceListener = DelegatingObservableList.this::sourceChanged;
+            sourceListener = new ListChangeListener<E>() {
+                @Override
+                public void onChanged(Change<? extends E> c) {
+                    DelegatingObservableList.this.sourceChanged(c);
+                }
+            };
         }
         return sourceListener;
     }
