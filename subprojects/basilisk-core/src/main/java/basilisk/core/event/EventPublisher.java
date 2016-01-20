@@ -20,6 +20,7 @@ import basilisk.core.RunnableWithArgs;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -58,12 +59,12 @@ public interface EventPublisher {
 
     /**
      * Adds a Map containing event listeners.<p>
-     * <p>
+     * <p/>
      * An event listener may be<ul>
      * <li>a <tt>RunnableWithArgs</tt></li>
      * <li>a <tt>CallableWithArgs</tt></li>
      * </ul>
-     * <p>
+     * <p/>
      * Maps require handlers to be named as eventName only.<p>
      * Some examples of eventHandler names are: StartupStart, MyCoolEvent.
      * Event names must follow the camelCase naming convention.<p>
@@ -118,12 +119,12 @@ public interface EventPublisher {
 
     /**
      * Removes a Map containing event listeners.<p>
-     * <p>
+     * <p/>
      * An event listener may be<ul>
      * <li>a <tt>RunnableWithArgs</tt></li>
      * <li>a <tt>CallableWithArgs</tt></li>
      * </ul>
-     * <p>
+     * <p/>
      * Maps require handlers to be named as eventName only.<p>
      * Some examples of eventHandler names are: StartupStart, MyCoolEvent.
      * Event names must follow the camelCase naming convention.<p>
@@ -239,4 +240,24 @@ public interface EventPublisher {
      * @param enabled the value fot the enabled state.
      */
     void setEventPublishingEnabled(boolean enabled);
+
+    /**
+     * Returns an immutable snapshot view of all event listeners registered.
+     *
+     * @return an immutable collection of all registered listeners.
+     * @since 0.2.0
+     */
+    @Nonnull
+    Collection<Object> getEventListeners();
+
+
+    /**
+     * Returns an immutable snapshot view of all event listeners registered for the target event name.
+     *
+     * @param eventName the name of the event
+     * @return an immutable collection of all registered listeners for the target event name.
+     * @since 0.2.0
+     */
+    @Nonnull
+    Collection<Object> getEventListeners(@Nonnull String eventName);
 }
