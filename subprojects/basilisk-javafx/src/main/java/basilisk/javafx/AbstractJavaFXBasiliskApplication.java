@@ -446,7 +446,7 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
             if (groups.isEmpty()) {
                 continue;
             }
-            log.info("Initializing all {} startup groups: {}", e.getKey(), groups);
+            log.info("Initializing all {} startup groups: {}", e.getKey(), groups);
             Map<String, Map<String, Object>> mvcGroups = e.getValue().getMvcGroups();
             for (String groupName : groups) {
                 if (mvcGroups.containsKey(groupName)) {
