@@ -41,25 +41,18 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestApplicationBootstrapperTest {
-    private enum BindingTypes {
-        TARGET("No binding of type " + TargetBinding.class.getName() + " was found"),
-        INSTANCE("No named binding of type " + InstanceBinding.class.getName() + " was found"),
-        NAMED_TARGET("No binding of type " + TargetBinding.class.getName() + " was found"),
-        NAMED_INSTANCE("No named binding of type " + InstanceBinding.class.getName() + " was found"),
-        PROVIDER("No binding of type " + ProviderBinding.class.getName() + " was found"),
-        NAMED_PROVIDER("No named binding of type " + ProviderTypeBinding.class.getName() + " was found"),
-        PROVIDER_TYPE("No binding of type " + ProviderBinding.class.getName() + " was found"),
-        NAMED_PROVIDER_TYPE("No named binding of type " + ProviderTypeBinding.class.getName() + " was found");
+    private static Atom instantiate(Class<? extends Atom> atomClass) throws Exception {
+        return atomClass.newInstance();
+    }
 
-        private String label;
+    private static Atom instantiateProvider(Class<Provider<? extends Atom>> providerClass) throws Exception {
+        return providerClass.newInstance().get();
+    }
 
-        BindingTypes(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
+    private static void assertName(Annotation annotation, String name) {
+        assertTrue(annotation instanceof Named);
+        Named named = (Named) annotation;
+        assertEquals(name, named.value());
     }
 
     @Test
@@ -115,6 +108,58 @@ public class TestApplicationBootstrapperTest {
     }
 
     @Test
+    public void annotatedModulesMethodSuppliesAllBindings() {
+        // given:
+        BasiliskApplication application = new DefaultBasiliskApplication();
+        TestApplicationBootstrapper bootstrapper = new TestApplicationBootstrapper(application);
+        Object testCase = new AnnotatedModulesMethodTestcase();
+        bootstrapper.setTestCase(testCase);
+
+        // when:
+        List<Module> modules = bootstrapper.loadModules();
+
+        // then:
+        assertEquals(1, modules.size());
+        Map<ApplicationBootstrapper.Key, Binding<?>> bindings = getBindings(modules);
+        for (Map.Entry<ApplicationBootstrapper.Key, Binding<?>> e : bindings.entrySet()) {
+            if (e.getValue() instanceof TargetBinding) {
+                TargetBinding tb = (TargetBinding) e.getValue();
+                if (ApplicationClassLoader.class.isAssignableFrom(tb.getSource())) {
+                    assertTrue(TestApplicationClassLoader.class.isAssignableFrom(tb.getTarget()));
+                    return;
+                }
+            }
+        }
+        fail("Test case did not provide an overriding binding for " + ApplicationClassLoader.class.getName());
+    }
+
+    @Test
+    public void annotatedModulesMethodSuppliesAllBindings_subclass() {
+        // given:
+        BasiliskApplication application = new DefaultBasiliskApplication();
+        TestApplicationBootstrapper bootstrapper = new TestApplicationBootstrapper(application);
+        Object testCase = new AnnotatedChildModulesMethodTestcase();
+        bootstrapper.setTestCase(testCase);
+
+        // when:
+        List<Module> modules = bootstrapper.loadModules();
+
+        // then:
+        assertEquals(1, modules.size());
+        Map<ApplicationBootstrapper.Key, Binding<?>> bindings = getBindings(modules);
+        for (Map.Entry<ApplicationBootstrapper.Key, Binding<?>> e : bindings.entrySet()) {
+            if (e.getValue() instanceof TargetBinding) {
+                TargetBinding tb = (TargetBinding) e.getValue();
+                if (ApplicationClassLoader.class.isAssignableFrom(tb.getSource())) {
+                    assertTrue(TestApplicationClassLoader.class.isAssignableFrom(tb.getTarget()));
+                    return;
+                }
+            }
+        }
+        fail("Test case did not provide an overriding binding for " + ApplicationClassLoader.class.getName());
+    }
+
+    @Test
     public void moduleOverridesMethodConfiguresCustomApplicationClassLoader() {
         // given:
         BasiliskApplication application = new DefaultBasiliskApplication();
@@ -145,6 +190,56 @@ public class TestApplicationBootstrapperTest {
         BasiliskApplication application = new DefaultBasiliskApplication();
         TestApplicationBootstrapper bootstrapper = new TestApplicationBootstrapper(application);
         Object testCase = new ChildModuleOverridesMethodTestcase();
+        bootstrapper.setTestCase(testCase);
+
+        // when:
+        List<Module> modules = bootstrapper.loadModules();
+
+        // then:
+        Map<ApplicationBootstrapper.Key, Binding<?>> bindings = getBindings(modules);
+        for (Map.Entry<ApplicationBootstrapper.Key, Binding<?>> e : bindings.entrySet()) {
+            if (e.getValue() instanceof TargetBinding) {
+                TargetBinding tb = (TargetBinding) e.getValue();
+                if (ApplicationClassLoader.class.isAssignableFrom(tb.getSource())) {
+                    assertTrue(TestApplicationClassLoader.class.isAssignableFrom(tb.getTarget()));
+                    return;
+                }
+            }
+        }
+        fail("Test case did not provide an overriding binding for " + ApplicationClassLoader.class.getName());
+    }
+
+    @Test
+    public void annotatedModuleOverridesMethodConfiguresCustomApplicationClassLoader() {
+        // given:
+        BasiliskApplication application = new DefaultBasiliskApplication();
+        TestApplicationBootstrapper bootstrapper = new TestApplicationBootstrapper(application);
+        Object testCase = new AnnotatedModuleOverridesMethodTestcase();
+        bootstrapper.setTestCase(testCase);
+
+        // when:
+        List<Module> modules = bootstrapper.loadModules();
+
+        // then:
+        Map<ApplicationBootstrapper.Key, Binding<?>> bindings = getBindings(modules);
+        for (Map.Entry<ApplicationBootstrapper.Key, Binding<?>> e : bindings.entrySet()) {
+            if (e.getValue() instanceof TargetBinding) {
+                TargetBinding tb = (TargetBinding) e.getValue();
+                if (ApplicationClassLoader.class.isAssignableFrom(tb.getSource())) {
+                    assertTrue(TestApplicationClassLoader.class.isAssignableFrom(tb.getTarget()));
+                    return;
+                }
+            }
+        }
+        fail("Test case did not provide an overriding binding for " + ApplicationClassLoader.class.getName());
+    }
+
+    @Test
+    public void annotatedModuleOverridesMethodConfiguresCustomApplicationClassLoader_subclass() {
+        // given:
+        BasiliskApplication application = new DefaultBasiliskApplication();
+        TestApplicationBootstrapper bootstrapper = new TestApplicationBootstrapper(application);
+        Object testCase = new AnnotatedChildModuleOverridesMethodTestcase();
         bootstrapper.setTestCase(testCase);
 
         // when:
@@ -375,20 +470,6 @@ public class TestApplicationBootstrapperTest {
         }
     }
 
-    private static Atom instantiate(Class<? extends Atom> atomClass) throws Exception {
-        return atomClass.newInstance();
-    }
-
-    private static Atom instantiateProvider(Class<Provider<? extends Atom>> providerClass) throws Exception {
-        return providerClass.newInstance().get();
-    }
-
-    private static void assertName(Annotation annotation, String name) {
-        assertTrue(annotation instanceof Named);
-        Named named = (Named) annotation;
-        assertEquals(name, named.value());
-    }
-
     @Nonnull
     protected Map<ApplicationBootstrapper.Key, Binding<?>> getBindings(@Nonnull Collection<Module> modules) {
         Map<ApplicationBootstrapper.Key, Binding<?>> map = new LinkedHashMap<>();
@@ -400,5 +481,26 @@ public class TestApplicationBootstrapperTest {
         }
 
         return map;
+    }
+
+    private enum BindingTypes {
+        TARGET("No binding of type " + TargetBinding.class.getName() + " was found"),
+        INSTANCE("No named binding of type " + InstanceBinding.class.getName() + " was found"),
+        NAMED_TARGET("No binding of type " + TargetBinding.class.getName() + " was found"),
+        NAMED_INSTANCE("No named binding of type " + InstanceBinding.class.getName() + " was found"),
+        PROVIDER("No binding of type " + ProviderBinding.class.getName() + " was found"),
+        NAMED_PROVIDER("No named binding of type " + ProviderTypeBinding.class.getName() + " was found"),
+        PROVIDER_TYPE("No binding of type " + ProviderBinding.class.getName() + " was found"),
+        NAMED_PROVIDER_TYPE("No named binding of type " + ProviderTypeBinding.class.getName() + " was found");
+
+        private String label;
+
+        BindingTypes(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 }
