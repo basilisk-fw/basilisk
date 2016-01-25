@@ -113,6 +113,11 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
         };
     }
 
+    public void injectMembers(@Nonnull Object target) {
+        requireNonNull(target, "Argument 'target' must not be null");
+        application.getInjector().injectMembers(target);
+    }
+
     protected void initialize() {
         getTestContext().setWindowName(windowName);
     }
