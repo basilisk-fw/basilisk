@@ -27,6 +27,8 @@ class BasiliskExtension {
 
     String applicationIconName = 'basilisk.icns'
 
+    Map applicationProperties = [:]
+
     BasiliskExtension(Project project) {
     }
 }

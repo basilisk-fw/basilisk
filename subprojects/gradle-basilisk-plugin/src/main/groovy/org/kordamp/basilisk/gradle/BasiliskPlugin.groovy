@@ -135,7 +135,7 @@ class BasiliskPlugin implements Plugin<Project> {
                     'application.name'   : resolveApplicationName(project),
                     'application.version': project.version,
                     'basilisk.version'   : extension.version
-                ])
+                ] + extension.applicationProperties)
             }
         }
     }
@@ -157,7 +157,7 @@ class BasiliskPlugin implements Plugin<Project> {
                     'application.name'   : resolveApplicationName(project),
                     'application.version': project.version,
                     'basilisk.version'   : extension.version
-                ])
+                ] + extension.applicationProperties)
             }
         }
     }

@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         jcenter()
@@ -13,24 +15,34 @@ buildscript {
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.1.5'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
         classpath 'org.javafxports:jfxmobile-plugin:1.0.3'
+        classpath 'net.nemerosa:versioning:1.6.0'
     }
 }
 
 apply plugin: 'groovy'
 apply plugin: 'org.kordamp.basilisk'
 apply plugin: 'org.javafxports.jfxmobile'
+apply plugin: 'net.nemerosa.versioning'
 
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
+Date buildTimeAndDate = new Date()
+ext {
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    macosx = System.getProperty('os.name').contains('Mac OS')
+}
+
 basilisk {
     disableDependencyResolution = false
     version = '${basilisk_version}'
-}
-
-ext {
-    macosx = System.getProperty('os.name').contains('Mac OS')
+    applicationProperties = [
+        'build.date'    : buildDate,
+        'build.time'    : buildTime,
+        'build.revision': versioning.info.commit
+    ]
 }
 
 mainClassName = '${project_package}.Launcher'
