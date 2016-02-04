@@ -250,7 +250,6 @@ public interface EventPublisher {
     @Nonnull
     Collection<Object> getEventListeners();
 
-
     /**
      * Returns an immutable snapshot view of all event listeners registered for the target event name.
      *
