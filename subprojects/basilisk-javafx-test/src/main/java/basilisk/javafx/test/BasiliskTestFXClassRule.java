@@ -20,6 +20,7 @@ import basilisk.core.RunnableWithArgs;
 import basilisk.core.env.Environment;
 import basilisk.exceptions.BasiliskException;
 import basilisk.javafx.JavaFXBasiliskApplication;
+import javafx.stage.Window;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -28,6 +29,7 @@ import org.kordamp.basilisk.runtime.javafx.TestJavaFXBasiliskApplication;
 import org.testfx.api.FxToolkit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
@@ -94,6 +96,8 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
                 FxToolkit.cleanupApplication(application);
             } catch (TimeoutException e) {
                 throw new BasiliskException("An error occurred while shutting down the application", e);
+            } finally {
+                application = null;
             }
         }
     }
@@ -116,6 +120,11 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
     public void injectMembers(@Nonnull Object target) {
         requireNonNull(target, "Argument 'target' must not be null");
         application.getInjector().injectMembers(target);
+    }
+
+    @Nullable
+    public <W extends Window> W window(@Nonnull String name) {
+        return (W) application.getWindowManager().findWindow(name);
     }
 
     protected void initialize() {

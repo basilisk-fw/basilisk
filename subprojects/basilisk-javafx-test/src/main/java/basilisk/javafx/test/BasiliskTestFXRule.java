@@ -18,7 +18,9 @@ package basilisk.javafx.test;
 import basilisk.core.ApplicationEvent;
 import basilisk.core.RunnableWithArgs;
 import basilisk.core.env.Environment;
+import basilisk.exceptions.BasiliskException;
 import basilisk.javafx.JavaFXBasiliskApplication;
+import javafx.stage.Window;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -27,6 +29,7 @@ import org.kordamp.basilisk.runtime.javafx.TestJavaFXBasiliskApplication;
 import org.testfx.api.FxToolkit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeoutException;
 
@@ -44,6 +47,7 @@ public class BasiliskTestFXRule extends TestFX implements MethodRule {
     protected String windowName;
     protected String[] startupArgs;
     protected Class<? extends TestJavaFXBasiliskApplication> applicationClass;
+    protected JavaFXBasiliskApplication application;
 
     public BasiliskTestFXRule(@Nonnull String windowName) {
         this(TestJavaFXBasiliskApplication.class, windowName, DefaultBasiliskApplication.EMPTY_ARGS);
@@ -105,8 +109,21 @@ public class BasiliskTestFXRule extends TestFX implements MethodRule {
     }
 
     protected void after(@Nonnull JavaFXBasiliskApplication application, @Nonnull Object target) throws TimeoutException {
-        application.shutdown();
-        FxToolkit.cleanupApplication(application);
+        if (application != null) {
+            application.shutdown();
+            try {
+                FxToolkit.cleanupApplication(application);
+            } catch (TimeoutException e) {
+                throw new BasiliskException("An error occurred while shutting down the application", e);
+            } finally {
+                this.application = null;
+            }
+        }
+    }
+
+    @Nullable
+    public <W extends Window> W window(@Nonnull String name) {
+        return (W) application.getWindowManager().findWindow(name);
     }
 
     private static class WindowShownHandler implements RunnableWithArgs {
