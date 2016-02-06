@@ -1,14 +1,12 @@
 package ${project_package};
 
 import basilisk.javafx.test.BasiliskTestFXClassRule;
+import basilisk.javafx.test.FunctionalJavaFXRunner;
 import org.junit.ClassRule;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.runner.RunWith;
 
-import static org.junit.Assert.fail;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(FunctionalJavaFXRunner.class)
 public class ${project_class_name}FunctionalTest {
     @ClassRule
     public static BasiliskTestFXClassRule testfx = new BasiliskTestFXClassRule("mainWindow");

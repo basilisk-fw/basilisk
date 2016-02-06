@@ -48,6 +48,7 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
     protected String[] startupArgs;
     protected Class<? extends TestJavaFXBasiliskApplication> applicationClass;
     protected JavaFXBasiliskApplication application;
+    private boolean failures = false;
 
     public BasiliskTestFXClassRule(@Nonnull String windowName) {
         this(TestJavaFXBasiliskApplication.class, windowName, DefaultBasiliskApplication.EMPTY_ARGS);
@@ -120,6 +121,14 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
     public void injectMembers(@Nonnull Object target) {
         requireNonNull(target, "Argument 'target' must not be null");
         application.getInjector().injectMembers(target);
+    }
+
+    public boolean hasFailures() {
+        return failures;
+    }
+
+    public void setFailures(boolean failures) {
+        this.failures = failures;
     }
 
     @Nullable
