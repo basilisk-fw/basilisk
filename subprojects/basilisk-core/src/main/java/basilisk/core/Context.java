@@ -309,7 +309,7 @@ public interface Context {
     <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type, @Nullable T defaultValue);
 
     /**
-     * Inject properties and members annotated with {@code basilisk.inject.Contextal}.
+     * Inject properties and members annotated with {@code basilisk.inject.Contextual}.
      *
      * @param instance the instance on which contextual members will be injected.
      * @param <T>      the type of the instance
