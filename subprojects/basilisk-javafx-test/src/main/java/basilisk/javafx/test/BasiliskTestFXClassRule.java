@@ -132,7 +132,7 @@ public class BasiliskTestFXClassRule extends TestFX implements TestRule {
     }
 
     @Nullable
-    public <W extends Window> W window(@Nonnull String name) {
+    public <W extends Window> W managedWindow(@Nonnull String name) {
         return (W) application.getWindowManager().findWindow(name);
     }
 

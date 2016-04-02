@@ -16,7 +16,6 @@
 
 apply plugin: 'checkstyle'
 apply plugin: 'codenarc'
-// apply plugin: 'findbugs'
 apply plugin: 'jdepend'
 apply plugin: 'com.github.hierynomus.license'
 
@@ -29,21 +28,15 @@ checkstyle {
     configProperties.checkstyleConfigDir = checkstyleConfigDir
 }
 
+dependencies {
+    codenarc("org.codenarc:CodeNarc:$codenarcVersion") { transitive = false }
+    codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
+}
+
 codenarc {
     ignoreFailures = true
     configFile = file("$configDir/codenarc/codenarc.groovy")
 }
-
-/*
-findbugs {
-    toolVersion = '3.0.0'
-    sourceSets = [sourceSets.main]
-    ignoreFailures = true
-    reportsDir = file("$project.buildDir/reports/findbugs")
-    effort = 'max'
-    reportLevel = 'high'
-}
-*/
 
 jdepend {
     toolVersion = '2.9.1'

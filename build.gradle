@@ -25,7 +25,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'net.saliman:gradle-cobertura-plugin:2.3.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
@@ -94,19 +93,19 @@ subprojects { subproj ->
         }
 
         dependencies {
-            testCompile 'junit:junit:4.12'
+            testCompile "junit:junit:$junitVersion"
             testCompile 'com.google.guiceberry:guiceberry:3.3.1'
             testCompile("com.google.inject:guice:$guiceVersion") {
                 exclude group: 'org.sonatype.sisu.inject', module: 'cglib'
             }
             if (!subproj.name.startsWith('gradle-')) {
                 testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
-                testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+                testCompile("org.spockframework:spock-core:$spockVersion") {
                     exclude group: 'org.codehaus.groovy', module: 'groovy-all'
                 }
             }
             testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
-            testCompile 'cglib:cglib-nodep:3.2.0'
+            testCompile "cglib:cglib-nodep:$cglibVersion"
         }
 
         sourceSets {
@@ -251,6 +250,20 @@ subprojects { subproj ->
                 lifecycle : [name: 'Lifecycle', path: 'basilisk-app/lifecycle']
             ]
         }
+    }
+
+    task allDeps(type: DependencyReportTask) {}
+    configurations.all {
+        resolutionStrategy.force "jdepend:jdepend:$jdependVersion",
+            "com.google.guava:guava:$guavaVersion",
+            "junit:junit:$junitVersion",
+            "cglib:cglib-nodep:$cglibVersion",
+            "org.asciidoctor:asciidoctorj:$asciidoctorjVersion",
+            "org.codehau.groovy:groovy-all:$groovyVersion",
+            "org.slf4j:slf4j-api:$slf4jVersion",
+            "org.slf4j:slf4j-simple:$slf4jVersion"
+
+        resolutionStrategy.failOnVersionConflict()
     }
 }
 
