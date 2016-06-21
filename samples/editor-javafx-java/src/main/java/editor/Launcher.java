@@ -19,6 +19,7 @@ import basilisk.javafx.JavaFXBasiliskApplication;
 
 public class Launcher {
     public static void main(String[] args) throws Exception {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         JavaFXBasiliskApplication.main(args);
     }
 }

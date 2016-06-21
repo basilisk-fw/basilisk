@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'groovy'
+apply plugin: 'com.gradle.plugin-publish'
 apply from: rootProject.file('gradle/coverage.gradle')
 
 sourceCompatibility = '1.7'
@@ -48,5 +49,25 @@ bintray {
                 'gradle-plugin': ['org.kordamp.basilisk.basilisk', project.group, project.name].join(':')
             ]
         }
+    }
+}
+
+pluginBundle {
+    website = project.project_website_url
+    vcsUrl = project.project_vcs_url
+    description = project.pomDescription
+    tags = ['basilisk']
+
+    plugins {
+        statsPlugin {
+            id = 'org.kordamp.basilisk.basilisk'
+            displayName = project.pomDescription
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
+        artifactId = project.name
+        version = project.version
     }
 }

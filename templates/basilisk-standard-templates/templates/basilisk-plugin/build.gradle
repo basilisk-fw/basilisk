@@ -61,11 +61,6 @@ ext.jacocoProjects = []
 
 subprojects { subproj ->
     plugins.withType(JavaPlugin) {
-        configurations {
-            compileOnly
-            testCompileOnly
-        }
-
         subproj.tasks.withType(JavaCompile) {
             sourceCompatibility = subproj.sourceCompatibility
             targetCompatibility = subproj.targetCompatibility
@@ -76,30 +71,10 @@ subprojects { subproj ->
             targetCompatibility = subproj.targetCompatibility
         }
 
-        sourceSets {
-            main {
-                compileClasspath += [configurations.compileOnly]
-            }
-            test {
-                compileClasspath += [configurations.testCompileOnly]
-            }
-        }
-
-        javadoc {
-            classpath += [configurations.compileOnly]
-        }
-
-        idea {
-            module {
-                scopes.PROVIDED.plus += [configurations.compileOnly]
-                scopes.PROVIDED.plus += [configurations.testCompileOnly]
-            }
-        }
-
         dependencies {
             testCompile 'junit:junit:4.12'
             testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-            testCompile 'org.slf4j:slf4j-simple:1.7.13'
+            testCompile 'org.slf4j:slf4j-simple:1.7.21'
         }
 
         task sourceJar(type: Jar) {

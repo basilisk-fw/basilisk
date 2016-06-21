@@ -220,7 +220,7 @@ public final class JavaFXUtils {
         requireNonNull(controller, ERROR_CONTROLLER_NULL);
         ActionManager actionManager = controller.getApplication().getActionManager();
         for (Map.Entry<String, Action> e : actionManager.actionsFor(controller).entrySet()) {
-            String actionName = actionManager.normalizeName(e.getKey());
+            final String actionName = actionManager.normalizeName(e.getKey());
             final String actionTargetName = actionName + ACTION_TARGET_SUFFIX;
             JavaFXAction action = (JavaFXAction) e.getValue().getToolkitAction();
 
@@ -886,14 +886,19 @@ public final class JavaFXUtils {
 
         if (id.equals(getPropertyValue(root, "id"))) { return root; }
 
-        if (root instanceof MenuBar) {
+        if (root instanceof ButtonBar) {
+            ButtonBar buttonBar = (ButtonBar) root;
+            for (Node child : buttonBar.getButtons()) {
+                Object found = findElement(child, id);
+                if (found != null) { return found; }
+            }
+        } else if (root instanceof MenuBar) {
             MenuBar menuBar = (MenuBar) root;
             for (Menu child : menuBar.getMenus()) {
                 Object found = findElement(child, id);
                 if (found != null) { return found; }
             }
-        }
-        if (root instanceof ContextMenu) {
+        } else if (root instanceof ContextMenu) {
             ContextMenu contextMenu = (ContextMenu) root;
             for (MenuItem child : contextMenu.getItems()) {
                 Object found = findElement(child, id);
@@ -944,7 +949,7 @@ public final class JavaFXUtils {
         } else if (root instanceof ToolBar) {
             ToolBar toolBar = (ToolBar) root;
             for (Node child : toolBar.getItems()) {
-                Node found = findNode(child, id);
+                Object found = findElement(child, id);
                 if (found != null) { return found; }
             }
         } else if (root instanceof Parent) {
@@ -957,7 +962,7 @@ public final class JavaFXUtils {
 
         return null;
     }
-    
+
     @Nullable
     public static Object findElement(@Nonnull Object root, @Nonnull Predicate<Object> predicate) {
         requireNonNull(root, ERROR_ROOT_NULL);
