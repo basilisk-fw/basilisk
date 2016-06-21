@@ -22,6 +22,7 @@ import javafx.collections.ObservableList
 import javafx.embed.swing.JFXPanel
 import javafx.scene.control.Accordion
 import javafx.scene.control.Button
+import javafx.scene.control.ButtonBar
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
@@ -127,7 +128,32 @@ class JavaFXUtilsSpec extends Specification {
             createScrollPane(),
             createToolBar(),
             createContextMenu(),
-            createMenuBar()
+            createMenuBar(),
+            createButtonBar()
+        ]
+    }
+
+    void "Find the buttons on #container.class using findElements method"() {
+        when:
+        def result = JavaFXUtils.findElements(container) { e ->
+            e.properties.tag == 'tag1'
+        }
+
+        then:
+        result.size() == 1
+
+        where:
+        container << [
+            createBorderPaneWithTags(),
+            createTabPaneWithTags(),
+            createTitledPaneWithTags(),
+            createSplitPaneWithTags(),
+            createAccordionWithTags(),
+            createScrollPaneWithTags(),
+            createToolBarWithTags(),
+            createContextMenuWithTags(),
+            createMenuBarWithTags(),
+            createButtonBarWithTags()
         ]
     }
 
@@ -140,67 +166,93 @@ class JavaFXUtilsSpec extends Specification {
     }
 
     private ContextMenu createContextMenu() {
-        ContextMenu contextMenu = new ContextMenu()
-        Menu primary = new Menu('Primary')
-        Menu secondary = new Menu('Secondary')
-        primary.items << secondary
-        MenuItem button = new MenuItem()
-        button.id = 'buttonId'
-        secondary.items << button
-        contextMenu.items << primary
-        contextMenu
+        runInsideUISync {
+            ContextMenu contextMenu = new ContextMenu()
+            Menu primary = new Menu('Primary')
+            Menu secondary = new Menu('Secondary')
+            primary.items << secondary
+            MenuItem item = new MenuItem()
+            item.id = 'buttonId'
+            secondary.items << item
+            contextMenu.items << primary
+            contextMenu
+        }
     }
 
     private MenuBar createMenuBar() {
-        MenuBar menuBar = new MenuBar()
-        Menu primary = new Menu('Primary')
-        Menu secondary = new Menu('Secondary')
-        primary.items << secondary
-        MenuItem button = new MenuItem()
-        button.id = 'buttonId'
-        secondary.items << button
-        menuBar.menus << primary
-        menuBar
+        runInsideUISync {
+            MenuBar menuBar = new MenuBar()
+            Menu primary = new Menu('Primary')
+            Menu secondary = new Menu('Secondary')
+            primary.items << secondary
+            MenuItem item = new MenuItem()
+            item.id = 'buttonId'
+            secondary.items << item
+            menuBar.menus << primary
+            menuBar
+        }
+    }
+
+    private ButtonBar createButtonBar() {
+        runInsideUISync {
+            ButtonBar buttonBar = new ButtonBar()
+            buttonBar.buttons << new Button('Primary')
+            buttonBar.buttons << new Button('Secondary')
+            buttonBar.buttons[1].id = 'buttonId'
+            buttonBar
+        }
     }
 
     private TabPane createTabPane() {
-        TabPane tabPane = new TabPane()
-        tabPane.tabs << new Tab('Tab #1')
-        Tab tab = new Tab('Tab #2')
-        tab.content = createBorderPane()
-        tabPane.tabs << tab
-        tabPane
+        runInsideUISync {
+            TabPane tabPane = new TabPane()
+            tabPane.tabs << new Tab('Tab #1')
+            Tab tab = new Tab('Tab #2')
+            tab.content = createBorderPane()
+            tabPane.tabs << tab
+            tabPane
+        }
     }
 
     private TitledPane createTitledPane() {
-        TitledPane pane = new TitledPane()
-        pane.content = createBorderPane()
-        pane
+        runInsideUISync {
+            TitledPane pane = new TitledPane()
+            pane.content = createBorderPane()
+            pane
+        }
     }
 
     private SplitPane createSplitPane() {
-        SplitPane pane = new SplitPane()
-        pane.items << new Pane()
-        pane.items << createBorderPane()
-        pane
+        runInsideUISync {
+            SplitPane pane = new SplitPane()
+            pane.items << new Pane()
+            pane.items << createBorderPane()
+            pane
+        }
     }
 
     private ScrollPane createScrollPane() {
-        ScrollPane pane = new ScrollPane()
-        pane.content = createBorderPane()
-        pane
+        runInsideUISync {
+            ScrollPane pane = new ScrollPane()
+            pane.content = createBorderPane()
+            pane
+        }
     }
 
     private Accordion createAccordion() {
-        Accordion accordion = new Accordion()
-        accordion.panes << createTitledPane()
-        accordion
+        runInsideUISync {
+            Accordion accordion = new Accordion()
+            accordion.panes << createTitledPane()
+            accordion
+        }
     }
 
     private ToolBar createToolBar() {
-        ToolBar toolBar = new ToolBar()
-        toolBar.items << createButton()
-        toolBar
+        runInsideUISync {
+            ToolBar toolBar = new ToolBar()
+            toolBar.items << createButton()
+            toolBar
+        }
     }
 
     private Button createButton() {
@@ -209,7 +261,126 @@ class JavaFXUtilsSpec extends Specification {
         button
     }
 
-    private <T> T runInsideUISync(Callable<T> callable) {
+    private BorderPane createBorderPaneWithTags() {
+        runInsideUISync {
+            BorderPane pane = new BorderPane()
+            pane.children << createButton()
+            pane.children << createButtonWithTag('tag1')
+            pane.children << createButtonWithTag('tag2')
+            pane
+        }
+    }
+
+    private ContextMenu createContextMenuWithTags() {
+        runInsideUISync {
+            ContextMenu contextMenu = new ContextMenu()
+            Menu primary = new Menu('Primary')
+            Menu secondary = new Menu('Secondary')
+            primary.items << secondary
+            secondary.items << new MenuItem()
+            MenuItem item = new MenuItem()
+            item.properties.tag = 'tag1'
+            secondary.items << item
+            item = new MenuItem()
+            item.properties.tag = 'tag2'
+            secondary.items << item
+            contextMenu.items << primary
+            contextMenu
+        }
+    }
+
+    private MenuBar createMenuBarWithTags() {
+        runInsideUISync {
+            MenuBar menuBar = new MenuBar()
+            Menu primary = new Menu('Primary')
+            Menu secondary = new Menu('Secondary')
+            primary.items << secondary
+            secondary.items << new MenuItem()
+            MenuItem item = new MenuItem()
+            item.properties.tag = 'tag1'
+            secondary.items << item
+            item = new MenuItem()
+            item.properties.tag = 'tag2'
+            secondary.items << item
+            menuBar.menus << primary
+            menuBar
+        }
+    }
+
+    private ButtonBar createButtonBarWithTags() {
+        runInsideUISync {
+            ButtonBar buttonBar = new ButtonBar()
+            buttonBar.buttons << createButton()
+            buttonBar.buttons << createButtonWithTag('tag1')
+            buttonBar.buttons << createButtonWithTag('tag2')
+            buttonBar
+        }
+    }
+
+    private TabPane createTabPaneWithTags() {
+        runInsideUISync {
+            TabPane tabPane = new TabPane()
+            tabPane.tabs << new Tab('Tab #1')
+            Tab tab = new Tab('Tab #2')
+            tab.content = createBorderPaneWithTags()
+            tabPane.tabs << tab
+            tabPane
+        }
+    }
+
+    private TitledPane createTitledPaneWithTags() {
+        runInsideUISync {
+            TitledPane pane = new TitledPane()
+            pane.content = createBorderPaneWithTags()
+            pane
+        }
+    }
+
+    private SplitPane createSplitPaneWithTags() {
+        runInsideUISync {
+            SplitPane pane = new SplitPane()
+            pane.items << new Pane()
+            pane.items << createBorderPaneWithTags()
+            pane
+        }
+    }
+
+    private ScrollPane createScrollPaneWithTags() {
+        runInsideUISync {
+            ScrollPane pane = new ScrollPane()
+            pane.content = createBorderPaneWithTags()
+            pane
+        }
+    }
+
+    private Accordion createAccordionWithTags() {
+        runInsideUISync {
+            Accordion accordion = new Accordion()
+            accordion.panes << createTitledPaneWithTags()
+            accordion
+        }
+    }
+
+    private ToolBar createToolBarWithTags() {
+        runInsideUISync {
+            ToolBar toolBar = new ToolBar()
+            toolBar.items << createButtonWithTag('tag1')
+            toolBar.items << createButtonWithTag('tag2')
+            toolBar
+        }
+    }
+
+    private Button createButtonWithTag(String tag){
+        Button button = new Button()
+        button.properties.tag = tag
+        button
+    }
+
+    private static <T> T runInsideUISync(Callable<T> callable) {
+        if (Platform.isFxApplicationThread()) {
+            return callable.call()
+        }
+
         T result = null
         CountDownLatch latch = new CountDownLatch(1)
         Platform.runLater {
