@@ -12,10 +12,10 @@ buildscript {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'org.gradle.api.plugins:gradle-izpack-plugin:0.2.3'
         classpath 'com.github.cr0:gradle-macappbundle-plugin:3.1.0'
-        classpath 'org.kordamp.gradle:stats-gradle-plugin:0.1.5'
+        classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
-        classpath 'org.javafxports:jfxmobile-plugin:1.0.3'
-        classpath 'net.nemerosa:versioning:1.6.2'
+        classpath 'org.javafxports:jfxmobile-plugin:1.0.8'
+        classpath 'net.nemerosa:versioning:210'
     }
 }
 
@@ -68,7 +68,7 @@ dependencies {
 
     functionalTestCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.1.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
 
 compileGroovy.enabled = false
