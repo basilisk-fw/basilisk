@@ -15,8 +15,10 @@
  */
 package org.kordamp.basilisk.gradle
 
+import org.junit.Ignore
 import spock.lang.Unroll
 
+@Ignore
 @Unroll
 class BasiliskPluginWithAppliedEclipsePluginSpecification extends AbstractPluginSpecification {
 

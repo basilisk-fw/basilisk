@@ -45,7 +45,7 @@ bintray {
         version {
             vcsTag = project.version
             attributes = [
-                'gradle-plugin': ['org.kordamp.basilisk.basilisk-build', project.group, project.name].join(':')
+                'gradle-plugin': ['org.kordamp.basilisk-build', project.group, project.name].join(':')
             ]
         }
     }
@@ -59,7 +59,7 @@ pluginBundle {
 
     plugins {
         statsPlugin {
-            id = 'org.kordamp.basilisk.basilisk-build'
+            id = 'org.kordamp.basilisk-build'
             displayName = project.pomDescription
         }
     }
