@@ -15,7 +15,7 @@ buildscript {
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
         classpath 'org.javafxports:jfxmobile-plugin:1.0.8'
-        classpath 'net.nemerosa:versioning:210'
+        classpath 'net.nemerosa:versioning:2.1.0'
     }
 }
 
@@ -26,6 +26,7 @@ apply plugin: 'net.nemerosa.versioning'
 
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    jcenter()
 }
 
 Date buildTimeAndDate = new Date()

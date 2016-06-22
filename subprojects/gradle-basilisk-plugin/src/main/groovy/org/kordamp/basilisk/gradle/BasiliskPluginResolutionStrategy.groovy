@@ -36,34 +36,18 @@ class BasiliskPluginResolutionStrategy {
         'runtime'
     ]
 
+    private static final Map<String, List<String>> DEPENDENCY_MAP = [:]
+
     static void applyTo(Project project) {
         BasiliskPluginDependencyResolver resolver = new BasiliskPluginDependencyResolver(project)
-        project.configurations.getByName(BASILISK_CONFIGURATION).incoming.beforeResolve(resolver)
+
+        Configuration basiliskConfiguration = project.configurations.getByName(BASILISK_CONFIGURATION)
+        basiliskConfiguration.incoming.beforeResolve(resolver)
+        basiliskConfiguration.resolve()
+
         CONFIGURATION_NAMES.each { String configurationName ->
-            Configuration configuration = project.configurations.getByName(configurationName)
-            configuration.incoming.beforeResolve(new BasiliskDependencyResolver(configurationName, resolver))
-        }
-    }
-
-    private static class BasiliskDependencyResolver implements Action<ResolvableDependencies> {
-        private final BasiliskPluginDependencyResolver resolver
-        private final String configurationName
-
-        BasiliskDependencyResolver(String configurationName, BasiliskPluginDependencyResolver resolver) {
-            this.resolver = resolver
-            this.configurationName = configurationName
-        }
-
-        @Override
-        void execute(ResolvableDependencies resolvableDependencies) {
-            if (resolver.project.extensions.getByName(BASILISK_CONFIGURATION).disableDependencyResolution) {
-                return
-            }
-
-            if (!resolver.dependencyMap) {
-                resolver.project.configurations.getByName(BASILISK_CONFIGURATION).resolve()
-            }
-            resolver.dependencyMap[configurationName].each { String dependency ->
+            DEPENDENCY_MAP[configurationName].each { String dependency ->
+                project.logger.info("Adding {} to '{}' configuration", configurationName, dependency)
                 resolver.project.dependencies.add(configurationName, dependency)
             }
         }
@@ -71,7 +55,6 @@ class BasiliskPluginResolutionStrategy {
 
     private static class BasiliskPluginDependencyResolver implements Action<ResolvableDependencies> {
         final Project project
-        final Map<String, List<String>> dependencyMap = [:]
 
         BasiliskPluginDependencyResolver(Project project) {
             this.project = project
@@ -115,22 +98,14 @@ class BasiliskPluginResolutionStrategy {
             }
         }
 
-        private BasiliskExtension getBasiliskExtension() {
-            project.extensions.getByName(BASILISK_CONFIGURATION)
-        }
-
         private void appendDependency(String artifactId, String scope, String dependencyCoordinates) {
             if (artifactId.endsWith('-compile')) {
-                project.logger.info("Adding {} to 'compileOnly' configuration", dependencyCoordinates)
-                dependencyMap.get('compileOnly', []) << dependencyCoordinates
-                project.logger.info("Adding {} to 'testCompileOnly' configuration", dependencyCoordinates)
-                dependencyMap.get('testCompileOnly', []) << dependencyCoordinates
+                DEPENDENCY_MAP.get('compileOnly', []) << dependencyCoordinates
+                DEPENDENCY_MAP.get('testCompileOnly', []) << dependencyCoordinates
             } else if (scope == 'test' && artifactId.endsWith('-test')) {
-                project.logger.info("Adding {} to 'testCompile' configuration", dependencyCoordinates)
-                dependencyMap.get('testCompile', []) << dependencyCoordinates
+                DEPENDENCY_MAP.get('testCompile', []) << dependencyCoordinates
             } else {
-                project.logger.info("Adding {} to '{}' configuration", dependencyCoordinates, scope)
-                dependencyMap.get(scope, []) << dependencyCoordinates
+                DEPENDENCY_MAP.get(scope, []) << dependencyCoordinates
             }
         }
     }

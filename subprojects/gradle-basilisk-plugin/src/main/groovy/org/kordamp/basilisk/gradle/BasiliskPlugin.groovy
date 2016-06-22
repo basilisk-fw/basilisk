@@ -35,20 +35,12 @@ class BasiliskPlugin implements Plugin<Project> {
 
         applyDefaultPlugins(project)
 
-        // enable jcenter by default
-        project.repositories.jcenter()
-        // enable basilisk-plugins @ bintray
-        project.repositories.maven { url 'http://dl.bintray.com/basilisk/basilisk-plugins' }
-        project.repositories.maven { url 'https://dl.bintray.com/melix/thirdparty-apache' }
-
         applyDefaultDependencies(project)
 
         String sourceSetName = 'java'
 
         configureDefaultSourceSets(project, 'java')
         if (sourceSetName != 'java') configureDefaultSourceSets(project, sourceSetName)
-        adjustJavadocClasspath(project, sourceSetName)
-        adjustIdeClasspaths(project)
         createDefaultDirectoryStructure(project, 'java')
         if (sourceSetName != 'java') createDefaultDirectoryStructure(project, sourceSetName)
 
@@ -56,16 +48,7 @@ class BasiliskPlugin implements Plugin<Project> {
     }
 
     private void applyDefaultDependencies(final Project project) {
-        // add compile time configurations
-        project.configurations.maybeCreate('compileOnly')
-        project.configurations.maybeCreate('testCompileOnly')
         project.configurations.maybeCreate('basilisk').visible = true
-
-        // wire up classpaths with compile time dependencies
-        project.sourceSets.main.compileClasspath += [project.configurations.compileOnly]
-        project.sourceSets.test.compileClasspath += [project.configurations.testCompileOnly]
-
-        BasiliskPluginResolutionStrategy.applyTo(project)
     }
 
     private void applyDefaultPlugins(Project project) {
@@ -76,25 +59,9 @@ class BasiliskPlugin implements Plugin<Project> {
         }
     }
 
-    private void adjustJavadocClasspath(Project project, String sourceSetName) {
-        project.javadoc.classpath += [project.configurations.compileOnly]
-    }
-
-    private void adjustIdeClasspaths(Project project) {
-        // adjust Eclipse classpath, but only if EclipsePlugin is applied
-        project.plugins.withId('eclipse') {
-            project.eclipse.classpath.plusConfigurations += [project.configurations.compileOnly]
-            project.eclipse.classpath.plusConfigurations += [project.configurations.testCompileOnly]
-        }
-
-        // adjust IntelliJ classpath
-        project.idea.module.scopes.PROVIDED.plus += [project.configurations.compileOnly]
-        project.idea.module.scopes.PROVIDED.plus += [project.configurations.testCompileOnly]
-    }
-
     private void configureDefaultSourceSets(Project project, String sourceSetName) {
         // configure default source directories
-        project.sourceSets.main[sourceSetName].srcDirs = [
+        project.sourceSets.main[sourceSetName].srcDirs += [
             'basilisk-app/conf',
             'basilisk-app/controllers',
             'basilisk-app/models',
@@ -104,7 +71,7 @@ class BasiliskPlugin implements Plugin<Project> {
             'src/main/' + sourceSetName
         ]
         // configure default resource directories
-        project.sourceSets.main.resources.srcDirs = [
+        project.sourceSets.main.resources.srcDirs += [
             'basilisk-app/resources',
             'basilisk-app/i18n',
             'src/main/resources'
@@ -220,7 +187,14 @@ class BasiliskPlugin implements Plugin<Project> {
         project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void projectsEvaluated(Gradle gradle) {
-                project.repositories.mavenLocal()
+                if (extension.includeDefaultRepositories) {
+                    project.repositories.mavenLocal()
+                    // enable jcenter
+                    project.repositories.jcenter()
+                    // enable basilisk-plugins @ bintray
+                    project.repositories.maven { url 'http://dl.bintray.com/basilisk/basilisk-plugins' }
+                    project.repositories.maven { url 'https://dl.bintray.com/melix/thirdparty-apache' }
+                }
 
                 // add default dependencies
                 appendDependency('core')
@@ -231,6 +205,8 @@ class BasiliskPlugin implements Plugin<Project> {
                 project.plugins.withId('application') { plugin ->
                     configureApplicationSettings(project, extension)
                 }
+
+                BasiliskPluginResolutionStrategy.applyTo(project)
 
                 processMainResources(project, extension)
                 processTestResources(project, extension)

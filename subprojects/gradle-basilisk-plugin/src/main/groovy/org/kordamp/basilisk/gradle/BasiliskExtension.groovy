@@ -25,6 +25,8 @@ class BasiliskExtension {
 
     boolean disableDependencyResolution
 
+    boolean includeDefaultRepositories = true
+
     String applicationIconName = 'basilisk.icns'
 
     Map applicationProperties = [:]
