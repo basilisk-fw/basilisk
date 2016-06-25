@@ -1,5 +1,5 @@
 = Basilisk
-:github-branch: master
+:github-branch: development
 
 image:https://ci.appveyor.com/api/projects/status/s1n73p7bpfu2832s/branch/{github-branch}?svg=true[Build Status (appveyor)", link="https://ci.appveyor.com/project/aalmiray/basilisk/branch/{github-branch}"]
 image:http://img.shields.io/travis/basilisk-fw/basilisk/{github-branch}.svg["Build Status (travis)", link="https://travis-ci.org/basilisk-fw/basilisk"]
