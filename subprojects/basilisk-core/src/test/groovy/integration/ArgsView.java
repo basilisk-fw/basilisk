@@ -15,46 +15,19 @@
  */
 package integration;
 
-import basilisk.core.mvc.MVCGroup;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
 
-public class ChildView extends AbstractBasiliskView implements Invokable {
-    private ChildController controller;
-    private ChildModel model;
-    private MVCGroup parentGroup;
-    private RootView parentView;
+public class ArgsView extends AbstractBasiliskView implements Invokable {
+    private ArgsController controller;
+    private ArgsModel model;
     private boolean invoked;
 
-    public ChildController getController() {
-        return controller;
-    }
-
-    public void setController(ChildController controller) {
+    public void setController(ArgsController controller) {
         this.controller = controller;
     }
 
-    public ChildModel getModel() {
-        return model;
-    }
-
-    public void setModel(ChildModel model) {
+    public void setModel(ArgsModel model) {
         this.model = model;
-    }
-
-    public MVCGroup getParentGroup() {
-        return parentGroup;
-    }
-
-    public void setParentGroup(MVCGroup parentGroup) {
-        this.parentGroup = parentGroup;
-    }
-
-    public RootView getParentView() {
-        return parentView;
-    }
-
-    public void setParentView(RootView parentView) {
-        this.parentView = parentView;
     }
 
     @Override
