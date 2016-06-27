@@ -16,7 +16,7 @@ image:https://badges.gitter.im/Join%20Chat.svg[link="https://gitter.im/basilisk-
 
 ---
 
-http://basilisk-framework.org[Basilisk] is desktop/mobile application development platform
+Basilisk is desktop/mobile application development platform
 for the JVM. Inspired by http://griffon-framework.org[Griffon], Basilisk leverages JavaFX
 and JavafXPorts to bring the same codebase to desktop and mobile platforms alike.
 
