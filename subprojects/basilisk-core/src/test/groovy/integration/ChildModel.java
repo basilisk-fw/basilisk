@@ -16,6 +16,7 @@
 package integration;
 
 import basilisk.core.mvc.MVCGroup;
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskModel;
 
 public class ChildModel extends AbstractBasiliskModel {
@@ -26,6 +27,7 @@ public class ChildModel extends AbstractBasiliskModel {
         return parentGroup;
     }
 
+    @MVCMember
     public void setParentGroup(MVCGroup parentGroup) {
         this.parentGroup = parentGroup;
     }
@@ -34,6 +36,7 @@ public class ChildModel extends AbstractBasiliskModel {
         return parentModel;
     }
 
+    @MVCMember
     public void setParentModel(RootModel parentModel) {
         this.parentModel = parentModel;
     }

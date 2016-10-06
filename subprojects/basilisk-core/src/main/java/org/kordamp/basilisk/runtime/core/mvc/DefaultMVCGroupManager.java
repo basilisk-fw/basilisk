@@ -32,6 +32,7 @@ import basilisk.exceptions.MVCGroupInstantiationException;
 import basilisk.exceptions.NewInstanceException;
 import basilisk.exceptions.PropertyException;
 import basilisk.inject.Contextual;
+import basilisk.inject.MVCMember;
 import basilisk.util.CollectionUtils;
 import com.googlecode.openbeans.PropertyDescriptor;
 import org.kordamp.basilisk.runtime.core.injection.InjectionUnitOfWork;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,6 +62,7 @@ import static basilisk.util.AnnotationUtils.namesFor;
 import static basilisk.util.BasiliskClassUtils.getAllDeclaredFields;
 import static basilisk.util.BasiliskClassUtils.getPropertyDescriptors;
 import static basilisk.util.BasiliskClassUtils.setFieldValue;
+import static basilisk.util.BasiliskClassUtils.setPropertiesOrFieldsNoException;
 import static basilisk.util.BasiliskClassUtils.setPropertyOrFieldValueNoException;
 import static basilisk.util.BasiliskClassUtils.setPropertyValue;
 import static basilisk.util.BasiliskNameUtils.capitalize;
@@ -305,17 +308,200 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         // empty
     }
 
+    protected static abstract class InjectionPoint {
+        protected final String name;
+        protected final boolean nullable;
+        protected final Type type;
+
+        protected InjectionPoint(String name, boolean nullable, Type type) {
+            this.name = name;
+            this.nullable = nullable;
+            this.type = type;
+        }
+
+        protected enum Type {
+            MEMBER,
+            CONTEXTUAL,
+            OTHER
+        }
+
+        protected abstract void apply(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull Object instance, @Nonnull Map<String, Object> args);
+    }
+
+    protected static class FieldInjectionPoint extends InjectionPoint {
+        protected final Field field;
+
+        protected FieldInjectionPoint(String name, boolean nullable, Type type, Field field) {
+            super(name, nullable, type);
+            this.field = field;
+        }
+
+        @Override
+        protected void apply(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull Object instance, @Nonnull Map<String, Object> args) {
+            String[] keys = namesFor(field);
+            Object argValue = args.get(name);
+
+            if (type == Type.CONTEXTUAL) {
+                for (String key : keys) {
+                    if (group.getContext().containsKey(key)) {
+                        argValue = group.getContext().get(key);
+                        break;
+                    }
+                }
+            }
+
+            if (argValue == null) {
+                if (!nullable) {
+                    if (type == Type.CONTEXTUAL) {
+                        throw new IllegalStateException("Could not find an instance of type " +
+                            field.getType().getName() + " under keys '" + Arrays.toString(keys) +
+                            "' in the context of MVCGroup[" + group.getMvcType() + ":" + group.getMvcId() +
+                            "] to be injected on field '" + field.getName() +
+                            "' in " + type + " (" + instance.getClass().getName() + "). Field does not accept null values.");
+                    } else if (type == Type.MEMBER) {
+                        throw new IllegalStateException("Could not inject argument on field '"
+                            + name + "' in " + memberType + " (" + instance.getClass().getName() +
+                            "). Field does not accept null values.");
+                    }
+                }
+                return;
+            }
+
+            try {
+                setFieldValue(instance, name, argValue);
+                if (type == Type.OTHER) {
+                    LOG.warn("Field '" + name + "' in " + memberType + " (" + instance.getClass().getName() +
+                        ") must be annotated with @" + MVCMember.class.getName() + ".");
+                }
+            } catch (FieldException e) {
+                throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
+            }
+        }
+    }
+
+    protected static class MethodInjectionPoint extends InjectionPoint {
+        protected final Method method;
+
+        protected MethodInjectionPoint(String name, boolean nullable, Type type, Method method) {
+            super(name, nullable, type);
+            this.method = method;
+        }
+
+        @Override
+        protected void apply(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull Object instance, @Nonnull Map<String, Object> args) {
+            if (type == Type.CONTEXTUAL) {
+                String[] keys = namesFor(method);
+                Object argValue = args.get(name);
+
+                for (String key : keys) {
+                    if (group.getContext().containsKey(key)) {
+                        argValue = group.getContext().get(key);
+                        break;
+                    }
+                }
+
+                if (argValue == null && !nullable) {
+                    throw new IllegalStateException("Could not find an instance of type " +
+                        method.getParameterTypes()[0].getName() + " under keys '" + Arrays.toString(keys) +
+                        "' in the context of MVCGroup[" + group.getMvcType() + ":" + group.getMvcId() +
+                        "] to be injected on property '" + name +
+                        "' in " + type + " (" + instance.getClass().getName() + "). Property does not accept null values.");
+                }
+
+                try {
+                    method.invoke(instance, argValue);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
+                }
+            } else {
+                Object argValue = args.get(name);
+                if (argValue == null) {
+                    if (!nullable) {
+                        if (type == Type.MEMBER) {
+                            throw new IllegalStateException("Could not inject argument on property '" +
+                                name + "' in " + memberType + " (" + instance.getClass().getName() +
+                                "). Property does not accept null values.");
+                        }
+                    }
+                    return;
+                }
+
+                try {
+                    method.invoke(instance, argValue);
+                    if (type == Type.OTHER) {
+                        LOG.warn("Property '" + name + "' in " + memberType + " (" + instance.getClass().getName() +
+                            ") must be annotated with @" + MVCMember.class.getName() + ".");
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
+                }
+            }
+        }
+    }
+
     protected void fillReferencedProperties(@Nonnull MVCGroup group, @Nonnull Map<String, Object> args) {
         for (Map.Entry<String, Object> memberEntry : group.getMembers().entrySet()) {
             String memberType = memberEntry.getKey();
             Object member = memberEntry.getValue();
-            if (member instanceof BasiliskArtifact) {
-                fillArtifactMemberProperties(group, memberType, (BasiliskArtifact) member, args);
-            } else {
-                fillNonArtifactMemberProperties(group, memberType, member, args);
+
+            Map<String, Object> argsCopy = new LinkedHashMap<>(args);
+
+            Map<String, Field> fields = new LinkedHashMap<>();
+            for (Field field : getAllDeclaredFields(member.getClass())) {
+                fields.put(field.getName(), field);
             }
-            fillContextualMemberProperties(group, memberType, member);
+            Map<String, InjectionPoint> injectionPoints = new LinkedHashMap<>();
+            for (PropertyDescriptor descriptor : getPropertyDescriptors(member.getClass())) {
+                Method method = descriptor.getWriteMethod();
+                if (method == null || isInjectable(method)) { continue; }
+                boolean nullable = findAnnotation(annotationsOfMethodParameter(method, 0), Nonnull.class) == null;
+                InjectionPoint.Type type = resolveType(method);
+                Field field = fields.get(descriptor.getName());
+                if (field != null && type == InjectionPoint.Type.OTHER) {
+                    type = resolveType(field);
+                    nullable = field.getAnnotation(Nonnull.class) == null;
+                }
+                injectionPoints.put(descriptor.getName(), new MethodInjectionPoint(descriptor.getName(), nullable, type, method));
+            }
+
+            for (Field field : getAllDeclaredFields(member.getClass())) {
+                if (Modifier.isStatic(field.getModifiers()) || isInjectable(field)) { continue; }
+                if (!injectionPoints.containsKey(field.getName())) {
+                    boolean nullable = field.getAnnotation(Nonnull.class) == null;
+                    InjectionPoint.Type type = resolveType(field);
+                    injectionPoints.put(field.getName(), new FieldInjectionPoint(field.getName(), nullable, type, field));
+                }
+            }
+
+            for (InjectionPoint ip : injectionPoints.values()) {
+                ip.apply(group, memberType, member, args);
+                argsCopy.remove(ip.name);
+            }
+
+            setPropertiesOrFieldsNoException(member, argsCopy);
         }
+    }
+
+    @Nonnull
+    protected InjectionPoint.Type resolveType(@Nonnull AnnotatedElement element) {
+        if (isContextual(element)) {
+            return InjectionPoint.Type.CONTEXTUAL;
+        } else if (isMvcMember(element)) {
+            return InjectionPoint.Type.MEMBER;
+        }
+        return InjectionPoint.Type.OTHER;
+    }
+
+    protected boolean isContextual(AnnotatedElement element) {
+        return element != null && element.getAnnotation(Contextual.class) != null;
+    }
+
+    protected boolean isInjectable(AnnotatedElement element) {
+        return element != null && element.getAnnotation(Inject.class) != null;
+    }
+
+    protected boolean isMvcMember(AnnotatedElement element) {
+        return element != null && element.getAnnotation(MVCMember.class) != null;
     }
 
     protected void fillArtifactMemberProperties(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull BasiliskArtifact member, @Nonnull Map<String, Object> args) {

@@ -16,15 +16,19 @@
 package integration;
 
 import basilisk.core.mvc.MVCGroup;
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 
 public class SimpleController extends AbstractBasiliskController {
     private SimpleModel model;
     private String key;
     private String mvcId;
+    @MVCMember
     private MVCGroup parentGroup;
+    @MVCMember
     private IntegrationModel parentModel;
 
+    @MVCMember
     public void setModel(SimpleModel model) {
         this.model = model;
     }
@@ -33,6 +37,7 @@ public class SimpleController extends AbstractBasiliskController {
         return mvcId;
     }
 
+    @MVCMember
     public void setMvcId(String mvcId) {
         this.mvcId = mvcId;
     }

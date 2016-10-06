@@ -15,6 +15,7 @@
  */
 package integration;
 
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
 
 public class SimpleView extends AbstractBasiliskView implements Invokable {
@@ -22,10 +23,12 @@ public class SimpleView extends AbstractBasiliskView implements Invokable {
     private SimpleModel model;
     private boolean invoked;
 
+    @MVCMember
     public void setController(SimpleController controller) {
         this.controller = controller;
     }
 
+    @MVCMember
     public void setModel(SimpleModel model) {
         this.model = model;
     }

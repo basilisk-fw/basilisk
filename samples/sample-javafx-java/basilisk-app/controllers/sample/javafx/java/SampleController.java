@@ -16,9 +16,11 @@
 package sample.javafx.java;
 
 import basilisk.core.artifact.BasiliskController;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 @ArtifactProviderFor(BasiliskController.class)
@@ -28,7 +30,8 @@ public class SampleController extends AbstractBasiliskController {
     @Inject
     private SampleService sampleService;                                //<2>
 
-    public void setModel(SampleModel model) {
+    @MVCMember
+    public void setModel(@Nonnull SampleModel model) {
         this.model = model;
     }
 

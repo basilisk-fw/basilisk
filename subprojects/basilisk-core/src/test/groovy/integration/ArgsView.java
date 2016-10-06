@@ -15,18 +15,23 @@
  */
 package integration;
 
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
+
+import javax.annotation.Nonnull;
 
 public class ArgsView extends AbstractBasiliskView implements Invokable {
     private ArgsController controller;
     private ArgsModel model;
     private boolean invoked;
 
-    public void setController(ArgsController controller) {
+    @MVCMember
+    public void setController(@Nonnull ArgsController controller) {
         this.controller = controller;
     }
 
-    public void setModel(ArgsModel model) {
+    @MVCMember
+    public void setModel(@Nonnull ArgsModel model) {
         this.model = model;
     }
 

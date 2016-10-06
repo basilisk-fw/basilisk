@@ -15,6 +15,7 @@
  */
 package integration;
 
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 
 import javax.annotation.Nonnull;
@@ -24,10 +25,12 @@ public class RootController extends AbstractBasiliskController {
     private RootModel model;
     private RootView view;
 
+    @MVCMember
     public void setModel(RootModel model) {
         this.model = model;
     }
 
+    @MVCMember
     public void setView(RootView view) {
         this.view = view;
     }

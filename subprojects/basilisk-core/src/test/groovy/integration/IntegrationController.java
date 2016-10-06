@@ -16,6 +16,7 @@
 package integration;
 
 import basilisk.inject.Contextual;
+import basilisk.inject.MVCMember;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 
 import javax.annotation.Nonnull;
@@ -29,7 +30,8 @@ public class IntegrationController extends AbstractBasiliskController {
     @Inject
     private IntegrationService sampleService;
 
-    public void setModel(IntegrationModel model) {
+    @MVCMember
+    public void setModel(@Nonnull IntegrationModel model) {
         this.model = model;
     }
 

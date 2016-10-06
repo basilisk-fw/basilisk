@@ -1,6 +1,7 @@
 package ${project_package};
 
 import basilisk.core.artifact.BasiliskView;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import basilisk.util.BasiliskApplicationUtils;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.basilisk.runtime.javafx.artifact.AbstractJavaFXBasiliskView;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 @ArtifactProviderFor(BasiliskView.class)
@@ -25,11 +27,13 @@ public class ${project_class_name}View extends AbstractJavaFXBasiliskView {
     @FXML
     private Label clickLabel;
 
-    public void setController(${project_class_name}Controller controller) {
+    @MVCMember
+    public void setController(@Nonnull ${project_class_name}Controller controller) {
         this.controller = controller;
     }
 
-    public void setModel(${project_class_name}Model model) {
+    @MVCMember
+    public void setModel(@Nonnull ${project_class_name}Model model) {
         this.model = model;
     }
 
@@ -40,7 +44,7 @@ public class ${project_class_name}View extends AbstractJavaFXBasiliskView {
         stage.setTitle(getApplication().getConfiguration().getAsString("application.title"));
         stage.setScene(init());
         stage.sizeToScene();
-        getApplication().getWindowManager().attach("mainWindow", stage);
+        getApplication().getWindowManager().attach("${name}", stage);
     }
 
     // build the UI

@@ -16,6 +16,7 @@
 package sample.javafx.java;
 
 import basilisk.core.artifact.BasiliskView;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -27,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.kordamp.basilisk.runtime.javafx.artifact.AbstractJavaFXBasiliskView;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 @ArtifactProviderFor(BasiliskView.class)
@@ -39,11 +41,13 @@ public class SampleView extends AbstractJavaFXBasiliskView {
     @FXML
     private Label output;                                                 //<2>
 
-    public void setController(SampleController controller) {
+    @MVCMember
+    public void setController(@Nonnull SampleController controller) {
         this.controller = controller;
     }
 
-    public void setModel(SampleModel model) {
+    @MVCMember
+    public void setModel(@Nonnull SampleModel model) {
         this.model = model;
     }
 

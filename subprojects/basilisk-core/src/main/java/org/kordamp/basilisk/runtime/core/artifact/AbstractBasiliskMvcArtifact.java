@@ -22,6 +22,7 @@ import basilisk.core.artifact.BasiliskView;
 import basilisk.core.mvc.MVCFunction;
 import basilisk.core.mvc.MVCGroup;
 import basilisk.core.mvc.MVCGroupFunction;
+import basilisk.inject.MVCMember;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,6 +38,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class AbstractBasiliskMvcArtifact extends AbstractBasiliskArtifact implements BasiliskMvcArtifact {
     private MVCGroup group;
 
+    @MVCMember
     public void setMvcGroup(@Nonnull MVCGroup group) {
         this.group = requireNonNull(group, "Argument 'group' must not be null");
     }
