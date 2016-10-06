@@ -290,15 +290,12 @@ public final class BasiliskApplicationUtils {
             version = "1.8";
         }
 
-        switch (version) {
-            case "1.9":
-                isJdk9 = true;
-                isJdk8 = true;
-                break;
-            default:
-                isJdk9 = false;
-                isJdk8 = false;
-                break;
+        if (version.startsWith("9")) {
+            isJdk9 = true;
+            isJdk8 = true;
+        } else {
+            isJdk9 = false;
+            isJdk8 = false;
         }
 
         platform = basePlatform + (is64Bit && !isSolaris ? "64" : "");
@@ -307,7 +304,7 @@ public final class BasiliskApplicationUtils {
     @Nonnull
     @SuppressWarnings("ConstantConditions")
     public static Locale parseLocale(@Nullable String locale) {
-        if (isBlank(locale)) return Locale.getDefault();
+        if (isBlank(locale)) { return Locale.getDefault(); }
         String[] parts = locale.split("_");
         switch (parts.length) {
             case 1:
