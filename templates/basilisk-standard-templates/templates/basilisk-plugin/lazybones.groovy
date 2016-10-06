@@ -27,7 +27,7 @@ props.project_group = ask("Define value for 'group' [org.kordamp.basilisk.plugin
 props.project_version = ask("Define value for 'version' [0.1.0-SNAPSHOT]: ", "0.1.0-SNAPSHOT", "version")
 props.project_package = ask("Define value for 'package' [org.kordamp.basilisk.runtime." + pluginName + "]: ",
     'org.kordamp.basilisk.runtime.' + pluginName, "package")
-props.basilisk_version = ask("Define value for 'basiliskVersion' [0.3.0-SNAPSHOT]: ", "0.3.0-SNAPSHOT", "basiliskVersion")
+props.basilisk_version = ask("Define value for 'basiliskVersion' [0.3.0]: ", "0.3.0", "basiliskVersion")
 props.project_website = ask("Define value for 'website' [http://artifacts.basilisk-framework.org/plugin/" + pluginName + "]: ",
     "http://artifacts.basilisk-framework.org/plugin/" + pluginName, "website")
 props.project_issue_tracker = ask("Define value for 'issueTracker' [http://artifacts.basilisk-framework.org/plugin/" + pluginName + "/issues]: ",
