@@ -1163,7 +1163,7 @@ public final class JavaFXUtils {
      *
      * @param <T> the type of the input to the predicate
      *
-     * @authot Andres Almiray
+     * @author Andres Almiray
      * @since 0.2.0
      */
     public interface Predicate<T> {
