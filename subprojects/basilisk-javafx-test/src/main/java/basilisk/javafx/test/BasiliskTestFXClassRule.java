@@ -35,7 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import static basilisk.javafx.test.TestContext.getTestContext;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
-import static com.jayway.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.await;
 import static java.util.Objects.requireNonNull;
 
 /**
