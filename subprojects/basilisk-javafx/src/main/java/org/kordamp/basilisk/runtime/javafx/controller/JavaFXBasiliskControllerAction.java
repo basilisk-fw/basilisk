@@ -45,14 +45,6 @@ import static java.util.Objects.requireNonNull;
  * @author Andres Almiray
  */
 public class JavaFXBasiliskControllerAction extends AbstractAction {
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_ICON = "icon";
-    public static final String KEY_IMAGE = "image";
-    public static final String KEY_GRAPHIC = "graphic";
-    public static final String KEY_SELECTED = "selected";
-    public static final String KEY_VISIBLE = "visible";
-    public static final String KEY_ACCELERATOR = "accelerator";
-    public static final String KEY_STYLECLASS = "styleClass";
     private final JavaFXAction toolkitAction;
 
     private StringProperty description;
@@ -61,6 +53,9 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
     private ObjectProperty<Node> graphic;
     private StringProperty accelerator;
     private StringProperty styleClass;
+    private StringProperty style;
+    private StringProperty graphicStyleClass;
+    private StringProperty graphicStyle;
     private BooleanProperty selected;
     private BooleanProperty visible;
 
@@ -164,6 +159,39 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
                 });
             }
         });
+        styleProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setStyle(n);
+                    }
+                });
+            }
+        });
+        graphicStyleClassProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setGraphicStyleClass(n);
+                    }
+                });
+            }
+        });
+        graphicStyleProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> v, String o, final String n) {
+                uiThreadManager.runInsideUIAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        toolkitAction.setGraphicStyle(n);
+                    }
+                });
+            }
+        });
         selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> v, Boolean o, final Boolean n) {
@@ -238,6 +266,30 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
             styleClass = new SimpleStringProperty(this, "styleClass");
         }
         return styleClass;
+    }
+
+    @Nonnull
+    public StringProperty styleProperty() {
+        if (style == null) {
+            style = new SimpleStringProperty(this, "style");
+        }
+        return style;
+    }
+
+    @Nonnull
+    public StringProperty graphicStyleClassProperty() {
+        if (graphicStyleClass == null) {
+            graphicStyleClass = new SimpleStringProperty(this, "graphicStyleClass");
+        }
+        return graphicStyleClass;
+    }
+
+    @Nonnull
+    public StringProperty graphicStyleProperty() {
+        if (graphicStyle == null) {
+            graphicStyle = new SimpleStringProperty(this, "graphicStyle");
+        }
+        return graphicStyle;
     }
 
     @Nonnull
@@ -317,6 +369,33 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         styleClassProperty().set(styleClass);
     }
 
+    @Nullable
+    public String getStyle() {
+        return styleProperty().get();
+    }
+
+    public void setStyle(@Nullable String style) {
+        styleProperty().set(style);
+    }
+
+    @Nullable
+    public String getGraphicStyleClass() {
+        return graphicStyleClassProperty().get();
+    }
+
+    public void setGraphicStyleClass(@Nullable String graphicStyleClass) {
+        graphicStyleClassProperty().set(graphicStyleClass);
+    }
+
+    @Nullable
+    public String getGraphicStyle() {
+        return graphicStyleProperty().get();
+    }
+
+    public void setGraphicStyle(@Nullable String graphicStyle) {
+        graphicStyleProperty().set(graphicStyle);
+    }
+
     public boolean isSelected() {
         return selectedProperty().get();
     }
@@ -354,11 +433,14 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         toolkitAction.setSelected(isSelected());
         toolkitAction.setVisible(isVisible());
         String accelerator = getAccelerator();
-        if (!isBlank(accelerator)) toolkitAction.setAccelerator(accelerator);
-        if (!isBlank(getStyleClass())) toolkitAction.setStyleClass(getStyleClass());
+        if (!isBlank(accelerator)) { toolkitAction.setAccelerator(accelerator); }
+        if (!isBlank(getStyle())) { toolkitAction.setStyle(getStyle()); }
+        if (!isBlank(getStyleClass())) { toolkitAction.setStyleClass(getStyleClass()); }
         String icon = getIcon();
-        if (!isBlank(icon)) toolkitAction.setIcon(icon);
-        if (null != getImage()) toolkitAction.setImage(convertImage(getImage()));
-        if (null != getGraphic()) toolkitAction.setGraphic(getGraphic());
+        if (!isBlank(icon)) { toolkitAction.setIcon(icon); }
+        if (null != getImage()) { toolkitAction.setImage(convertImage(getImage())); }
+        if (null != getGraphic()) { toolkitAction.setGraphic(getGraphic()); }
+        if (!isBlank(getGraphicStyle())) { toolkitAction.setGraphicStyle(getGraphicStyle()); }
+        if (!isBlank(getGraphicStyleClass())) { toolkitAction.setGraphicStyleClass(getGraphicStyleClass()); }
     }
 }
