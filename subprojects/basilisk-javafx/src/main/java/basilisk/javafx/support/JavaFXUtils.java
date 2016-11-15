@@ -253,15 +253,26 @@ public final class JavaFXUtils {
         } else if (control instanceof MenuItem) {
             JavaFXUtils.configure(((MenuItem) control), action);
         } else if (control instanceof Node) {
-            ((Node) control).addEventHandler(ActionEvent.ACTION, action.getOnAction());
+            ((Node) control).addEventHandler(ActionEvent.ACTION, wrapAction(action));
         } else {
             // does it support the onAction property?
             try {
-                invokeInstanceMethod(control, "setOnAction", action.getOnAction());
+                invokeInstanceMethod(control, "setOnAction", wrapAction(action));
             } catch (InstanceMethodInvocationException imie) {
                 // ignore
             }
         }
+    }
+
+    private static EventHandler<ActionEvent> wrapAction(final @Nonnull JavaFXAction action) {
+        return new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (action.isEnabled()) {
+                    action.getOnAction().handle(event);
+                }
+            }
+        };
     }
 
     private static void runInsideUIThread(@Nonnull Runnable runnable) {
