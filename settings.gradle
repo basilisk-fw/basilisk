@@ -14,7 +14,7 @@ if (!appveyor) {
     include 'samples/sample-javafx-java'
 }
 if (fullBuild) {
-    include 'templates/basilisk-javafx-ios-templates'
+    include 'templates/basilisk-application-templates'
     include 'templates/basilisk-standard-templates'
 //    include 'docs/basilisk-guide'
 //    include 'docs/basilisk-site'

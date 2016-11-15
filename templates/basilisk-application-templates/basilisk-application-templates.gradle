@@ -19,5 +19,5 @@ apply from: rootProject.file('templates/shared-files/shared.gradle')
 lazybones {
     licenses = ['Apache-2.0']
     vcsUrl = 'https://github.com/basilisk-fw/basilisk'
-    template 'basilisk-javafx-ios' includes 'artifact'
+    template 'basilisk-application' includes 'artifact'
 }

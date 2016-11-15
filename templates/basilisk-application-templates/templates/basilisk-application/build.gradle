@@ -14,7 +14,7 @@ buildscript {
         classpath 'com.github.cr0:gradle-macappbundle-plugin:3.1.0'
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-        classpath 'org.javafxports:jfxmobile-plugin:1.0.9'
+        classpath 'org.javafxports:jfxmobile-plugin:1.1.1'
         classpath 'net.nemerosa:versioning:2.5.0'
     }
 }
@@ -68,8 +68,6 @@ dependencies {
     testCompile "org.spockframework:spock-core:\${spockVersion}"
 
     functionalTestCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
-
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 }
 
 compileGroovy.enabled = false
@@ -89,22 +87,6 @@ jfxmobile {
         forceLinkClasses = ['${project_package}.**.*', 'basilisk.**.*', 'org.kordamp.basilisk.**.*']
     }
 }
-
-retrolambda {
-    javaVersion JavaVersion.VERSION_1_7
-}
-
-// The following task is needed because Retrolambda places META-INF files at
-// build/retrolambda/main but they should be at build/classes/main
-// hardcoding paths for now
-task copyMetainf << {
-    copy {
-        from project.file("\${buildDir}/retrolambda/main")
-        into project.file("\${buildDir}/classes/main")
-    }
-}
-
-classes.finalizedBy copyMetainf
 
 task jacocoRootMerge(type: org.gradle.testing.jacoco.tasks.JacocoMerge, dependsOn: [test, jacocoTestReport, jacocoIntegrationTestReport, jacocoFunctionalTestReport]) {
     executionData = files(jacocoTestReport.executionData, jacocoIntegrationTestReport.executionData, jacocoFunctionalTestReport.executionData)

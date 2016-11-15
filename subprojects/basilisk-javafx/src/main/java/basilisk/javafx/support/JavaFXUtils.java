@@ -73,7 +73,6 @@ import static basilisk.util.BasiliskClassUtils.invokeExactInstanceMethod;
 import static basilisk.util.BasiliskClassUtils.invokeInstanceMethod;
 import static basilisk.util.BasiliskNameUtils.isBlank;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
-import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -697,7 +696,7 @@ public final class JavaFXUtils {
 
     public static void setStyle(@Nonnull Node node, @Nonnull String style) {
         requireNonNull(node, ERROR_CONTROL_NULL);
-        if (isNull(style)) { return; }
+        if (null == style) { return; }
         if (style.startsWith("&")) {
             // append style
             String nodeStyle = node.getStyle();
@@ -709,7 +708,7 @@ public final class JavaFXUtils {
 
     public static void setStyle(@Nonnull MenuItem node, @Nonnull String style) {
         requireNonNull(node, ERROR_CONTROL_NULL);
-        if (isNull(style)) { return; }
+        if (null == style) { return; }
         if (style.startsWith("&")) {
             // append style
             String nodeStyle = node.getStyle();
@@ -721,7 +720,7 @@ public final class JavaFXUtils {
 
     public static void setGraphicStyle(@Nonnull ButtonBase node, @Nonnull String graphicStyle) {
         requireNonNull(node, ERROR_CONTROL_NULL);
-        if (isNull(graphicStyle)) { return; }
+        if (null == graphicStyle) { return; }
         if (node.getGraphic() != null) {
             setStyle(node.getGraphic(), graphicStyle);
         }
@@ -729,7 +728,7 @@ public final class JavaFXUtils {
 
     public static void setGraphicStyle(@Nonnull MenuItem node, @Nonnull String graphicStyle) {
         requireNonNull(node, ERROR_CONTROL_NULL);
-        if (isNull(graphicStyle)) { return; }
+        if (null == graphicStyle) { return; }
         if (node.getGraphic() != null) {
             setStyle(node.getGraphic(), graphicStyle);
         }

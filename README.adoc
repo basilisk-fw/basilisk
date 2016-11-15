@@ -48,12 +48,12 @@ List all available templates by invoking the following command
     $ lazybones list
     Available templates in basilisk/basilisk-lazybones-templates
 
-        basilisk-javafx-ios
+        basilisk-application
         basilisk-plugin
 
 Select a starting template from the list and invoke the create command
 
-    $ lazybones create basilisk-javafx-ios sample
+    $ lazybones create basilisk-application sample
 
 Compile, run and test the project with any of these commands
 
