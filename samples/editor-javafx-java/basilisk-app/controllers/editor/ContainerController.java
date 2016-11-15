@@ -16,6 +16,7 @@
 package editor;
 
 import basilisk.core.artifact.BasiliskController;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import basilisk.transform.Threading;
 import basilisk.util.CollectionUtils;
@@ -28,8 +29,8 @@ import static basilisk.util.BasiliskNameUtils.isBlank;
 
 @ArtifactProviderFor(BasiliskController.class)
 public class ContainerController extends AbstractBasiliskController {
-    private ContainerModel model;
-    private ContainerView view;
+    @MVCMember private ContainerModel model;
+    @MVCMember private ContainerView view;
 
     @Threading(Threading.Policy.SKIP)
     public void open() {

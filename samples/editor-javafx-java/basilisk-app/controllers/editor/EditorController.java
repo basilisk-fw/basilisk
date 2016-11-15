@@ -16,6 +16,7 @@
 package editor;
 
 import basilisk.core.artifact.BasiliskController;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 
@@ -28,8 +29,8 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 @ArtifactProviderFor(BasiliskController.class)
 public class EditorController extends AbstractBasiliskController {
-    private EditorModel model;
-    private EditorView view;
+    @MVCMember private EditorModel model;
+    @MVCMember private EditorView view;
 
     @Override
     public void mvcGroupInit(@Nonnull Map<String, Object> args) {

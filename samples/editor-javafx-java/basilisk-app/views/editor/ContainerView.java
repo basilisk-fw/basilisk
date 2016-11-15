@@ -16,6 +16,7 @@
 package editor;
 
 import basilisk.core.artifact.BasiliskView;
+import basilisk.inject.MVCMember;
 import basilisk.core.controller.Action;
 import basilisk.metadata.ArtifactProviderFor;
 import javafx.fxml.FXML;
@@ -36,11 +37,10 @@ import java.util.Collections;
 
 @ArtifactProviderFor(BasiliskView.class)
 public class ContainerView extends AbstractJavaFXBasiliskView {
-    private ContainerController controller;
-    private ContainerModel model;
+    @MVCMember private ContainerController controller;
+    @MVCMember private ContainerModel model;
 
-    @FXML
-    private TabPane tabGroup;
+    @FXML private TabPane tabGroup;
 
     private FileChooser fileChooser;
 

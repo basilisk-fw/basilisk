@@ -16,6 +16,7 @@
 package editor;
 
 import basilisk.core.artifact.BasiliskView;
+import basilisk.inject.MVCMember;
 import basilisk.metadata.ArtifactProviderFor;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -26,12 +27,11 @@ import java.util.Objects;
 
 @ArtifactProviderFor(BasiliskView.class)
 public class EditorView extends AbstractJavaFXBasiliskView {
-    private EditorModel model;
-    private ContainerView parentView;
+    @MVCMember private EditorModel model;
+    @MVCMember private ContainerView parentView;
     private String tabName;
 
-    @FXML
-    private TextArea editor;
+    @FXML private TextArea editor;
 
     private Tab tab;
 
