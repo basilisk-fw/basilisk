@@ -20,6 +20,9 @@ import javafx.beans.value.ObservableValue;
 
 import javax.annotation.Nonnull;
 
+import static javafx.application.Platform.isFxApplicationThread;
+import static javafx.application.Platform.runLater;
+
 /**
  * @author Andres Almiray
  * @since 0.4.0
@@ -40,7 +43,16 @@ class UIThreadAwarePropertyBoolean extends AbstractUIThreadAwareProperty<Boolean
     }
 
     @Override
-    public void setValue(Boolean value) {
-        getDelegate().setValue(value);
+    public void setValue(final Boolean value) {
+        if (isFxApplicationThread()) {
+            getDelegate().setValue(value);
+        } else {
+            runLater(new Runnable() {
+                @Override
+                public void run() {
+                    getDelegate().setValue(value);
+                }
+            });
+        }
     }
 }

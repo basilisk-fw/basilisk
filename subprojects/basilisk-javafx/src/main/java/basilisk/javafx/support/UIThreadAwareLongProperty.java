@@ -23,6 +23,8 @@ import javafx.beans.value.ObservableValue;
 import javax.annotation.Nonnull;
 
 import static java.util.Objects.requireNonNull;
+import static javafx.application.Platform.isFxApplicationThread;
+import static javafx.application.Platform.runLater;
 
 /**
  * @author Andres Almiray
@@ -41,8 +43,17 @@ class UIThreadAwareLongProperty extends LongProperty implements UIThreadAware {
     }
 
     @Override
-    public void set(long value) {
-        delegate.set(value);
+    public void set(final long value) {
+        if (isFxApplicationThread()) {
+            delegate.set(value);
+        } else {
+            runLater(new Runnable() {
+                @Override
+                public void run() {
+                    delegate.set(value);
+                }
+            });
+        }
     }
 
     @Override
