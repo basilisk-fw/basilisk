@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareMapProperty<K, V> extends MapProperty<K, V> implements UIThreadAware {
     private final MapProperty<K, V> delegate;

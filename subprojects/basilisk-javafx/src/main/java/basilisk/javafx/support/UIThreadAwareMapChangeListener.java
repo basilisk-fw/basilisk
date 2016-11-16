@@ -25,7 +25,7 @@ import static javafx.application.Platform.runLater;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareMapChangeListener<K, V> implements MapChangeListener<K, V>, UIThreadAware {
     private final MapChangeListener<K, V> delegate;

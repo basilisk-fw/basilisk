@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareObjectProperty<T> extends ObjectProperty<T> implements UIThreadAware {
     private final ObjectProperty<T> delegate;

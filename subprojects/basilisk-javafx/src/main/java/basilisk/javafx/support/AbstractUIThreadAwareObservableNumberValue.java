@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class AbstractUIThreadAwareObservableNumberValue<T> implements ObservableNumberValue, UIThreadAware {
     private final ObservableNumberValue delegate;

@@ -17,7 +17,7 @@ package basilisk.javafx.support;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 interface UIThreadAware {
 

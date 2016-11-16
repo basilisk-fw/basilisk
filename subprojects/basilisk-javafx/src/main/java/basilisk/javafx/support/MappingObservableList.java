@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 public class MappingObservableList<T, S> extends TransformationList<T, S> {
     private static final String ERROR_MAPPER_NULL = "Argument 'mapper' must not be null";

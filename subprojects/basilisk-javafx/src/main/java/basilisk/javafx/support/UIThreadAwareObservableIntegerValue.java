@@ -19,7 +19,7 @@ import javafx.beans.value.ObservableIntegerValue;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareObservableIntegerValue extends AbstractUIThreadAwareObservableNumberValue<Integer> implements ObservableIntegerValue {
     UIThreadAwareObservableIntegerValue(ObservableIntegerValue delegate) {

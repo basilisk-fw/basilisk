@@ -19,7 +19,7 @@ import javafx.beans.value.ObservableDoubleValue;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareObservableDoubleValue extends AbstractUIThreadAwareObservableNumberValue<Double> implements ObservableDoubleValue {
     UIThreadAwareObservableDoubleValue(ObservableDoubleValue delegate) {

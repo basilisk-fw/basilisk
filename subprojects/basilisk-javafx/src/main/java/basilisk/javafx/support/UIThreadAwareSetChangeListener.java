@@ -25,7 +25,7 @@ import static javafx.application.Platform.runLater;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareSetChangeListener<E> implements SetChangeListener<E>, UIThreadAware {
     private final SetChangeListener<E> delegate;

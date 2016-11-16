@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 abstract class AbstractUIThreadAwareProperty<T> implements Property<T>, UIThreadAware {
     private final Property<T> delegate;

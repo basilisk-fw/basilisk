@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwarePropertyInteger extends AbstractUIThreadAwareProperty<Integer> implements Property<Integer> {
     UIThreadAwarePropertyInteger(@Nonnull Property<Integer> delegate) {

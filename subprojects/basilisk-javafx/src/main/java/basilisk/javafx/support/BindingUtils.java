@@ -73,7 +73,7 @@ import static javafx.beans.binding.Bindings.createStringBinding;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 public class BindingUtils {
     private static final String ERROR_ITEMS_NULL = "Argument 'items' must not be null";

@@ -26,7 +26,7 @@ import static javafx.application.Platform.runLater;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareInvalidationListener implements InvalidationListener, UIThreadAware {
     private final InvalidationListener delegate;

@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwarePropertyBoolean extends AbstractUIThreadAwareProperty<Boolean> implements Property<Boolean> {
     UIThreadAwarePropertyBoolean(@Nonnull Property<Boolean> delegate) {

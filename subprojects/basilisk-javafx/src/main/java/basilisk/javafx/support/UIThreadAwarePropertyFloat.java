@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwarePropertyFloat extends AbstractUIThreadAwareProperty<Float> implements Property<Float> {
     UIThreadAwarePropertyFloat(@Nonnull Property<Float> delegate) {

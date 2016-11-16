@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.9.0
+ * @since 0.4.0
  */
 class UIThreadAwareListProperty<E> extends ListProperty<E> implements UIThreadAware {
     private final ListProperty<E> delegate;
