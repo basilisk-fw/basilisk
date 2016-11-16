@@ -103,7 +103,7 @@ public final class JavaFXUtils {
      *
      * @since 0.2.0
      */
-    public static void setGriffonActionId(@Nonnull Node node, @Nonnull String actionId) {
+    public static void setBasiliskActionId(@Nonnull Node node, @Nonnull String actionId) {
         requireNonNull(node, ERROR_NODE_NULL);
         requireNonBlank(actionId, ERROR_ID_BLANK);
         node.getProperties().put(Action.class.getName(), actionId);
@@ -119,7 +119,7 @@ public final class JavaFXUtils {
      * @since 0.2.0
      */
     @Nullable
-    public static String getGriffonActionId(@Nonnull Node node) {
+    public static String getBasiliskActionId(@Nonnull Node node) {
         requireNonNull(node, ERROR_NODE_NULL);
         return (String) node.getProperties().get(Action.class.getName());
     }
@@ -132,7 +132,7 @@ public final class JavaFXUtils {
      *
      * @since 0.2.0
      */
-    public static void setGriffonActionId(@Nonnull MenuItem menuItem, @Nonnull String actionId) {
+    public static void setBasiliskActionId(@Nonnull MenuItem menuItem, @Nonnull String actionId) {
         requireNonNull(menuItem, ERROR_NODE_NULL);
         requireNonBlank(actionId, ERROR_ID_BLANK);
         menuItem.getProperties().put(Action.class.getName(), actionId);
@@ -148,7 +148,7 @@ public final class JavaFXUtils {
      * @since 0.2.0
      */
     @Nullable
-    public static String getGriffonActionId(@Nonnull MenuItem menuItem) {
+    public static String getBasiliskActionId(@Nonnull MenuItem menuItem) {
         requireNonNull(menuItem, ERROR_NODE_NULL);
         return (String) menuItem.getProperties().get(Action.class.getName());
     }
@@ -228,9 +228,9 @@ public final class JavaFXUtils {
                 @Override
                 public boolean test(@Nonnull Object arg) {
                     if (arg instanceof Node) {
-                        return actionName.equals(getGriffonActionId((Node) arg));
+                        return actionName.equals(getBasiliskActionId((Node) arg));
                     } else if (arg instanceof MenuItem) {
-                        return actionName.equals(getGriffonActionId((MenuItem) arg));
+                        return actionName.equals(getBasiliskActionId((MenuItem) arg));
                     }
                     return false;
                 }
