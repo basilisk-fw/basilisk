@@ -98,7 +98,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<String> mapAsObject(@Nonnull final ObservableStringValue observable) {
+    public static ObjectBinding<String> mapToObject(@Nonnull final ObservableStringValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<String>() {
             @Override
@@ -116,7 +116,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<Boolean> mapAsObject(@Nonnull final ObservableBooleanValue observable) {
+    public static ObjectBinding<Boolean> mapToObject(@Nonnull final ObservableBooleanValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<Boolean>() {
             @Override
@@ -134,7 +134,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<Integer> mapAsObject(@Nonnull final ObservableIntegerValue observable) {
+    public static ObjectBinding<Integer> mapToObject(@Nonnull final ObservableIntegerValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<Integer>() {
             @Override
@@ -152,7 +152,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<Long> mapAsObject(@Nonnull final ObservableLongValue observable) {
+    public static ObjectBinding<Long> mapToObject(@Nonnull final ObservableLongValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<Long>() {
             @Override
@@ -170,7 +170,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<Float> mapAsObject(@Nonnull final ObservableFloatValue observable) {
+    public static ObjectBinding<Float> mapToObject(@Nonnull final ObservableFloatValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<Float>() {
             @Override
@@ -188,7 +188,7 @@ public class BindingUtils {
      * @return an object binding.
      */
     @Nonnull
-    public static ObjectBinding<Double> mapAsObject(@Nonnull final ObservableDoubleValue observable) {
+    public static ObjectBinding<Double> mapToObject(@Nonnull final ObservableDoubleValue observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createObjectBinding(new Callable<Double>() {
             @Override
@@ -206,7 +206,7 @@ public class BindingUtils {
      * @return a boolean binding.
      */
     @Nonnull
-    public static BooleanBinding mapAsBoolean(@Nonnull final ObservableObjectValue<Boolean> observable) {
+    public static BooleanBinding mapToBoolean(@Nonnull final ObservableObjectValue<Boolean> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
             @Override
@@ -224,7 +224,7 @@ public class BindingUtils {
      * @return a integer binding.
      */
     @Nonnull
-    public static IntegerBinding mapAsInteger(@Nonnull final ObservableObjectValue<Integer> observable) {
+    public static IntegerBinding mapToInteger(@Nonnull final ObservableObjectValue<Integer> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createIntegerBinding(new Callable<Integer>() {
             @Override
@@ -242,7 +242,7 @@ public class BindingUtils {
      * @return a long binding.
      */
     @Nonnull
-    public static LongBinding mapAsLong(@Nonnull final ObservableObjectValue<Long> observable) {
+    public static LongBinding mapToLong(@Nonnull final ObservableObjectValue<Long> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createLongBinding(new Callable<Long>() {
             @Override
@@ -260,7 +260,7 @@ public class BindingUtils {
      * @return a float binding.
      */
     @Nonnull
-    public static FloatBinding mapAsFloat(@Nonnull final ObservableObjectValue<Float> observable) {
+    public static FloatBinding mapToFloat(@Nonnull final ObservableObjectValue<Float> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createFloatBinding(new Callable<Float>() {
             @Override
@@ -278,7 +278,7 @@ public class BindingUtils {
      * @return a double binding.
      */
     @Nonnull
-    public static DoubleBinding mapAsDouble(@Nonnull final ObservableObjectValue<Double> observable) {
+    public static DoubleBinding mapToDouble(@Nonnull final ObservableObjectValue<Double> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createDoubleBinding(new Callable<Double>() {
             @Override
@@ -296,7 +296,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static StringBinding mapAsString(@Nonnull final ObservableObjectValue<String> observable) {
+    public static StringBinding mapToString(@Nonnull final ObservableObjectValue<String> observable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         return createStringBinding(new Callable<String>() {
             @Override
@@ -1896,8 +1896,8 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static StringBinding join(@Nonnull final ObservableList<?> items, @Nullable final String delimiter) {
-        return join(items, delimiter, new Function<Object, String>() {
+    public static StringBinding joinList(@Nonnull final ObservableList<?> items, @Nullable final String delimiter) {
+        return joinList(items, delimiter, new Function<Object, String>() {
             @Override
             public String apply(Object obj) {
                 return String.valueOf(obj);
@@ -1915,7 +1915,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <T> StringBinding join(@Nonnull final ObservableList<T> items, @Nullable final String delimiter, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding joinList(@Nonnull final ObservableList<T> items, @Nullable final String delimiter, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         final String value = delimiter == null ? "" : delimiter;
@@ -1936,7 +1936,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static StringBinding join(@Nonnull final ObservableList<?> items, @Nonnull final ObservableValue<String> delimiter) {
+    public static StringBinding joinList(@Nonnull final ObservableList<?> items, @Nonnull final ObservableValue<String> delimiter) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
 
@@ -1968,7 +1968,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <T> StringBinding join(@Nonnull final ObservableList<T> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding joinList(@Nonnull final ObservableList<T> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1992,8 +1992,8 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static StringBinding join(@Nonnull final ObservableSet<?> items, @Nullable final String delimiter) {
-        return join(items, delimiter, new Function<Object, String>() {
+    public static StringBinding joinSet(@Nonnull final ObservableSet<?> items, @Nullable final String delimiter) {
+        return joinSet(items, delimiter, new Function<Object, String>() {
             @Override
             public String apply(Object o) {
                 return String.valueOf(o);
@@ -2011,7 +2011,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <T> StringBinding join(@Nonnull final ObservableSet<T> items, @Nullable final String delimiter, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding joinSet(@Nonnull final ObservableSet<T> items, @Nullable final String delimiter, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         final String value = delimiter == null ? "" : delimiter;
@@ -2032,7 +2032,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static StringBinding join(@Nonnull final ObservableSet<?> items, @Nonnull final ObservableValue<String> delimiter) {
+    public static StringBinding joinSet(@Nonnull final ObservableSet<?> items, @Nonnull final ObservableValue<String> delimiter) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
         final Function<Object, String> mapper = new Function<Object, String>() {
@@ -2061,7 +2061,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <T> StringBinding join(@Nonnull final ObservableSet<T> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding joinSet(@Nonnull final ObservableSet<T> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2085,8 +2085,8 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <K, V> StringBinding join(@Nonnull final ObservableMap<K, V> items, @Nullable final String delimiter) {
-        return join(items, delimiter, new Function<Map.Entry<K, V>, String>() {
+    public static <K, V> StringBinding joinMap(@Nonnull final ObservableMap<K, V> items, @Nullable final String delimiter) {
+        return joinMap(items, delimiter, new Function<Map.Entry<K, V>, String>() {
             @Override
             public String apply(Map.Entry<K, V> entry) {
                 return String.valueOf(entry.getKey()) + "=" + String.valueOf(entry.getValue());
@@ -2104,7 +2104,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <K, V> StringBinding join(@Nonnull final ObservableMap<K, V> items, @Nullable final String delimiter, @Nonnull final Function<Map.Entry<K, V>, String> mapper) {
+    public static <K, V> StringBinding joinMap(@Nonnull final ObservableMap<K, V> items, @Nullable final String delimiter, @Nonnull final Function<Map.Entry<K, V>, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         final String value = delimiter == null ? "," : delimiter;
@@ -2125,7 +2125,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <K, V> StringBinding join(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<String> delimiter) {
+    public static <K, V> StringBinding joinMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<String> delimiter) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
         final Function<Map.Entry<K, V>, String> mapper = new Function<Map.Entry<K, V>, String>() {
@@ -2154,7 +2154,7 @@ public class BindingUtils {
      * @return a string binding.
      */
     @Nonnull
-    public static <K, V> StringBinding join(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<Map.Entry<K, V>, String>> mapper) {
+    public static <K, V> StringBinding joinMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<String> delimiter, @Nonnull final ObservableValue<Function<Map.Entry<K, V>, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(delimiter, ERROR_DELIMITER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2274,7 +2274,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Boolean> mapper) {
+    public static <K, V> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2297,7 +2297,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Boolean> mapper) {
+    public static <K, V> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2321,7 +2321,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper) {
+    public static <K, V> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -2347,7 +2347,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper) {
+    public static <K, V> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -2373,7 +2373,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Integer> mapper) {
+    public static <K, V> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2396,7 +2396,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Integer> mapper) {
+    public static <K, V> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2420,7 +2420,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper) {
+    public static <K, V> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -2446,7 +2446,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper) {
+    public static <K, V> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -2472,7 +2472,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding reduceThenMapAsLong(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Long> mapper) {
+    public static <K, V> LongBinding reduceThenMapToLong(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2495,7 +2495,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding reduceThenMapAsLong(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Long> mapper) {
+    public static <K, V> LongBinding reduceThenMapToLong(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2519,7 +2519,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding reduceThenMapAsLong(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Long>> mapper) {
+    public static <K, V> LongBinding reduceThenMapToLong(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Long>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -2545,7 +2545,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding reduceThenMapAsLong(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Long>> mapper) {
+    public static <K, V> LongBinding reduceThenMapToLong(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Long>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -2571,7 +2571,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Float> mapper) {
+    public static <K, V> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2594,7 +2594,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Float> mapper) {
+    public static <K, V> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2618,7 +2618,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Float>> mapper) {
+    public static <K, V> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Float>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -2644,7 +2644,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Float>> mapper) {
+    public static <K, V> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Float>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -2670,7 +2670,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Double> mapper) {
+    public static <K, V> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2693,7 +2693,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Double> mapper) {
+    public static <K, V> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2717,7 +2717,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Double>> mapper) {
+    public static <K, V> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Double>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -2743,7 +2743,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Double>> mapper) {
+    public static <K, V> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, Double>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -2769,7 +2769,7 @@ public class BindingUtils {
      * @return a String binding
      */
     @Nonnull
-    public static <K, V> StringBinding reduceThenMapAsString(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, String> mapper) {
+    public static <K, V> StringBinding reduceThenMapToString(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2792,7 +2792,7 @@ public class BindingUtils {
      * @return a String binding
      */
     @Nonnull
-    public static <K, V> StringBinding reduceThenMapAsString(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, String> mapper) {
+    public static <K, V> StringBinding reduceThenMapToString(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final BinaryOperator<V> reducer, @Nonnull final Function<? super V, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -2816,7 +2816,7 @@ public class BindingUtils {
      * @return a String binding
      */
     @Nonnull
-    public static <K, V> StringBinding reduceThenMapAsString(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, String>> mapper) {
+    public static <K, V> StringBinding reduceThenMapToString(@Nonnull final ObservableMap<K, V> items, @Nullable final V defaultValue, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, String>> mapper) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -2842,7 +2842,7 @@ public class BindingUtils {
      * @return a String binding
      */
     @Nonnull
-    public static <K, V> StringBinding reduceThenMapAsString(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, String>> mapper) {
+    public static <K, V> StringBinding reduceThenMapToString(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<V> supplier, @Nonnull final ObservableValue<BinaryOperator<V>> reducer, @Nonnull final ObservableValue<Function<? super V, String>> mapper) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -2956,7 +2956,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
 
@@ -2980,7 +2980,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         final Function<? super T, String> mapperValue = resolveStringMapper(mapper);
@@ -3003,7 +3003,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3029,7 +3029,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3056,7 +3056,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3079,7 +3079,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3102,7 +3102,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3129,7 +3129,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3157,7 +3157,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3180,7 +3180,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3203,7 +3203,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3230,7 +3230,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3258,7 +3258,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3281,7 +3281,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3304,7 +3304,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3331,7 +3331,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3359,7 +3359,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3382,7 +3382,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3405,7 +3405,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3432,7 +3432,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3460,7 +3460,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3483,7 +3483,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3507,7 +3507,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3534,7 +3534,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3562,7 +3562,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, ? extends Number> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, ? extends Number> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3585,7 +3585,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Number> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Number> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3609,7 +3609,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, ? extends Number>> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableList<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, ? extends Number>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3636,7 +3636,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Number>> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Number>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3752,7 +3752,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         final Function<? super T, String> mapperValue = resolveStringMapper(mapper);
@@ -3775,7 +3775,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, String> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -3799,7 +3799,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3825,7 +3825,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding reduceThenMapAsString(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
+    public static <T> StringBinding reduceThenMapToString(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, String>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3852,7 +3852,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3875,7 +3875,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Integer> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3899,7 +3899,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3926,7 +3926,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding reduceThenMapAsInteger(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
+    public static <T> IntegerBinding reduceThenMapToInteger(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3954,7 +3954,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -3977,7 +3977,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Long> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4001,7 +4001,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4028,7 +4028,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding reduceThenMapAsLong(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
+    public static <T> LongBinding reduceThenMapToLong(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Long>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4056,7 +4056,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4079,7 +4079,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Float> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4103,7 +4103,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4130,7 +4130,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding reduceThenMapAsFloat(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
+    public static <T> FloatBinding reduceThenMapToFloat(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Float>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4158,7 +4158,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4181,7 +4181,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Double> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4205,7 +4205,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4232,7 +4232,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding reduceThenMapAsDouble(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
+    public static <T> DoubleBinding reduceThenMapToDouble(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Double>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4260,7 +4260,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4283,7 +4283,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Boolean> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4307,7 +4307,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4334,7 +4334,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding reduceThenMapAsBoolean(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
+    public static <T> BooleanBinding reduceThenMapToBoolean(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4362,7 +4362,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, ? extends Number> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, ? extends Number> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4385,7 +4385,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Number> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final BinaryOperator<T> reducer, @Nonnull final Function<? super T, Number> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4409,7 +4409,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, ? extends Number>> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableSet<T> items, @Nullable final T defaultValue, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, ? extends Number>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -4436,7 +4436,7 @@ public class BindingUtils {
      * @return a number binding
      */
     @Nonnull
-    public static <T> NumberBinding reduceThenMapAsNumber(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Number>> mapper) {
+    public static <T> NumberBinding reduceThenMapToNumber(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<BinaryOperator<T>> reducer, @Nonnull final ObservableValue<Function<? super T, Number>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -5896,7 +5896,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -5919,7 +5919,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -5943,7 +5943,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -5969,7 +5969,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -5996,7 +5996,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -6018,7 +6018,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super T, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6042,7 +6042,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -6068,7 +6068,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <T> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <T> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super T, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6095,7 +6095,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super V, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <K, V> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Boolean defaultValue, @Nonnull final Function<? super V, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6118,7 +6118,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super V, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
+    public static <K, V> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final Function<? super V, Boolean> mapper, @Nonnull final BinaryOperator<Boolean> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6142,7 +6142,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <K, V> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Boolean defaultValue, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createBooleanBinding(new Callable<Boolean>() {
@@ -6168,7 +6168,7 @@ public class BindingUtils {
      * @return a boolean binding
      */
     @Nonnull
-    public static <K, V> BooleanBinding mapAsBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
+    public static <K, V> BooleanBinding mapToBooleanThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<Function<? super V, Boolean>> mapper, @Nonnull final ObservableValue<BinaryOperator<Boolean>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6195,7 +6195,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6218,7 +6218,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6242,7 +6242,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -6268,7 +6268,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6295,7 +6295,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -6317,7 +6317,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super T, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6341,7 +6341,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -6367,7 +6367,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <T> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <T> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super T, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6394,7 +6394,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super V, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <K, V> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Integer defaultValue, @Nonnull final Function<? super V, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6417,7 +6417,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super V, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
+    public static <K, V> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final Function<? super V, Integer> mapper, @Nonnull final BinaryOperator<Integer> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6441,7 +6441,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <K, V> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Integer defaultValue, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createIntegerBinding(new Callable<Integer>() {
@@ -6467,7 +6467,7 @@ public class BindingUtils {
      * @return an integer binding
      */
     @Nonnull
-    public static <K, V> IntegerBinding mapAsIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
+    public static <K, V> IntegerBinding mapToIntegerThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<Function<? super V, Integer>> mapper, @Nonnull final ObservableValue<BinaryOperator<Integer>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6494,7 +6494,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Long defaultValue, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Long defaultValue, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6517,7 +6517,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6541,7 +6541,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -6567,7 +6567,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6594,7 +6594,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Long defaultValue, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Long defaultValue, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -6616,7 +6616,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super T, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6640,7 +6640,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -6666,7 +6666,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <T> LongBinding mapAsLongThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <T> LongBinding mapToLongThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super T, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6693,7 +6693,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding mapAsLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Long defaultValue, @Nonnull final Function<? super V, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <K, V> LongBinding mapToLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Long defaultValue, @Nonnull final Function<? super V, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6716,7 +6716,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding mapAsLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super V, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
+    public static <K, V> LongBinding mapToLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Long> supplier, @Nonnull final Function<? super V, Long> mapper, @Nonnull final BinaryOperator<Long> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6740,7 +6740,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding mapAsLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super V, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <K, V> LongBinding mapToLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Long defaultValue, @Nonnull final ObservableValue<Function<? super V, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createLongBinding(new Callable<Long>() {
@@ -6766,7 +6766,7 @@ public class BindingUtils {
      * @return a long binding
      */
     @Nonnull
-    public static <K, V> LongBinding mapAsLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super V, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
+    public static <K, V> LongBinding mapToLongThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<Function<? super V, Long>> mapper, @Nonnull final ObservableValue<BinaryOperator<Long>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6793,7 +6793,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Float defaultValue, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Float defaultValue, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6816,7 +6816,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6840,7 +6840,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -6866,7 +6866,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6893,7 +6893,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Float defaultValue, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Float defaultValue, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -6915,7 +6915,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super T, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -6939,7 +6939,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -6965,7 +6965,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <T> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <T> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super T, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -6992,7 +6992,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Float defaultValue, @Nonnull final Function<? super V, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <K, V> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Float defaultValue, @Nonnull final Function<? super V, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7015,7 +7015,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super V, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
+    public static <K, V> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Float> supplier, @Nonnull final Function<? super V, Float> mapper, @Nonnull final BinaryOperator<Float> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7039,7 +7039,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super V, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <K, V> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Float defaultValue, @Nonnull final ObservableValue<Function<? super V, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createFloatBinding(new Callable<Float>() {
@@ -7065,7 +7065,7 @@ public class BindingUtils {
      * @return a float binding
      */
     @Nonnull
-    public static <K, V> FloatBinding mapAsFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super V, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
+    public static <K, V> FloatBinding mapToFloatThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<Function<? super V, Float>> mapper, @Nonnull final ObservableValue<BinaryOperator<Float>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7092,7 +7092,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Double defaultValue, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Double defaultValue, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7115,7 +7115,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7139,7 +7139,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -7165,7 +7165,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7192,7 +7192,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Double defaultValue, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Double defaultValue, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -7214,7 +7214,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super T, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7238,7 +7238,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -7264,7 +7264,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <T> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <T> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super T, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7291,7 +7291,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Double defaultValue, @Nonnull final Function<? super V, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <K, V> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Double defaultValue, @Nonnull final Function<? super V, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7314,7 +7314,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super V, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
+    public static <K, V> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Double> supplier, @Nonnull final Function<? super V, Double> mapper, @Nonnull final BinaryOperator<Double> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7338,7 +7338,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super V, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <K, V> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final Double defaultValue, @Nonnull final ObservableValue<Function<? super V, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -7364,7 +7364,7 @@ public class BindingUtils {
      * @return a double binding
      */
     @Nonnull
-    public static <K, V> DoubleBinding mapAsDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super V, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
+    public static <K, V> DoubleBinding mapToDoubleThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<Function<? super V, Double>> mapper, @Nonnull final ObservableValue<BinaryOperator<Double>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7391,7 +7391,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableList<T> items, @Nullable final String defaultValue, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableList<T> items, @Nullable final String defaultValue, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7414,7 +7414,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7438,7 +7438,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableList<T> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableList<T> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -7464,7 +7464,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7491,7 +7491,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final String defaultValue, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final String defaultValue, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -7513,7 +7513,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super T, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7537,7 +7537,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableSet<T> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -7563,7 +7563,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <T> StringBinding mapAsStringThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <T> StringBinding mapToStringThenReduce(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super T, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7590,7 +7590,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <K, V> StringBinding mapAsStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final String defaultValue, @Nonnull final Function<? super V, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <K, V> StringBinding mapToStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final String defaultValue, @Nonnull final Function<? super V, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -7613,7 +7613,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <K, V> StringBinding mapAsStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super V, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
+    public static <K, V> StringBinding mapToStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<String> supplier, @Nonnull final Function<? super V, String> mapper, @Nonnull final BinaryOperator<String> reducer) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
@@ -7637,7 +7637,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <K, V> StringBinding mapAsStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super V, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <K, V> StringBinding mapToStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nullable final String defaultValue, @Nonnull final ObservableValue<Function<? super V, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createStringBinding(new Callable<String>() {
@@ -7663,7 +7663,7 @@ public class BindingUtils {
      * @return a string binding
      */
     @Nonnull
-    public static <K, V> StringBinding mapAsStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super V, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
+    public static <K, V> StringBinding mapToStringThenReduce(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<Function<? super V, String>> mapper, @Nonnull final ObservableValue<BinaryOperator<String>> reducer) {
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(reducer, ERROR_REDUCER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
