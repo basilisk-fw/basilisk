@@ -56,6 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -85,6 +86,9 @@ public class BindingUtils {
     private static final String ERROR_RUNNABLE_NULL = "Argument 'runnable' must not be null";
     private static final String ERROR_DELIMITER_NULL = "Argument 'delimiter' must not be null";
     private static final String ERROR_OBSERVABLE_NULL = "Argument 'observable' must not be null";
+    private static final String ERROR_OBSERVABLE1_NULL = "Argument 'observable1' must not be null";
+    private static final String ERROR_OBSERVABLE2_NULL = "Argument 'observable2' must not be null";
+    private static final String ERROR_DEFAULT_VALUE_NULL = "Argument 'defaultValue' must not be null";
 
     /**
      * Converts a string object observable value into an object binding.
@@ -4453,5 +4457,827 @@ public class BindingUtils {
                 return String.valueOf(obj);
             }
         };
+    }
+
+    /**
+     * Returns a boolean binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a boolean binding
+     */
+    @Nonnull
+    public static BooleanBinding mapBoolean(@Nonnull final ObservableValue<Boolean> observable1, @Nonnull final ObservableValue<Boolean> observable2, @Nonnull final Boolean defaultValue, @Nonnull final BiFunction<Boolean, Boolean, Boolean> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createBooleanBinding(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                Boolean value1 = observable1.getValue();
+                Boolean value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a boolean binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a boolean binding
+     */
+    @Nonnull
+    public static BooleanBinding mapBoolean(@Nonnull final ObservableValue<Boolean> observable1, @Nonnull final ObservableValue<Boolean> observable2, @Nonnull final Supplier<Boolean> supplier, @Nonnull final BiFunction<Boolean, Boolean, Boolean> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createBooleanBinding(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                Boolean value1 = observable1.getValue();
+                Boolean value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a boolean binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a boolean binding
+     */
+    @Nonnull
+    public static BooleanBinding mapBoolean(@Nonnull final ObservableValue<Boolean> observable1, @Nonnull final ObservableValue<Boolean> observable2, @Nonnull final Boolean defaultValue, @Nonnull final ObservableValue<BiFunction<Boolean, Boolean, Boolean>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createBooleanBinding(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                Boolean value1 = observable1.getValue();
+                Boolean value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<Boolean, Boolean, Boolean> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a boolean binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no value is present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a boolean binding
+     */
+    @Nonnull
+    public static BooleanBinding mapBoolean(@Nonnull final ObservableValue<Boolean> observable1, @Nonnull final ObservableValue<Boolean> observable2, @Nonnull final Supplier<Boolean> supplier, @Nonnull final ObservableValue<BiFunction<Boolean, Boolean, Boolean>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createBooleanBinding(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                Boolean value1 = observable1.getValue();
+                Boolean value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<Boolean, Boolean, Boolean> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns an integer binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an integer binding
+     */
+    @Nonnull
+    public static IntegerBinding mapInteger(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Integer defaultValue, @Nonnull final BiFunction<? super Number, ? super Number, Integer> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createIntegerBinding(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns an integer binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an integer binding
+     */
+    @Nonnull
+    public static IntegerBinding mapInteger(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Integer> supplier, @Nonnull final BiFunction<? super Number, ? super Number, Integer> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createIntegerBinding(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns an integer binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an integer binding
+     */
+    @Nonnull
+    public static IntegerBinding mapInteger(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Integer defaultValue, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Integer>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createIntegerBinding(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Integer> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns an integer binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no value is present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an integer binding
+     */
+    @Nonnull
+    public static IntegerBinding mapInteger(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Integer> supplier, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Integer>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createIntegerBinding(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Integer> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a long binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a long binding
+     */
+    @Nonnull
+    public static LongBinding mapLong(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Long defaultValue, @Nonnull final BiFunction<? super Number, ? super Number, Long> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createLongBinding(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a long binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a long binding
+     */
+    @Nonnull
+    public static LongBinding mapLong(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Long> supplier, @Nonnull final BiFunction<? super Number, ? super Number, Long> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createLongBinding(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a long binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a long binding
+     */
+    @Nonnull
+    public static LongBinding mapLong(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Long defaultValue, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Long>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createLongBinding(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Long> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a long binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no value is present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a long binding
+     */
+    @Nonnull
+    public static LongBinding mapLong(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Long> supplier, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Long>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createLongBinding(new Callable<Long>() {
+            @Override
+            public Long call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Long> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a float binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a float binding
+     */
+    @Nonnull
+    public static FloatBinding mapFloat(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Float defaultValue, @Nonnull final BiFunction<? super Number, ? super Number, Float> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createFloatBinding(new Callable<Float>() {
+            @Override
+            public Float call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a float binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a float binding
+     */
+    @Nonnull
+    public static FloatBinding mapFloat(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Float> supplier, @Nonnull final BiFunction<? super Number, ? super Number, Float> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createFloatBinding(new Callable<Float>() {
+            @Override
+            public Float call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a float binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a float binding
+     */
+    @Nonnull
+    public static FloatBinding mapFloat(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Float defaultValue, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Float>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createFloatBinding(new Callable<Float>() {
+            @Override
+            public Float call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Float> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a float binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no value is present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a float binding
+     */
+    @Nonnull
+    public static FloatBinding mapFloat(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Float> supplier, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Float>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createFloatBinding(new Callable<Float>() {
+            @Override
+            public Float call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Float> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a double binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a double binding
+     */
+    @Nonnull
+    public static DoubleBinding mapDouble(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Double defaultValue, @Nonnull final BiFunction<? super Number, ? super Number, Double> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createDoubleBinding(new Callable<Double>() {
+            @Override
+            public Double call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a double binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a double binding
+     */
+    @Nonnull
+    public static DoubleBinding mapDouble(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Double> supplier, @Nonnull final BiFunction<? super Number, ? super Number, Double> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createDoubleBinding(new Callable<Double>() {
+            @Override
+            public Double call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a double binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a double binding
+     */
+    @Nonnull
+    public static DoubleBinding mapDouble(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Double defaultValue, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Double>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createDoubleBinding(new Callable<Double>() {
+            @Override
+            public Double call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Double> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a double binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no value is present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a double binding
+     */
+    @Nonnull
+    public static DoubleBinding mapDouble(@Nonnull final ObservableValue<? extends Number> observable1, @Nonnull final ObservableValue<? extends Number> observable2, @Nonnull final Supplier<Double> supplier, @Nonnull final ObservableValue<BiFunction<? super Number, ? super Number, Double>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createDoubleBinding(new Callable<Double>() {
+            @Override
+            public Double call() throws Exception {
+                Number value1 = observable1.getValue();
+                Number value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super Number, ? super Number, Double> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return requireNonNull(supplier.get(), ERROR_DEFAULT_VALUE_NULL);
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns an object binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present, may be null.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an object binding
+     */
+    @Nonnull
+    public static <A, B, R> ObjectBinding<R> mapObject(@Nonnull final ObservableValue<A> observable1, @Nonnull final ObservableValue<B> observable2, @Nullable final R defaultValue, @Nonnull final BiFunction<? super A, ? super B, R> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createObjectBinding(new Callable<R>() {
+            @Override
+            public R call() throws Exception {
+                A value1 = observable1.getValue();
+                B value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns an object binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an object binding
+     */
+    @Nonnull
+    public static <A, B, R> ObjectBinding<R> mapObject(@Nonnull final ObservableValue<A> observable1, @Nonnull final ObservableValue<B> observable2, @Nonnull final Supplier<R> supplier, @Nonnull final BiFunction<? super A, ? super B, R> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createObjectBinding(new Callable<R>() {
+            @Override
+            public R call() throws Exception {
+                A value1 = observable1.getValue();
+                B value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return supplier.get();
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns an object binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present, may be null.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an object binding
+     */
+    @Nonnull
+    public static <A, B, R> ObjectBinding<R> mapObject(@Nonnull final ObservableValue<A> observable1, @Nonnull final ObservableValue<B> observable2, @Nullable final R defaultValue, @Nonnull final ObservableValue<BiFunction<? super A, ? super B, R>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createObjectBinding(new Callable<R>() {
+            @Override
+            public R call() throws Exception {
+                A value1 = observable1.getValue();
+                B value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super A, ? super B, R> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns an object binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return an object binding
+     */
+    @Nonnull
+    public static <A, B, R> ObjectBinding<R> mapObject(@Nonnull final ObservableValue<A> observable1, @Nonnull final ObservableValue<B> observable2, @Nonnull final Supplier<R> supplier, @Nonnull final ObservableValue<BiFunction<? super A, ? super B, R>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createObjectBinding(new Callable<R>() {
+            @Override
+            public R call() throws Exception {
+                A value1 = observable1.getValue();
+                B value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<? super A, ? super B, R> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return supplier.get();
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a string binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there are no values present.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a string binding
+     */
+    @Nonnull
+    public static StringBinding mapString(@Nonnull final ObservableValue<String> observable1, @Nonnull final ObservableValue<String> observable2, @Nullable final String defaultValue, @Nonnull final BiFunction<String, String, String> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createStringBinding(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                String value1 = observable1.getValue();
+                String value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a string binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a string binding
+     */
+    @Nonnull
+    public static StringBinding mapString(@Nonnull final ObservableValue<String> observable1, @Nonnull final ObservableValue<String> observable2, @Nonnull final Supplier<String> supplier, @Nonnull final BiFunction<String, String, String> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createStringBinding(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                String value1 = observable1.getValue();
+                String value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    return mapper.apply(value1, value2);
+                }
+                return supplier.get();
+            }
+        }, observable1, observable2);
+    }
+
+    /**
+     * Returns a string binding whose value is the combination of two observable values.
+     *
+     * @param observable1  the first observable value.
+     * @param observable2  the second observable value.
+     * @param defaultValue the value to be returned if there is no value present, may be null.
+     * @param mapper       a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a string binding
+     */
+    @Nonnull
+    public static StringBinding mapString(@Nonnull final ObservableValue<String> observable1, @Nonnull final ObservableValue<String> observable2, @Nullable final String defaultValue, @Nonnull final ObservableValue<BiFunction<String, String, String>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createStringBinding(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                String value1 = observable1.getValue();
+                String value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<String, String, String> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return defaultValue;
+            }
+        }, observable1, observable2, mapper);
+    }
+
+    /**
+     * Returns a string binding whose value is the combination of two observable values.
+     *
+     * @param observable1 the first observable value.
+     * @param observable2 the second observable value.
+     * @param supplier    a {@code Supplier} whose result is returned if no values are present.
+     * @param mapper      a non-interfering, stateless function to apply to the supplied values.
+     *
+     * @return a string binding
+     */
+    @Nonnull
+    public static StringBinding mapString(@Nonnull final ObservableValue<String> observable1, @Nonnull final ObservableValue<String> observable2, @Nonnull final Supplier<String> supplier, @Nonnull final ObservableValue<BiFunction<String, String, String>> mapper) {
+        requireNonNull(observable1, ERROR_OBSERVABLE1_NULL);
+        requireNonNull(observable2, ERROR_OBSERVABLE2_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(mapper, ERROR_MAPPER_NULL);
+        return createStringBinding(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                String value1 = observable1.getValue();
+                String value2 = observable2.getValue();
+                if (value1 != null && value2 != null) {
+                    BiFunction<String, String, String> function = mapper.getValue();
+                    return requireNonNull(function, ERROR_MAPPER_NULL).apply(value1, value2);
+                }
+                return supplier.get();
+            }
+        }, observable1, observable2, mapper);
     }
 }
