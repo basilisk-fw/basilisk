@@ -39,10 +39,11 @@ import basilisk.core.resources.ResourceInjector;
 import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
-import com.googlecode.openbeans.PropertyChangeEvent;
-import com.googlecode.openbeans.PropertyChangeListener;
-import com.googlecode.openbeans.PropertyChangeSupport;
 import javafx.application.Application;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -61,7 +62,6 @@ import java.util.concurrent.CountDownLatch;
 
 import static basilisk.util.AnnotationUtils.named;
 import static basilisk.util.BasiliskApplicationUtils.parseLocale;
-import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -74,14 +74,14 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
     public static final String[] EMPTY_ARGS = new String[0];
     private static final String ERROR_SHUTDOWN_HANDLER_NULL = "Argument 'shutdownHandler' must not be null";
     protected final Object[] lock = new Object[0];
-    protected final PropertyChangeSupport pcs;
     private final List<ShutdownHandler> shutdownHandlers = new ArrayList<>();
     private final Object shutdownLock = new Object();
     private final Logger log;
-    private Locale locale = Locale.getDefault();
-    private ApplicationPhase phase = ApplicationPhase.INITIALIZE;
     private String[] startupArgs;
     private Injector<?> injector;
+
+    private ObjectProperty<Locale> locale;
+    private ReadOnlyObjectWrapper<ApplicationPhase> phase;
 
     public AbstractJavaFXBasiliskApplication() {
         this(EMPTY_ARGS);
@@ -89,7 +89,6 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
 
     public AbstractJavaFXBasiliskApplication(@Nonnull String[] args) {
         requireNonNull(args, "Argument 'args' must not be null");
-        pcs = new PropertyChangeSupport(this);
         startupArgs = Arrays.copyOf(args, args.length);
         log = LoggerFactory.getLogger(getClass());
     }
@@ -111,52 +110,50 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
         shutdown();
     }
 
-    public void addPropertyChangeListener(@Nullable PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    public void addPropertyChangeListener(@Nullable String propertyName, @Nullable PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
-    }
-
-    public void removePropertyChangeListener(@Nullable PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(@Nullable String propertyName, @Nullable PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
-    }
-
-    @Nonnull
-    public PropertyChangeListener[] getPropertyChangeListeners() {
-        return pcs.getPropertyChangeListeners();
-    }
-
-    @Nonnull
-    public PropertyChangeListener[] getPropertyChangeListeners(@Nullable String propertyName) {
-        return pcs.getPropertyChangeListeners(propertyName);
-    }
-
-    protected void firePropertyChange(@Nonnull PropertyChangeEvent event) {
-        pcs.firePropertyChange(requireNonNull(event, "Argument 'event' must not be null"));
-    }
-
-    protected void firePropertyChange(@Nonnull String propertyName, @Nullable Object oldValue, @Nullable Object newValue) {
-        pcs.firePropertyChange(requireNonBlank(propertyName, "Argument 'propertyName' must not be blank"), oldValue, newValue);
-    }
-
     // ------------------------------------------------------
 
     @Nonnull
-    public Locale getLocale() {
+    @Override
+    public ObjectProperty<Locale> localeProperty() {
+        if (locale == null) {
+            locale = new SimpleObjectProperty<>(this, PROPERTY_LOCALE, Locale.getDefault());
+        }
         return locale;
     }
 
+    @Nonnull
+    @Override
+    public ReadOnlyObjectProperty<ApplicationPhase> phaseProperty() {
+        if (phase == null) {
+            phase = new ReadOnlyObjectWrapper<>(this, PROPERTY_PHASE, ApplicationPhase.INITIALIZE);
+        }
+        return phase.getReadOnlyProperty();
+    }
+
+    @Nonnull
+    @Override
+    public Locale getLocale() {
+        return localeProperty().get();
+    }
+
     public void setLocale(@Nonnull Locale locale) {
-        Locale oldValue = this.locale;
-        this.locale = locale;
+        requireNonNull(locale, "Argument 'locale' must not be null");
+        localeProperty().set(locale);
         Locale.setDefault(locale);
-        firePropertyChange(PROPERTY_LOCALE, oldValue, locale);
+    }
+
+    @Nonnull
+    @Override
+    public ApplicationPhase getPhase() {
+        return phaseProperty().get();
+    }
+
+    protected void setPhase(@Nonnull ApplicationPhase phase) {
+        requireNonNull(phase, "Argument 'phase' must not be null");
+        synchronized (lock) {
+            phaseProperty();
+            this.phase.set(phase);
+        }
     }
 
     @Nonnull
@@ -175,26 +172,12 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
 
     public void addShutdownHandler(@Nonnull ShutdownHandler handler) {
         requireNonNull(handler, ERROR_SHUTDOWN_HANDLER_NULL);
-        if (!shutdownHandlers.contains(handler)) shutdownHandlers.add(handler);
+        if (!shutdownHandlers.contains(handler)) { shutdownHandlers.add(handler); }
     }
 
     public void removeShutdownHandler(@Nonnull ShutdownHandler handler) {
         requireNonNull(handler, ERROR_SHUTDOWN_HANDLER_NULL);
         shutdownHandlers.remove(handler);
-    }
-
-    @Nonnull
-    public ApplicationPhase getPhase() {
-        synchronized (lock) {
-            return this.phase;
-        }
-    }
-
-    protected void setPhase(@Nonnull ApplicationPhase phase) {
-        requireNonNull(phase, "Argument 'phase' must not be null");
-        synchronized (lock) {
-            firePropertyChange(PROPERTY_PHASE, this.phase, this.phase = phase);
-        }
     }
 
     @Nonnull
@@ -313,7 +296,7 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
     }
 
     public void ready() {
-        if (getPhase() != ApplicationPhase.STARTUP) return;
+        if (getPhase() != ApplicationPhase.STARTUP) { return; }
 
         showStartingWindow();
 
@@ -356,9 +339,9 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
     public boolean shutdown() {
         // avoids reentrant calls to shutdown()
         // once permission to quit has been granted
-        if (getPhase() == ApplicationPhase.SHUTDOWN) return false;
+        if (getPhase() == ApplicationPhase.SHUTDOWN) { return false; }
 
-        if (!canShutdown()) return false;
+        if (!canShutdown()) { return false; }
         log.info("Shutdown is in process");
 
         // signal that shutdown is in process
@@ -413,7 +396,7 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
 
     @SuppressWarnings("unchecked")
     public void startup() {
-        if (getPhase() != ApplicationPhase.INITIALIZE) return;
+        if (getPhase() != ApplicationPhase.INITIALIZE) { return; }
 
         setPhase(ApplicationPhase.STARTUP);
         event(ApplicationEvent.STARTUP_START, asList(this));

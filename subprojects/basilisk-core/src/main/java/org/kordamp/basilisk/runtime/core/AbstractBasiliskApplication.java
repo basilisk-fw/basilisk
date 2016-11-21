@@ -77,8 +77,6 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
     private final String[] startupArgs;
     private final Object shutdownLock = new Object();
     private final Logger log;
-    //private Locale locale = Locale.getDefault();
-    //private ApplicationPhase phase = ApplicationPhase.INITIALIZE;
     private Injector<?> injector;
 
     private ObjectProperty<Locale> locale;
@@ -107,21 +105,22 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
     }
 
     @Nonnull
+    @Override
     public ObjectProperty<Locale> localeProperty() {
         if (locale == null) {
-            locale = new SimpleObjectProperty<>(this, "locale", Locale.getDefault());
+            locale = new SimpleObjectProperty<>(this, PROPERTY_LOCALE, Locale.getDefault());
         }
         return locale;
     }
 
     @Nonnull
+    @Override
     public ReadOnlyObjectProperty<ApplicationPhase> phaseProperty() {
         if (phase == null) {
-            phase = new ReadOnlyObjectWrapper<>(this, "phase", ApplicationPhase.INITIALIZE);
+            phase = new ReadOnlyObjectWrapper<>(this, PROPERTY_PHASE, ApplicationPhase.INITIALIZE);
         }
         return phase.getReadOnlyProperty();
     }
-
 
     @Nonnull
     @Override
@@ -129,10 +128,10 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
         return localeProperty().get();
     }
 
-
     public void setLocale(@Nonnull Locale locale) {
         requireNonNull(locale, "Argument 'locale' must not be null");
         localeProperty().set(locale);
+        Locale.setDefault(locale);
     }
 
     @Nonnull
@@ -165,7 +164,7 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
 
     public void addShutdownHandler(@Nonnull ShutdownHandler handler) {
         requireNonNull(handler, ERROR_SHUTDOWN_HANDLER_NULL);
-        if (!shutdownHandlers.contains(handler)) shutdownHandlers.add(handler);
+        if (!shutdownHandlers.contains(handler)) { shutdownHandlers.add(handler); }
     }
 
     public void removeShutdownHandler(@Nonnull ShutdownHandler handler) {
@@ -282,7 +281,7 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
     }
 
     public void ready() {
-        if (getPhase() != ApplicationPhase.STARTUP) return;
+        if (getPhase() != ApplicationPhase.STARTUP) { return; }
 
         showStartingWindow();
 
@@ -321,9 +320,9 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
     public boolean shutdown() {
         // avoids reentrant calls to shutdown()
         // once permission to quit has been granted
-        if (getPhase() == ApplicationPhase.SHUTDOWN) return false;
+        if (getPhase() == ApplicationPhase.SHUTDOWN) { return false; }
 
-        if (!canShutdown()) return false;
+        if (!canShutdown()) { return false; }
         log.info("Shutdown is in process");
 
         // signal that shutdown is in process
@@ -378,7 +377,7 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
 
     @SuppressWarnings("unchecked")
     public void startup() {
-        if (getPhase() != ApplicationPhase.INITIALIZE) return;
+        if (getPhase() != ApplicationPhase.INITIALIZE) { return; }
 
         setPhase(ApplicationPhase.STARTUP);
         event(ApplicationEvent.STARTUP_START, asList(this));

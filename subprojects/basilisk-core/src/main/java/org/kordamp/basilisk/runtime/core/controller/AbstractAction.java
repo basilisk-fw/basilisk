@@ -75,7 +75,7 @@ public abstract class AbstractAction implements Action {
     @Nonnull
     public BooleanProperty enabledProperty() {
         if (enabled == null) {
-            enabled = new SimpleBooleanProperty(this, "enabled", true);
+            enabled = new SimpleBooleanProperty(this, KEY_ENABLED, true);
         }
         return enabled;
     }
@@ -83,7 +83,7 @@ public abstract class AbstractAction implements Action {
     @Nonnull
     public StringProperty nameProperty() {
         if (name == null) {
-            name = new SimpleStringProperty(this, "name");
+            name = new SimpleStringProperty(this, KEY_NAME);
         }
         return name;
     }
@@ -117,7 +117,7 @@ public abstract class AbstractAction implements Action {
 
     public final void initialize() {
         synchronized (lock) {
-            if (initialized) return;
+            if (initialized) { return; }
             doInitialize();
             initialized = true;
         }

@@ -28,6 +28,8 @@ import basilisk.core.resources.ResourceInjector;
 import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -189,4 +191,24 @@ public interface BasiliskApplication {
      */
     @Nonnull
     Logger getLog();
+
+    /**
+     * Returns an observable for the {@code locale} property.
+     *
+     * @return an observable for the {@code locale} property.
+     *
+     * @since 0.4.0
+     */
+    @Nonnull
+    ObjectProperty<Locale> localeProperty();
+
+    /**
+     * Returns an observable for the {@code applicationPhase} property.
+     *
+     * @return an observable for the {@code applicationPhase} property.
+     *
+     * @since 0.4.0
+     */
+    @Nonnull
+    ReadOnlyObjectProperty<ApplicationPhase> phaseProperty();
 }
