@@ -38,7 +38,7 @@ public class MappingObservableListTest {
                 return Integer.valueOf(s);
             }
         };
-        ObservableList<Integer> target = BindingUtils.mapList(source, mapper);
+        ObservableList<Integer> target = MappingBindings.mapList(source, mapper);
 
         // expect:
         assertThat(target, empty());
@@ -80,7 +80,7 @@ public class MappingObservableListTest {
             }
         };
         ObjectProperty<Function<Integer, Integer>> mapper = new SimpleObjectProperty<>(function);
-        ObservableList<Integer> target = BindingUtils.mapList(source, mapper);
+        ObservableList<Integer> target = MappingBindings.mapList(source, mapper);
 
         // expect:
         assertThat(target, empty());
