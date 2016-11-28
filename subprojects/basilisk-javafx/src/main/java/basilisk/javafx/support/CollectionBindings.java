@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
@@ -395,7 +396,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).min().orElse(supplier.get().doubleValue());
+                }).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -445,7 +446,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).max().orElse(supplier.get().doubleValue());
+                }).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -495,7 +496,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).average().orElse(supplier.get().doubleValue());
+                }).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -562,7 +563,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).min().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -606,7 +607,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).max().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -650,7 +651,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).average().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -718,7 +719,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).min().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -766,7 +767,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).max().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -814,7 +815,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).average().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -886,7 +887,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).min().orElse(supplier.get().doubleValue());
+                }).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -936,7 +937,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).max().orElse(supplier.get().doubleValue());
+                }).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -986,7 +987,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).average().orElse(supplier.get().doubleValue());
+                }).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1053,7 +1054,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).min().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1097,7 +1098,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).max().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1141,7 +1142,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.stream().mapToDouble(mapper).average().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapper).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1209,7 +1210,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).min().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1257,7 +1258,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).max().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1305,7 +1306,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super T> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.stream().mapToDouble(mapperValue).average().orElse(supplier.get().doubleValue());
+                return items.stream().mapToDouble(mapperValue).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1377,7 +1378,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).min().orElse(supplier.get().doubleValue());
+                }).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1427,7 +1428,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).max().orElse(supplier.get().doubleValue());
+                }).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1477,7 +1478,7 @@ public final class CollectionBindings {
                     public double applyAsDouble(Number number) {
                         return number.doubleValue();
                     }
-                }).average().orElse(supplier.get().doubleValue());
+                }).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1544,7 +1545,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.values().stream().mapToDouble(mapper).min().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapper).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1588,7 +1589,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.values().stream().mapToDouble(mapper).max().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapper).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1632,7 +1633,7 @@ public final class CollectionBindings {
         return createDoubleBinding(new Callable<Double>() {
             @Override
             public Double call() throws Exception {
-                return items.values().stream().mapToDouble(mapper).average().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapper).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items);
     }
@@ -1700,7 +1701,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super V> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.values().stream().mapToDouble(mapperValue).min().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapperValue).min().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1748,7 +1749,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super V> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.values().stream().mapToDouble(mapperValue).max().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapperValue).max().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1796,7 +1797,7 @@ public final class CollectionBindings {
             public Double call() throws Exception {
                 ToDoubleFunction<? super V> mapperValue = mapper.getValue();
                 requireNonNull(mapperValue, ERROR_MAPPER_NULL);
-                return items.values().stream().mapToDouble(mapperValue).average().orElse(supplier.get().doubleValue());
+                return items.values().stream().mapToDouble(mapperValue).average().orElseGet(resolveDoubleSupplier(supplier));
             }
         }, items, mapper);
     }
@@ -1823,4 +1824,14 @@ public final class CollectionBindings {
         }, items, mapper);
     }
 
+    @Nonnull
+    private static DoubleSupplier resolveDoubleSupplier(@Nonnull final Supplier<? extends Number> supplier) {
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        return new DoubleSupplier() {
+            @Override
+            public double getAsDouble() {
+                return supplier.get().doubleValue();
+            }
+        };
+    }
 }
