@@ -1,0 +1,112 @@
+import java.text.SimpleDateFormat
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+
+    dependencies {
+        classpath 'org.kordamp.basilisk:gradle-basilisk-plugin:0.4.0-SNAPSHOT'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath 'org.gradle.api.plugins:gradle-izpack-plugin:0.2.3'
+        classpath 'com.github.cr0:gradle-macappbundle-plugin:3.1.0'
+        classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
+        classpath 'org.javafxports:jfxmobile-plugin:1.2.0'
+        classpath 'net.nemerosa:versioning:2.5.0'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'org.kordamp.basilisk'
+apply plugin: 'org.javafxports.jfxmobile'
+apply plugin: 'net.nemerosa.versioning'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+Date buildTimeAndDate = new Date()
+ext {
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    macosx = System.getProperty('os.name').contains('Mac OS')
+}
+
+basilisk {
+    disableDependencyResolution = false
+    version = '0.4.0-SNAPSHOT'
+    applicationProperties = [
+        'build.date'    : buildDate,
+        'build.time'    : buildTime,
+        'build.revision': versioning.info.commit
+    ]
+}
+
+mainClassName = 'org.example.Launcher'
+
+apply from: 'gradle/publishing.gradle'
+apply from: 'gradle/code-coverage.gradle'
+apply from: 'gradle/code-quality.gradle'
+apply from: 'gradle/integration-test.gradle'
+apply from: 'gradle/functional-test.gradle'
+apply from: 'gradle/package.gradle'
+apply from: 'gradle/docs.gradle'
+apply plugin: 'org.kordamp.gradle.stats'
+apply plugin: 'com.github.ben-manes.versions'
+
+dependencies {
+    compile "org.kordamp.basilisk:basilisk-guice:${basilisk.version}"
+    compile 'org.kordamp.ikonli:ikonli-javafx:1.8.0'
+    compile 'org.kordamp.ikonli:ikonli-fontawesome-pack:1.8.0'
+
+    runtime 'org.slf4j:slf4j-simple:1.7.21'
+
+    testCompile "org.kordamp.basilisk:basilisk-javafx-test:${basilisk.version}"
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+
+    functionalTestCompile "org.kordamp.basilisk:basilisk-javafx-test:${basilisk.version}"
+}
+
+compileGroovy.enabled = false
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = project.sourceCompatibility
+    targetCompatibility = project.targetCompatibility
+}
+
+tasks.withType(GroovyCompile) {
+    sourceCompatibility = project.sourceCompatibility
+    targetCompatibility = project.targetCompatibility
+}
+
+jfxmobile {
+    ios {
+        forceLinkClasses = ['org.example.**.*', 'basilisk.**.*', 'org.kordamp.basilisk.**.*']
+    }
+}
+
+task jacocoRootMerge(type: org.gradle.testing.jacoco.tasks.JacocoMerge, dependsOn: [test, jacocoTestReport, jacocoIntegrationTestReport, jacocoFunctionalTestReport]) {
+    executionData = files(jacocoTestReport.executionData, jacocoIntegrationTestReport.executionData, jacocoFunctionalTestReport.executionData)
+    destinationFile = file("${buildDir}/jacoco/root.exec")
+}
+
+task jacocoRootReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
+    group = 'Reporting'
+    description = 'Generate Jacoco coverage reports after running all tests.'
+    executionData file("${buildDir}/jacoco/root.exec")
+    sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+    classDirectories = files(sourceSets.main.output)
+    reports {
+        csv.enabled = false
+        xml.enabled = true
+        html.enabled = true
+        html.destination = "${buildDir}/reports/jacoco/root/html"
+        xml.destination = "${buildDir}/reports/jacoco/root/root.xml"
+    }
+}
