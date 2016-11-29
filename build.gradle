@@ -262,7 +262,7 @@ subprojects { subproj ->
 evaluationDependsOnChildren()
 
 coveralls {
-    sourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs).files.absolutePath
+    sourceDirs = projectsWithCoverage.sourceSets.main.allSource.srcDirs.flatten()
 }
 
 task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
