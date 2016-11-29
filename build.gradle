@@ -266,11 +266,14 @@ task codeCoverageReport(type: JacocoReport) {
     group = "Reporting"
     description = "Aggregate Jacoco coverage reports."
 
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-
     additionalSourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
     classDirectories = files(projectsWithCoverage.sourceSets.main.output)
+    executionData = files([
+        projectsWithCoverage.jacocoTestReport +
+            projectsWithIntegrationCoverage.jacocoIntegrationTestReport +
+            projectsWithFunctionalCoverage.jacocoFunctionalTestReport
+    ].unique().executionData)
 
     reports {
         xml.enabled true
