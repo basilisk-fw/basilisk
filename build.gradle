@@ -261,29 +261,28 @@ subprojects { subproj ->
 
 evaluationDependsOnChildren()
 
-
-coveralls {
-    sourceDirs = projectsWithCoverage.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-}
-
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+task codeCoverageReport(type: JacocoReport) {
     dependsOn = projectsWithCoverage.test + projectsWithIntegrationCoverage.integrationTest + projectsWithFunctionalCoverage.functionalTest
     group = "Reporting"
     description = "Aggregate Jacoco coverage reports."
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
     additionalSourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
     classDirectories = files(projectsWithCoverage.sourceSets.main.output)
-    executionData = files([
-        projectsWithCoverage.jacocoTestReport +
-            projectsWithIntegrationCoverage.jacocoIntegrationTestReport +
-            projectsWithFunctionalCoverage.jacocoFunctionalTestReport
-    ].executionData)
+
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
+        xml.enabled true
+        html.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.destination "${buildDir}/reports/jacoco/html"
     }
+}
+
+coveralls {
+    sourceDirs = projectsWithCoverage.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/report.xml"
 }
 
 task clirrRootReport(type: org.kordamp.gradle.clirr.ClirrReportTask) {
