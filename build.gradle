@@ -261,8 +261,10 @@ subprojects { subproj ->
 
 evaluationDependsOnChildren()
 
+
 coveralls {
     sourceDirs = projectsWithCoverage.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
 task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
@@ -281,8 +283,6 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         html.enabled = true
         xml.enabled = true
         csv.enabled = false
-        html.destination = "${buildDir}/reports/jacoco/test/html"
-        xml.destination = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
 
