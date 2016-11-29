@@ -18,4 +18,6 @@ before_script:
 script: ./gradlew -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport jacocoRootReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
 after_success:
   - ./gradlew coveralls
+  - for report in `find ./subprojects -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
+  - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - bash <(curl -s https://codecov.io/bash)
