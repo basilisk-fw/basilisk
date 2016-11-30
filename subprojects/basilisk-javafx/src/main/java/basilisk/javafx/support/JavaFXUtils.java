@@ -15,10 +15,12 @@
  */
 package basilisk.javafx.support;
 
+import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.editors.ValueConversionException;
+import basilisk.core.i18n.MessageSource;
 import basilisk.exceptions.InstanceMethodInvocationException;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
@@ -68,9 +70,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static basilisk.util.BasiliskClassUtils.EMPTY_OBJECT_ARRAY;
 import static basilisk.util.BasiliskClassUtils.getGetterName;
 import static basilisk.util.BasiliskClassUtils.getPropertyValue;
 import static basilisk.util.BasiliskClassUtils.invokeExactInstanceMethod;
@@ -89,14 +93,144 @@ public final class JavaFXUtils {
     private static final String ERROR_ICON_BLANK = "Argument 'iconUrl' must not be blank";
     private static final String ERROR_ID_BLANK = "Argument 'id' must not be blank";
     private static final String ERROR_URL_BLANK = "Argument 'url' must not be blank";
-    private static final String ERROR_PREDICATE_NULL = "Argument 'predicate' must not be null";
+    private static final String ERROR_KEY_BLANK = "Argument 'key' must not be blank";
+    private static final String ERROR_ARGS_BLANK = "Argument 'args' must not be blank";
     private static final String ERROR_ROOT_NULL = "Argument 'root' must not be null";
+    private static final String ERROR_PREDICATE_NULL = "Argument 'predicate' must not be null";
     private static final String ERROR_CONTROLLER_NULL = "Argument 'controller' must not be null";
+    private static final String ERROR_APPLICATION_NULL = "Argument 'application' must not be null";
     private static final String ACTION_TARGET_SUFFIX = "ActionTarget";
     private static final String PROPERTY_SUFFIX = "Property";
 
     private JavaFXUtils() {
 
+    }
+
+    /**
+     * Associates an i18n key to a {@code node}. The key is used to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param key  the message key to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nKey(@Nonnull Labeled node, @Nonnull String key) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(key, ERROR_KEY_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + "-KEY", key);
+    }
+
+    /**
+     * Finds out if an i18n {@code key} has been registered with the target {@code Node}, returning the key if found.
+     *
+     * @param node the target node on which the key may have been registered.
+     *
+     * @return the key registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nKey(@Nonnull Labeled node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + "-KEY");
+    }
+
+    /**
+     * Associates an i18n arrays of arguments to a {@code node}.
+     * These arguments will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param args the array of arguments to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nArgs(@Nonnull Labeled node, @Nullable String args) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(args, ERROR_ARGS_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + "-ARGS", args);
+    }
+
+    /**
+     * Finds out if an {@code arguments array} has been registered with the target {@code Node}, returning the array if found.
+     *
+     * @param node the target node on which the arguments may have been registered.
+     *
+     * @return the arguments registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nArgs(@Nonnull Labeled node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + "-ARGS");
+    }
+
+    /**
+     * Associates an default value {@code node}.
+     * The value will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node         the target node on which the key will be registered.
+     * @param defaultValue the value to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nDefaultValue(@Nonnull Labeled node, @Nullable String defaultValue) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        node.getProperties().put(MessageSource.class.getName() + "-DEFAULT_VALUE", defaultValue);
+    }
+
+    /**
+     * Finds out if a {@code default value} has been registered with the target {@code Node}, returning the value if found.
+     *
+     * @param node the target node on which the value may have been registered.
+     *
+     * @return the value registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nDefaultValue(@Nonnull Labeled node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + "-DEFAULT_VALUE");
+    }
+
+    public static void connectMessageSource(@Nonnull Object node, @Nonnull BasiliskApplication application) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonNull(application, ERROR_APPLICATION_NULL);
+
+        Collection<Object> elements = findElements(node, new Predicate<Object>() {
+            @Override
+            public boolean test(@Nonnull Object arg) {
+                return arg instanceof Labeled && !isBlank(getI18nKey((Labeled) arg));
+            }
+        });
+        for (Object element : elements) {
+            doConnectMessageSource((Labeled) element, application);
+        }
+    }
+
+    private static void doConnectMessageSource(final @Nonnull Labeled labeled, final @Nonnull BasiliskApplication application) {
+        application.localeProperty().addListener(new ChangeListener<Locale>() {
+            @Override
+            public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
+                updateLabeled(labeled, application);
+            }
+        });
+        updateLabeled(labeled, application);
+    }
+
+    private static void updateLabeled(@Nonnull Labeled labeled, @Nonnull BasiliskApplication application) {
+        String key = getI18nKey(labeled);
+        String args = getI18nArgs(labeled);
+        String defaultValue = getI18nDefaultValue(labeled);
+
+        Object[] argArray = isBlank(args) ? EMPTY_OBJECT_ARRAY : args.split(",");
+
+        if (isBlank(defaultValue)) {
+            labeled.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale()));
+        } else {
+            labeled.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale(), defaultValue));
+        }
     }
 
     /**
@@ -114,7 +248,7 @@ public final class JavaFXUtils {
     }
 
     /**
-     * Finds out if an {@code Action} has been registered with the target {@code Node}, returning the aciton id if found.
+     * Finds out if an {@code Action} has been registered with the target {@code Node}, returning the action id if found.
      *
      * @param node the target node on which the action may have been registered.
      *
@@ -143,7 +277,7 @@ public final class JavaFXUtils {
     }
 
     /**
-     * Finds out if an {@code Action} has been registered with the target {@code MenuItem}, returning the aciton id if found.
+     * Finds out if an {@code Action} has been registered with the target {@code MenuItem}, returning the action id if found.
      *
      * @param menuItem the target menuItem on which the action may have been registered.
      *

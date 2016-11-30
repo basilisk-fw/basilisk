@@ -108,6 +108,10 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
         JavaFXUtils.connectActions(node, controller);
     }
 
+    protected void connectMessageSource(@Nonnull Object node) {
+        JavaFXUtils.connectMessageSource(node, getApplication());
+    }
+
     @Nullable
     protected JavaFXAction toolkitActionFor(@Nonnull BasiliskController controller, @Nonnull String actionName) {
         Action action = actionFor(controller, actionName);
