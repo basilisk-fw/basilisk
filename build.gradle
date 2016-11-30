@@ -62,7 +62,11 @@ ext {
     projectsWithClirr = []
     depProjects = []
     fullBuild = !travis && !appveyor
-    withDebug = travis
+    withDebug = (rootProject.hasProperty('withDebug') && rootProject.withDebug.toBoolean()) || travis
+}
+
+if (rootProject.withDebug) {
+    println "Enabling debug information for compiled classes"
 }
 
 allprojects {
@@ -176,7 +180,6 @@ subprojects { subproj ->
             }
 
             if (rootProject.hasProperty('withDebug') && rootProject.withDebug.toBoolean()) {
-                println "Enabling debug information for compiled classes"
                 jar.classifier = 'debug'
                 tasks.withType(AbstractCompile) {
                     options.debug = true
@@ -265,8 +268,8 @@ evaluationDependsOnChildren()
 
 task codeCoverageReport(type: JacocoReport) {
     dependsOn = projectsWithCoverage.test + projectsWithIntegrationCoverage.integrationTest + projectsWithFunctionalCoverage.functionalTest
-    group = "Reporting"
-    description = "Aggregate Jacoco coverage reports."
+    group = 'Reporting'
+    description = 'Aggregate Jacoco coverage reports.'
 
     additionalSourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
