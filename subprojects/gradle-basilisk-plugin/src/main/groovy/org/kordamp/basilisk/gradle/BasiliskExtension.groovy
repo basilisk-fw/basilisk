@@ -21,7 +21,7 @@ import org.gradle.api.Project
  * @author Andres Almiray
  */
 class BasiliskExtension {
-    String version = '0.4.0-SNAPSHOT'
+    String version = '0.4.0'
 
     boolean disableDependencyResolution
 
