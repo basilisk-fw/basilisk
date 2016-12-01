@@ -112,7 +112,7 @@ public abstract class AbstractArtifactManager implements ArtifactManager {
     @Override
     @Nonnull
     @SuppressWarnings("unchecked")
-    public <A extends BasiliskArtifact> A newInstance(final @Nonnull Class<A> clazz) {
+    public <A extends BasiliskArtifact> A newInstance(@Nonnull final Class<A> clazz) {
         if (findBasiliskClass(clazz) == null) {
             throw new ArtifactNotFoundException(clazz);
         }

@@ -59,7 +59,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
     private BooleanProperty selected;
     private BooleanProperty visible;
 
-    public JavaFXBasiliskControllerAction(final @Nonnull UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
+    public JavaFXBasiliskControllerAction(@Nonnull final UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
         super(actionManager, controller, actionName);
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
@@ -216,7 +216,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         });
     }
 
-    protected JavaFXAction createAction(final @Nonnull ActionManager actionManager, final @Nonnull BasiliskController controller, final @Nonnull String actionName) {
+    protected JavaFXAction createAction(@Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
         return new JavaFXAction();
     }
 

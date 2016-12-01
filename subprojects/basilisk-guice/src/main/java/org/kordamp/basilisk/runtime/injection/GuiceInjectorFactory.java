@@ -70,7 +70,7 @@ public class GuiceInjectorFactory implements InjectorFactory {
         return injector;
     }
 
-    private GuiceInjector createModules(final @Nonnull BasiliskApplication application, @Nonnull final InjectorProvider injectorProvider, @Nonnull Iterable<Binding<?>> bindings) {
+    private GuiceInjector createModules(@Nonnull final BasiliskApplication application, @Nonnull final InjectorProvider injectorProvider, @Nonnull Iterable<Binding<?>> bindings) {
         final InjectionListener<BasiliskArtifact> injectionListener = new InjectionListener<BasiliskArtifact>() {
             @Override
             public void afterInjection(BasiliskArtifact injectee) {

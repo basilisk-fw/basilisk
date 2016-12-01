@@ -396,7 +396,7 @@ public final class JavaFXUtils {
         }
     }
 
-    private static void doConnectMessageSource(final @Nonnull Labeled node, final @Nonnull BasiliskApplication application) {
+    private static void doConnectMessageSource(@Nonnull final Labeled node, @Nonnull final BasiliskApplication application) {
         application.localeProperty().addListener(new ChangeListener<Locale>() {
             @Override
             public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
@@ -406,7 +406,7 @@ public final class JavaFXUtils {
         updateTextProperty(node, application);
     }
 
-    private static void doConnectMessageSource(final @Nonnull Tab node, final @Nonnull BasiliskApplication application) {
+    private static void doConnectMessageSource(@Nonnull final Tab node, @Nonnull final BasiliskApplication application) {
         application.localeProperty().addListener(new ChangeListener<Locale>() {
             @Override
             public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
@@ -416,7 +416,7 @@ public final class JavaFXUtils {
         updateTextProperty(node, application);
     }
 
-    private static void doConnectMessageSource(final @Nonnull MenuItem node, final @Nonnull BasiliskApplication application) {
+    private static void doConnectMessageSource(@Nonnull final MenuItem node, @Nonnull final BasiliskApplication application) {
         application.localeProperty().addListener(new ChangeListener<Locale>() {
             @Override
             public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
@@ -426,7 +426,7 @@ public final class JavaFXUtils {
         updateTextProperty(node, application);
     }
 
-    private static void updateTextProperty(final @Nonnull Labeled node, final @Nonnull BasiliskApplication application) {
+    private static void updateTextProperty(@Nonnull final Labeled node, @Nonnull final BasiliskApplication application) {
         runInsideUIThread(new Runnable() {
             @Override
             public void run() {
@@ -445,7 +445,7 @@ public final class JavaFXUtils {
         });
     }
 
-    private static void updateTextProperty(final @Nonnull Tab node, final @Nonnull BasiliskApplication application) {
+    private static void updateTextProperty(@Nonnull final Tab node, @Nonnull final BasiliskApplication application) {
         runInsideUIThread(new Runnable() {
             @Override
             public void run() {
@@ -464,7 +464,7 @@ public final class JavaFXUtils {
         });
     }
 
-    private static void updateTextProperty(final @Nonnull MenuItem node, final @Nonnull BasiliskApplication application) {
+    private static void updateTextProperty(@Nonnull final MenuItem node, @Nonnull final BasiliskApplication application) {
         runInsideUIThread(new Runnable() {
             @Override
             public void run() {
@@ -724,7 +724,7 @@ public final class JavaFXUtils {
         }
     }
 
-    private static EventHandler<ActionEvent> wrapAction(final @Nonnull JavaFXAction action) {
+    private static EventHandler<ActionEvent> wrapAction(@Nonnull final JavaFXAction action) {
         return new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -757,7 +757,7 @@ public final class JavaFXUtils {
         return style + key + ": " + value + ";";
     }
 
-    public static void configure(final @Nonnull ToggleButton control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final ToggleButton control, @Nonnull final JavaFXAction action) {
         configure((ButtonBase) control, action);
 
         action.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -779,7 +779,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void configure(final @Nonnull CheckBox control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final CheckBox control, @Nonnull final JavaFXAction action) {
         configure((ButtonBase) control, action);
 
         action.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -801,7 +801,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void configure(final @Nonnull RadioButton control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final RadioButton control, @Nonnull final JavaFXAction action) {
         configure((ButtonBase) control, action);
 
         action.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -823,7 +823,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void configure(final @Nonnull ButtonBase control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final ButtonBase control, @Nonnull final JavaFXAction action) {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonNull(action, ERROR_ACTION_NULL);
 
@@ -962,7 +962,7 @@ public final class JavaFXUtils {
         setGraphicStyle(control, action.getGraphicStyle());
     }
 
-    public static void configure(final @Nonnull CheckMenuItem control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final CheckMenuItem control, @Nonnull final JavaFXAction action) {
         configure((MenuItem) control, action);
 
         action.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -984,7 +984,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void configure(final @Nonnull RadioMenuItem control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final RadioMenuItem control, @Nonnull final JavaFXAction action) {
         configure((MenuItem) control, action);
 
         action.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -1006,7 +1006,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void configure(final @Nonnull MenuItem control, final @Nonnull JavaFXAction action) {
+    public static void configure(@Nonnull final MenuItem control, @Nonnull final JavaFXAction action) {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonNull(action, ERROR_ACTION_NULL);
 
@@ -1261,7 +1261,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setTooltip(final @Nonnull Control control, final @Nullable String text) {
+    public static void setTooltip(@Nonnull final Control control, final @Nullable String text) {
         if (isBlank(text)) {
             return;
         }
@@ -1280,7 +1280,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setIcon(final @Nonnull Labeled control, @Nonnull String iconUrl) {
+    public static void setIcon(@Nonnull final Labeled control, @Nonnull String iconUrl) {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonBlank(iconUrl, ERROR_ICON_BLANK);
 
@@ -1295,7 +1295,7 @@ public final class JavaFXUtils {
         }
     }
 
-    public static void setIcon(final @Nonnull MenuItem control, @Nonnull String iconUrl) {
+    public static void setIcon(@Nonnull final MenuItem control, @Nonnull String iconUrl) {
         requireNonNull(control, ERROR_CONTROL_NULL);
         requireNonBlank(iconUrl, ERROR_ICON_BLANK);
 
@@ -1310,7 +1310,7 @@ public final class JavaFXUtils {
         }
     }
 
-    public static void setGraphic(final @Nonnull Labeled control, final @Nullable Image graphic) {
+    public static void setGraphic(@Nonnull final Labeled control, final @Nullable Image graphic) {
         requireNonNull(control, ERROR_CONTROL_NULL);
 
         runInsideUIThread(new Runnable() {
@@ -1326,7 +1326,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setGraphic(final @Nonnull MenuItem control, final @Nullable Image graphic) {
+    public static void setGraphic(@Nonnull final MenuItem control, final @Nullable Image graphic) {
         requireNonNull(control, ERROR_CONTROL_NULL);
 
         runInsideUIThread(new Runnable() {
@@ -1342,7 +1342,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setGraphic(final @Nonnull Labeled control, final @Nullable Node graphic) {
+    public static void setGraphic(@Nonnull final Labeled control, final @Nullable Node graphic) {
         requireNonNull(control, ERROR_CONTROL_NULL);
 
         runInsideUIThread(new Runnable() {
@@ -1357,7 +1357,7 @@ public final class JavaFXUtils {
         });
     }
 
-    public static void setGraphic(final @Nonnull MenuItem control, final @Nullable Node graphic) {
+    public static void setGraphic(@Nonnull final MenuItem control, final @Nullable Node graphic) {
         requireNonNull(control, ERROR_CONTROL_NULL);
 
         runInsideUIThread(new Runnable() {

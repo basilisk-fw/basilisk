@@ -285,7 +285,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         }
     }
 
-    protected void initializeArtifactMember(@Nonnull MVCGroup group, @Nonnull String type, final @Nonnull BasiliskArtifact member, final @Nonnull Map<String, Object> args) {
+    protected void initializeArtifactMember(@Nonnull MVCGroup group, @Nonnull String type, @Nonnull final BasiliskArtifact member, @Nonnull final Map<String, Object> args) {
         if (member instanceof BasiliskView) {
             getApplication().getUIThreadManager().runInsideUISync(new Runnable() {
                 @Override
