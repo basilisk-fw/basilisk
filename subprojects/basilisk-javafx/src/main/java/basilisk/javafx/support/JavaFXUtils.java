@@ -101,6 +101,9 @@ public final class JavaFXUtils {
     private static final String ERROR_APPLICATION_NULL = "Argument 'application' must not be null";
     private static final String ACTION_TARGET_SUFFIX = "ActionTarget";
     private static final String PROPERTY_SUFFIX = "Property";
+    private static final String SUFFIX_KEY = "-KEY";
+    private static final String SUFFIX_ARGS = "-ARGS";
+    private static final String SUFFIX_DEFAULT_VALUE = "-DEFAULT_VALUE";
 
     private JavaFXUtils() {
 
@@ -117,7 +120,7 @@ public final class JavaFXUtils {
     public static void setI18nKey(@Nonnull Labeled node, @Nonnull String key) {
         requireNonNull(node, ERROR_NODE_NULL);
         requireNonBlank(key, ERROR_KEY_BLANK);
-        node.getProperties().put(MessageSource.class.getName() + "-KEY", key);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_KEY, key);
     }
 
     /**
@@ -132,7 +135,7 @@ public final class JavaFXUtils {
     @Nullable
     public static String getI18nKey(@Nonnull Labeled node) {
         requireNonNull(node, ERROR_NODE_NULL);
-        return (String) node.getProperties().get(MessageSource.class.getName() + "-KEY");
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_KEY);
     }
 
     /**
@@ -147,7 +150,7 @@ public final class JavaFXUtils {
     public static void setI18nArgs(@Nonnull Labeled node, @Nullable String args) {
         requireNonNull(node, ERROR_NODE_NULL);
         requireNonBlank(args, ERROR_ARGS_BLANK);
-        node.getProperties().put(MessageSource.class.getName() + "-ARGS", args);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_ARGS, args);
     }
 
     /**
@@ -162,7 +165,7 @@ public final class JavaFXUtils {
     @Nullable
     public static String getI18nArgs(@Nonnull Labeled node) {
         requireNonNull(node, ERROR_NODE_NULL);
-        return (String) node.getProperties().get(MessageSource.class.getName() + "-ARGS");
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_ARGS);
     }
 
     /**
@@ -176,7 +179,7 @@ public final class JavaFXUtils {
      */
     public static void setI18nDefaultValue(@Nonnull Labeled node, @Nullable String defaultValue) {
         requireNonNull(node, ERROR_NODE_NULL);
-        node.getProperties().put(MessageSource.class.getName() + "-DEFAULT_VALUE", defaultValue);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE, defaultValue);
     }
 
     /**
@@ -191,7 +194,183 @@ public final class JavaFXUtils {
     @Nullable
     public static String getI18nDefaultValue(@Nonnull Labeled node) {
         requireNonNull(node, ERROR_NODE_NULL);
-        return (String) node.getProperties().get(MessageSource.class.getName() + "-DEFAULT_VALUE");
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE);
+    }
+
+    /**
+     * Associates an i18n key to a {@code node}. The key is used to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param key  the message key to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nKey(@Nonnull Tab node, @Nonnull String key) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(key, ERROR_KEY_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_KEY, key);
+    }
+
+    /**
+     * Finds out if an i18n {@code key} has been registered with the target {@code Node}, returning the key if found.
+     *
+     * @param node the target node on which the key may have been registered.
+     *
+     * @return the key registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nKey(@Nonnull Tab node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_KEY);
+    }
+
+    /**
+     * Associates an i18n arrays of arguments to a {@code node}.
+     * These arguments will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param args the array of arguments to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nArgs(@Nonnull Tab node, @Nullable String args) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(args, ERROR_ARGS_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_ARGS, args);
+    }
+
+    /**
+     * Finds out if an {@code arguments array} has been registered with the target {@code Node}, returning the array if found.
+     *
+     * @param node the target node on which the arguments may have been registered.
+     *
+     * @return the arguments registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nArgs(@Nonnull Tab node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_ARGS);
+    }
+
+    /**
+     * Associates an default value {@code node}.
+     * The value will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node         the target node on which the key will be registered.
+     * @param defaultValue the value to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nDefaultValue(@Nonnull Tab node, @Nullable String defaultValue) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE, defaultValue);
+    }
+
+    /**
+     * Finds out if a {@code default value} has been registered with the target {@code Node}, returning the value if found.
+     *
+     * @param node the target node on which the value may have been registered.
+     *
+     * @return the value registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nDefaultValue(@Nonnull Tab node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE);
+    }
+
+    /**
+     * Associates an i18n key to a {@code node}. The key is used to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param key  the message key to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nKey(@Nonnull MenuItem node, @Nonnull String key) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(key, ERROR_KEY_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_KEY, key);
+    }
+
+    /**
+     * Finds out if an i18n {@code key} has been registered with the target {@code Node}, returning the key if found.
+     *
+     * @param node the target node on which the key may have been registered.
+     *
+     * @return the key registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nKey(@Nonnull MenuItem node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_KEY);
+    }
+
+    /**
+     * Associates an i18n arrays of arguments to a {@code node}.
+     * These arguments will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node the target node on which the key will be registered.
+     * @param args the array of arguments to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nArgs(@Nonnull MenuItem node, @Nullable String args) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        requireNonBlank(args, ERROR_ARGS_BLANK);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_ARGS, args);
+    }
+
+    /**
+     * Finds out if an {@code arguments array} has been registered with the target {@code Node}, returning the array if found.
+     *
+     * @param node the target node on which the arguments may have been registered.
+     *
+     * @return the arguments registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nArgs(@Nonnull MenuItem node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_ARGS);
+    }
+
+    /**
+     * Associates an default value {@code node}.
+     * The value will be used alongside a key to resolve a message via the application's {@code MessageSource}.
+     *
+     * @param node         the target node on which the key will be registered.
+     * @param defaultValue the value to be registered.
+     *
+     * @since 0.4.0
+     */
+    public static void setI18nDefaultValue(@Nonnull MenuItem node, @Nullable String defaultValue) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        node.getProperties().put(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE, defaultValue);
+    }
+
+    /**
+     * Finds out if a {@code default value} has been registered with the target {@code Node}, returning the value if found.
+     *
+     * @param node the target node on which the value may have been registered.
+     *
+     * @return the value registered with the target {@code Node} or {@code null} if not found.
+     *
+     * @since 0.4.0
+     */
+    @Nullable
+    public static String getI18nDefaultValue(@Nonnull MenuItem node) {
+        requireNonNull(node, ERROR_NODE_NULL);
+        return (String) node.getProperties().get(MessageSource.class.getName() + SUFFIX_DEFAULT_VALUE);
     }
 
     public static void connectMessageSource(@Nonnull Object node, @Nonnull BasiliskApplication application) {
@@ -201,36 +380,107 @@ public final class JavaFXUtils {
         Collection<Object> elements = findElements(node, new Predicate<Object>() {
             @Override
             public boolean test(@Nonnull Object arg) {
-                return arg instanceof Labeled && !isBlank(getI18nKey((Labeled) arg));
+                return (arg instanceof Labeled && !isBlank(getI18nKey((Labeled) arg))) ||
+                    (arg instanceof Tab && !isBlank(getI18nKey((Tab) arg))) ||
+                    (arg instanceof MenuItem && !isBlank(getI18nKey((MenuItem) arg)));
             }
         });
         for (Object element : elements) {
-            doConnectMessageSource((Labeled) element, application);
+            if (element instanceof Labeled) {
+                doConnectMessageSource((Labeled) element, application);
+            } else if (element instanceof Tab) {
+                doConnectMessageSource((Tab) element, application);
+            } else if (element instanceof MenuItem) {
+                doConnectMessageSource((MenuItem) element, application);
+            }
         }
     }
 
-    private static void doConnectMessageSource(final @Nonnull Labeled labeled, final @Nonnull BasiliskApplication application) {
+    private static void doConnectMessageSource(final @Nonnull Labeled node, final @Nonnull BasiliskApplication application) {
         application.localeProperty().addListener(new ChangeListener<Locale>() {
             @Override
             public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
-                updateLabeled(labeled, application);
+                updateTextProperty(node, application);
             }
         });
-        updateLabeled(labeled, application);
+        updateTextProperty(node, application);
     }
 
-    private static void updateLabeled(@Nonnull Labeled labeled, @Nonnull BasiliskApplication application) {
-        String key = getI18nKey(labeled);
-        String args = getI18nArgs(labeled);
-        String defaultValue = getI18nDefaultValue(labeled);
+    private static void doConnectMessageSource(final @Nonnull Tab node, final @Nonnull BasiliskApplication application) {
+        application.localeProperty().addListener(new ChangeListener<Locale>() {
+            @Override
+            public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
+                updateTextProperty(node, application);
+            }
+        });
+        updateTextProperty(node, application);
+    }
 
-        Object[] argArray = isBlank(args) ? EMPTY_OBJECT_ARRAY : args.split(",");
+    private static void doConnectMessageSource(final @Nonnull MenuItem node, final @Nonnull BasiliskApplication application) {
+        application.localeProperty().addListener(new ChangeListener<Locale>() {
+            @Override
+            public void changed(ObservableValue<? extends Locale> observable, Locale oldValue, Locale newValue) {
+                updateTextProperty(node, application);
+            }
+        });
+        updateTextProperty(node, application);
+    }
 
-        if (isBlank(defaultValue)) {
-            labeled.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale()));
-        } else {
-            labeled.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale(), defaultValue));
-        }
+    private static void updateTextProperty(final @Nonnull Labeled node, final @Nonnull BasiliskApplication application) {
+        runInsideUIThread(new Runnable() {
+            @Override
+            public void run() {
+                String key = getI18nKey(node);
+                String args = getI18nArgs(node);
+                String defaultValue = getI18nDefaultValue(node);
+
+                Object[] argArray = isBlank(args) ? EMPTY_OBJECT_ARRAY : args.split(",");
+
+                if (isBlank(defaultValue)) {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale()));
+                } else {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale(), defaultValue));
+                }
+            }
+        });
+    }
+
+    private static void updateTextProperty(final @Nonnull Tab node, final @Nonnull BasiliskApplication application) {
+        runInsideUIThread(new Runnable() {
+            @Override
+            public void run() {
+                String key = getI18nKey(node);
+                String args = getI18nArgs(node);
+                String defaultValue = getI18nDefaultValue(node);
+
+                Object[] argArray = isBlank(args) ? EMPTY_OBJECT_ARRAY : args.split(",");
+
+                if (isBlank(defaultValue)) {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale()));
+                } else {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale(), defaultValue));
+                }
+            }
+        });
+    }
+
+    private static void updateTextProperty(final @Nonnull MenuItem node, final @Nonnull BasiliskApplication application) {
+        runInsideUIThread(new Runnable() {
+            @Override
+            public void run() {
+                String key = getI18nKey(node);
+                String args = getI18nArgs(node);
+                String defaultValue = getI18nDefaultValue(node);
+
+                Object[] argArray = isBlank(args) ? EMPTY_OBJECT_ARRAY : args.split(",");
+
+                if (isBlank(defaultValue)) {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale()));
+                } else {
+                    node.setText(application.getMessageSource().getMessage(key, argArray, application.getLocale(), defaultValue));
+                }
+            }
+        });
     }
 
     /**
