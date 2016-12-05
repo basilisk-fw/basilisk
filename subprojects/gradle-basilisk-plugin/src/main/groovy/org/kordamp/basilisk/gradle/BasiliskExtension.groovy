@@ -27,6 +27,10 @@ class BasiliskExtension {
 
     boolean includeDefaultRepositories = true
 
+    boolean generateProjectStructure = true
+
+    boolean applicationProject = true
+
     String applicationIconName = 'basilisk.icns'
 
     Map applicationProperties = [:]

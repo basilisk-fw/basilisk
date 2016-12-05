@@ -46,6 +46,9 @@ class BasiliskPluginResolutionStrategy {
         basiliskConfiguration.resolve()
 
         CONFIGURATION_NAMES.each { String configurationName ->
+            if (project.extensions.getByName(BASILISK_CONFIGURATION).disableDependencyResolution) {
+                return
+            }
             DEPENDENCY_MAP[configurationName].each { String dependency ->
                 project.logger.info("Adding {} to '{}' configuration", configurationName, dependency)
                 resolver.project.dependencies.add(configurationName, dependency)
@@ -62,6 +65,10 @@ class BasiliskPluginResolutionStrategy {
 
         @Override
         void execute(ResolvableDependencies resolvableDependencies) {
+            if (basiliskExtension.disableDependencyResolution) {
+                return
+            }
+
             resolvableDependencies.dependencies.each { Dependency dependency ->
                 String pluginName = dependency.name
                 if (pluginName.startsWith(PLUGIN_PREFIX) && pluginName.endsWith(PLUGIN_SUFFIX)) {
@@ -96,6 +103,10 @@ class BasiliskPluginResolutionStrategy {
                         dependency.group, dependency.name, dependency.version)
                 }
             }
+        }
+
+        private BasiliskExtension getBasiliskExtension() {
+            project.extensions.getByName(BASILISK_CONFIGURATION)
         }
 
         private void appendDependency(String artifactId, String scope, String dependencyCoordinates) {

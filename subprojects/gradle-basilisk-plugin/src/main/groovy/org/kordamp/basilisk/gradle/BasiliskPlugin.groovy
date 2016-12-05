@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.SourceSet
 
 /**
  * @author Andres Almiray
@@ -33,17 +34,8 @@ class BasiliskPlugin implements Plugin<Project> {
     void apply(Project project) {
         BasiliskExtension extension = project.extensions.create('basilisk', BasiliskExtension, project)
 
-        applyDefaultPlugins(project)
-
+        applyDefaultPlugins(project, extension)
         applyDefaultDependencies(project)
-
-        String sourceSetName = 'java'
-
-        configureDefaultSourceSets(project, 'java')
-        if (sourceSetName != 'java') configureDefaultSourceSets(project, sourceSetName)
-        createDefaultDirectoryStructure(project, 'java')
-        if (sourceSetName != 'java') createDefaultDirectoryStructure(project, sourceSetName)
-
         registerBuildListener(project, extension)
     }
 
@@ -51,31 +43,31 @@ class BasiliskPlugin implements Plugin<Project> {
         project.configurations.maybeCreate('basilisk').visible = true
     }
 
-    private void applyDefaultPlugins(Project project) {
+    private void applyDefaultPlugins(Project project, BasiliskExtension extension) {
         project.apply(plugin: 'idea')
         project.apply(plugin: 'java')
-        if (!project.hasProperty('basiliskPlugin') || !project.basiliskPlugin) {
+        if (extension.applicationProject) {
             project.apply(plugin: 'application')
         }
     }
 
-    private void configureDefaultSourceSets(Project project, String sourceSetName) {
-        // configure default source directories
-        project.sourceSets.main[sourceSetName].srcDirs += [
-            'basilisk-app/conf',
-            'basilisk-app/controllers',
-            'basilisk-app/models',
-            'basilisk-app/views',
-            'basilisk-app/services',
-            'basilisk-app/lifecycle',
-            'src/main/' + sourceSetName
-        ]
-        // configure default resource directories
-        project.sourceSets.main.resources.srcDirs += [
-            'basilisk-app/resources',
-            'basilisk-app/i18n',
-            'src/main/resources'
-        ]
+    private void configureDefaultSourceSets(Project project, BasiliskExtension extension, String sourceSetName) {
+        if (extension.generateProjectStructure) {
+            // configure default source directories
+            project.sourceSets.main[sourceSetName].srcDirs += [
+                'basilisk-app/conf',
+                'basilisk-app/controllers',
+                'basilisk-app/models',
+                'basilisk-app/views',
+                'basilisk-app/services',
+                'basilisk-app/lifecycle'
+            ]
+            // configure default resource directories
+            project.sourceSets.main.resources.srcDirs += [
+                'basilisk-app/resources',
+                'basilisk-app/i18n'
+            ]
+        }
     }
 
     private static String resolveApplicationName(Project project) {
@@ -85,41 +77,20 @@ class BasiliskPlugin implements Plugin<Project> {
         return project.name
     }
 
-    private void processMainResources(Project project, BasiliskExtension extension) {
-        project.processResources {
-            from(project.sourceSets.main.resources.srcDirs) {
-                exclude '**/*.properties'
-                exclude '**/*.html'
-                exclude '**/*.xml'
-                exclude '**/*.txt'
+    private void processResources(Project project, SourceSet sourceSet, BasiliskExtension extension) {
+        def filePatterns = [
+            '**/*.properties',
+            '**/*.groovy',
+            '**/*.html',
+            '**/*.xml',
+            '**/*.txt'
+        ]
+        project.tasks."${sourceSet.processResourcesTaskName}" {
+            from(sourceSet.resources.srcDirs) {
+                exclude filePatterns
             }
-            from(project.sourceSets.main.resources.srcDirs) {
-                include '**/*.properties'
-                include '**/*.html'
-                include '**/*.xml'
-                include '**/*.txt'
-                filter(ReplaceTokens, tokens: [
-                    'application.name'   : resolveApplicationName(project),
-                    'application.version': project.version,
-                    'basilisk.version'   : extension.version
-                ] + extension.applicationProperties)
-            }
-        }
-    }
-
-    private void processTestResources(Project project, BasiliskExtension extension) {
-        project.processTestResources {
-            from(project.sourceSets.test.resources.srcDirs) {
-                exclude '**/*.properties'
-                exclude '**/*.html'
-                exclude '**/*.xml'
-                exclude '**/*.txt'
-            }
-            from(project.sourceSets.test.resources.srcDirs) {
-                include '**/*.properties'
-                include '**/*.html'
-                include '**/*.xml'
-                include '**/*.txt'
+            from(sourceSet.resources.srcDirs) {
+                include filePatterns
                 filter(ReplaceTokens, tokens: [
                     'application.name'   : resolveApplicationName(project),
                     'application.version': project.version,
@@ -168,8 +139,8 @@ class BasiliskPlugin implements Plugin<Project> {
         }
     }
 
-    private void createDefaultDirectoryStructure(Project project, String sourceSetName) {
-        project.gradle.taskGraph.whenReady {
+    private void createDefaultDirectoryStructure(Project project, BasiliskExtension extension, String sourceSetName) {
+        if (extension.generateProjectStructure) {
             def createIfNotExists = { File dir ->
                 if (!dir.exists()) {
                     dir.mkdirs()
@@ -196,20 +167,26 @@ class BasiliskPlugin implements Plugin<Project> {
                     project.repositories.maven { url 'https://dl.bintray.com/melix/thirdparty-apache' }
                 }
 
+                configureDefaultSourceSets(project, extension, 'java')
+                createDefaultDirectoryStructure(project, extension, 'java')
+
                 // add default dependencies
                 appendDependency('core')
                 appendDependency('core-compile')
                 appendDependency('core-test')
                 appendDependency('javafx')
 
+                if (extension.applicationProject) {
+                    project.apply(plugin: 'application')
+                }
                 project.plugins.withId('application') { plugin ->
                     configureApplicationSettings(project, extension)
                 }
 
                 BasiliskPluginResolutionStrategy.applyTo(project)
 
-                processMainResources(project, extension)
-                processTestResources(project, extension)
+                processResources(project, project.sourceSets.main, extension)
+                processResources(project, project.sourceSets.test, extension)
 
                 project.plugins.withId('org.kordamp.gradle.stats') { plugin ->
                     Task statsTask = project.tasks.findByName('stats')
