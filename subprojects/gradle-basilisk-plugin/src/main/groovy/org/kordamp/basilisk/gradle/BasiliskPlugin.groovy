@@ -51,23 +51,21 @@ class BasiliskPlugin implements Plugin<Project> {
         }
     }
 
-    private void configureDefaultSourceSets(Project project, BasiliskExtension extension, String sourceSetName) {
-        if (extension.generateProjectStructure) {
-            // configure default source directories
-            project.sourceSets.main[sourceSetName].srcDirs += [
-                'basilisk-app/conf',
-                'basilisk-app/controllers',
-                'basilisk-app/models',
-                'basilisk-app/views',
-                'basilisk-app/services',
-                'basilisk-app/lifecycle'
-            ]
-            // configure default resource directories
-            project.sourceSets.main.resources.srcDirs += [
-                'basilisk-app/resources',
-                'basilisk-app/i18n'
-            ]
-        }
+    private void configureDefaultSourceSets(Project project, String sourceSetName) {
+        // configure default source directories
+        project.sourceSets.main[sourceSetName].srcDirs += [
+            'basilisk-app/conf',
+            'basilisk-app/controllers',
+            'basilisk-app/models',
+            'basilisk-app/views',
+            'basilisk-app/services',
+            'basilisk-app/lifecycle'
+        ]
+        // configure default resource directories
+        project.sourceSets.main.resources.srcDirs += [
+            'basilisk-app/resources',
+            'basilisk-app/i18n'
+        ]
     }
 
     private static String resolveApplicationName(Project project) {
@@ -167,7 +165,7 @@ class BasiliskPlugin implements Plugin<Project> {
                     project.repositories.maven { url 'https://dl.bintray.com/melix/thirdparty-apache' }
                 }
 
-                configureDefaultSourceSets(project, extension, 'java')
+                configureDefaultSourceSets(project, 'java')
                 createDefaultDirectoryStructure(project, extension, 'java')
 
                 // add default dependencies
