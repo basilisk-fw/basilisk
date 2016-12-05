@@ -49,8 +49,8 @@ class BasiliskPluginResolutionStrategy {
             if (project.extensions.getByName(BASILISK_CONFIGURATION).disableDependencyResolution) {
                 return
             }
-            DEPENDENCY_MAP[configurationName].each { String dependency ->
-                project.logger.info("Adding {} to '{}' configuration", configurationName, dependency)
+            DEPENDENCY_MAP.get(project.name, [:])[configurationName].each { String dependency ->
+                project.logger.info("Adding {} to '{}' configuration of {}", dependency, configurationName, project.name)
                 resolver.project.dependencies.add(configurationName, dependency)
             }
         }
@@ -110,13 +110,14 @@ class BasiliskPluginResolutionStrategy {
         }
 
         private void appendDependency(String artifactId, String scope, String dependencyCoordinates) {
+            Map projectDependencyMap = DEPENDENCY_MAP.get(project.name, [:])
             if (artifactId.endsWith('-compile')) {
-                DEPENDENCY_MAP.get('compileOnly', []) << dependencyCoordinates
-                DEPENDENCY_MAP.get('testCompileOnly', []) << dependencyCoordinates
+                projectDependencyMap.get('compileOnly', []) << dependencyCoordinates
+                projectDependencyMap.get('testCompileOnly', []) << dependencyCoordinates
             } else if (scope == 'test' && artifactId.endsWith('-test')) {
-                DEPENDENCY_MAP.get('testCompile', []) << dependencyCoordinates
+                projectDependencyMap.get('testCompile', []) << dependencyCoordinates
             } else {
-                DEPENDENCY_MAP.get(scope, []) << dependencyCoordinates
+                projectDependencyMap.get(scope, []) << dependencyCoordinates
             }
         }
     }
