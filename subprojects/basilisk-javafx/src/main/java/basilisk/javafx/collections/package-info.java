@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 /**
- * Defines additional JavaFX binding implementations.
+ * Defines additional JavaFX collection implementations.
  *
  * @since 1.0.0
  */
 
-package basilisk.javafx.beans.binding;
+package basilisk.javafx.collections;

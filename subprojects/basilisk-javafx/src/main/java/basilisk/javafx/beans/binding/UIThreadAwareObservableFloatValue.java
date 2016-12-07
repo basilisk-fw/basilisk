@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Defines additional JavaFX binding implementations.
- *
- * @since 1.0.0
- */
-
 package basilisk.javafx.beans.binding;
+
+import javafx.beans.value.ObservableFloatValue;
+
+/**
+ * @author Andres Almiray
+ * @since 0.4.0
+ */
+class UIThreadAwareObservableFloatValue extends AbstractUIThreadAwareObservableNumberValue<Float> implements ObservableFloatValue {
+    UIThreadAwareObservableFloatValue(ObservableFloatValue delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public float get() {
+        return getDelegate().floatValue();
+    }
+}

@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Defines additional JavaFX binding implementations.
- *
- * @since 1.0.0
- */
-
 package basilisk.javafx.beans.binding;
+
+import javafx.beans.value.ObservableDoubleValue;
+
+/**
+ * @author Andres Almiray
+ * @since 0.4.0
+ */
+class UIThreadAwareObservableDoubleValue extends AbstractUIThreadAwareObservableNumberValue<Double> implements ObservableDoubleValue {
+    UIThreadAwareObservableDoubleValue(ObservableDoubleValue delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public double get() {
+        return getDelegate().doubleValue();
+    }
+}

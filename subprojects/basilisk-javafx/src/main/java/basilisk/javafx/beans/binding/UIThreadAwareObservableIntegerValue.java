@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Defines additional JavaFX binding implementations.
- *
- * @since 1.0.0
- */
-
 package basilisk.javafx.beans.binding;
+
+import javafx.beans.value.ObservableIntegerValue;
+
+/**
+ * @author Andres Almiray
+ * @since 0.4.0
+ */
+class UIThreadAwareObservableIntegerValue extends AbstractUIThreadAwareObservableNumberValue<Integer> implements ObservableIntegerValue {
+    UIThreadAwareObservableIntegerValue(ObservableIntegerValue delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public int get() {
+        return getDelegate().intValue();
+    }
+}

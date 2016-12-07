@@ -13,10 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Defines additional JavaFX binding implementations.
- *
- * @since 1.0.0
- */
-
 package basilisk.javafx.beans.binding;
+
+import javafx.beans.value.ObservableStringValue;
+
+import javax.annotation.Nonnull;
+
+/**
+ * @author Andres Almiray
+ * @since 0.4.0
+ */
+class UIThreadAwareObservableStringValue extends UIThreadAwareObservableValue<String> implements ObservableStringValue {
+    UIThreadAwareObservableStringValue(@Nonnull ObservableStringValue delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public String get() {
+        return getDelegate().getValue();
+    }
+}

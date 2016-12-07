@@ -13,10 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Defines additional JavaFX binding implementations.
- *
- * @since 1.0.0
- */
-
 package basilisk.javafx.beans.binding;
+
+import javafx.beans.value.ObservableBooleanValue;
+
+import javax.annotation.Nonnull;
+
+/**
+ * @author Andres Almiray
+ * @since 0.4.0
+ */
+class UIThreadAwareObservableBooleanValue extends UIThreadAwareObservableValue<Boolean> implements ObservableBooleanValue {
+    UIThreadAwareObservableBooleanValue(@Nonnull ObservableBooleanValue delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public boolean get() {
+        return getDelegate().getValue();
+    }
+
+    @Override
+    public Boolean getValue() {
+        return getDelegate().getValue();
+    }
+}

@@ -26,12 +26,7 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -539,115 +534,6 @@ public final class JavaFXUtils {
     public static String getBasiliskActionId(@Nonnull MenuItem menuItem) {
         requireNonNull(menuItem, ERROR_NODE_NULL);
         return (String) menuItem.getProperties().get(Action.class.getName());
-    }
-
-    /**
-     * Wraps an <tt>ObservableList</tt>, publishing updates inside the UI thread.
-     *
-     * @param source the <tt>ObservableList</tt> to be wrapped
-     * @param <E>    the list's parameter type.
-     *
-     * @return a new <tt>ObservableList</tt>
-     *
-     * @since 0.1.0
-     */
-    @Nonnull
-    public static <E> ObservableList<E> createJavaFXThreadProxyList(@Nonnull ObservableList<E> source) {
-        requireNonNull(source, "Argument 'source' must not be null");
-        return new JavaFXThreadProxyObservableList<>(source);
-    }
-
-    private static class JavaFXThreadProxyObservableList<E> extends DelegatingObservableList<E> {
-        protected JavaFXThreadProxyObservableList(ObservableList<E> delegate) {
-            super(delegate);
-        }
-
-        @Override
-        protected void sourceChanged(@Nonnull final ListChangeListener.Change<? extends E> c) {
-            if (Platform.isFxApplicationThread()) {
-                fireChange(c);
-            } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JavaFXThreadProxyObservableList.this.fireChange(c);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
-     * Wraps an <tt>ObservableSet</tt>, publishing updates inside the UI thread.
-     *
-     * @param source the <tt>ObservableSet</tt> to be wrapped
-     * @param <E>    the set's parameter type.
-     *
-     * @return a new <tt>ObservableSet</tt>
-     *
-     * @since 0.4.0
-     */
-    @Nonnull
-    public static <E> ObservableSet<E> createJavaFXThreadProxySet(@Nonnull ObservableSet<E> source) {
-        requireNonNull(source, "Argument 'source' must not be null");
-        return new JavaFXThreadProxyObservableSet<>(source);
-    }
-
-    private static class JavaFXThreadProxyObservableSet<E> extends DelegatingObservableSet<E> {
-        protected JavaFXThreadProxyObservableSet(ObservableSet<E> delegate) {
-            super(delegate);
-        }
-
-        @Override
-        protected void sourceChanged(@Nonnull final SetChangeListener.Change<? extends E> c) {
-            if (Platform.isFxApplicationThread()) {
-                fireChange(c);
-            } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JavaFXThreadProxyObservableSet.this.fireChange(c);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
-     * Wraps an <tt>ObservableMap</tt>, publishing updates inside the UI thread.
-     *
-     * @param source the <tt>ObservableMap</tt> to be wrapped
-     * @param <K>    the type of keys maintained by the map
-     * @param <V>    the type of mapped values
-     *
-     * @return a new <tt>ObservableMap</tt>
-     *
-     * @since 0.4.0
-     */
-    @Nonnull
-    public static <K, V> ObservableMap<K, V> createJavaFXThreadProxyMap(@Nonnull ObservableMap<K, V> source) {
-        requireNonNull(source, "Argument 'source' must not be null");
-        return new JavaFXThreadProxyObservableMap<>(source);
-    }
-
-    private static class JavaFXThreadProxyObservableMap<K, V> extends DelegatingObservableMap<K, V> {
-        protected JavaFXThreadProxyObservableMap(ObservableMap<K, V> delegate) {
-            super(delegate);
-        }
-
-        @Override
-        protected void sourceChanged(@Nonnull final MapChangeListener.Change<? extends K, ? extends V> c) {
-            if (Platform.isFxApplicationThread()) {
-                fireChange(c);
-            } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JavaFXThreadProxyObservableMap.this.fireChange(c);
-                    }
-                });
-            }
-        }
     }
 
     @Nonnull
