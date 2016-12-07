@@ -17,6 +17,7 @@ package basilisk.util
 
 import basilisk.inject.BindTo
 import basilisk.inject.DependsOn
+import basilisk.inject.Evicts
 import basilisk.inject.Typed
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -88,6 +89,40 @@ class AnnotationUtilsSpec extends Specification {
         'three' in named.keySet()
     }
 
+    def "Instances are evicted and mapped by their names"() {
+        given:
+        List instances = [new Foo(), new FooEvictor()]
+
+        when:
+        Map named = AnnotationUtils.mapInstancesByName(instances, '', 'Object')
+
+        then:
+        1 == named.size()
+        'foo' in named.keySet()
+    }
+
+    def "Multiple instances with same name should cause an exception"() {
+        given:
+        List instances = [new Foo(), new FooImpersonator()]
+
+        when:
+        AnnotationUtils.mapInstancesByName(instances, '', 'Object')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def "Multiple evictions with same name should cause an exception"() {
+        given:
+        List instances = [new Foo(), new FooEvictor(), new FooEvictor2()]
+
+        when:
+        AnnotationUtils.mapInstancesByName(instances, '', 'Object')
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def "Instances are sorted by their dependencies"() {
         given:
         List instances = [new Three(), new Two(), new One()]
@@ -131,4 +166,18 @@ class AnnotationUtilsSpec extends Specification {
     @DependsOn('cycle1')
     @Named('cycle2')
     static class Cycle2 {}
+
+    @Named('foo')
+    static class Foo {}
+
+    @Named('foo')
+    static class FooImpersonator {}
+
+    @Named
+    @Evicts('foo')
+    static class FooEvictor {}
+
+    @Named
+    @Evicts('foo')
+    static class FooEvictor2 {}
 }
