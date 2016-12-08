@@ -44,6 +44,7 @@ import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
 import basilisk.util.CompositeResourceBundleBuilder;
+import basilisk.util.PropertiesReader;
 import org.kordamp.basilisk.runtime.core.addon.DefaultAddonManager;
 import org.kordamp.basilisk.runtime.core.artifact.ControllerArtifactHandler;
 import org.kordamp.basilisk.runtime.core.artifact.DefaultArtifactManager;
@@ -106,6 +107,10 @@ public class DefaultApplicationModule extends AbstractModule {
 
         bind(ContextFactory.class)
             .to(DefaultContextFactory.class)
+            .asSingleton();
+
+        bind(PropertiesReader.class)
+            .toProvider(PropertiesReader.Provider.class)
             .asSingleton();
 
         bind(Context.class)
