@@ -41,7 +41,7 @@ public class ElementObservableList<E extends ElementObservableList.PropertyConta
     private final Map<E, List<ListenerSubscription>> subscriptions = new LinkedHashMap<>();
 
     public ElementObservableList() {
-        this(FXCollections.observableArrayList());
+        this(FXCollections.<E>observableArrayList());
     }
 
     public ElementObservableList(@Nonnull ObservableList<E> delegate) {
