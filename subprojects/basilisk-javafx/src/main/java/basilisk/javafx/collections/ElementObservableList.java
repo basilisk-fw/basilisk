@@ -18,6 +18,7 @@ package basilisk.javafx.collections;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
@@ -38,6 +39,10 @@ public class ElementObservableList<E extends ElementObservableList.PropertyConta
     }
 
     private final Map<E, List<ListenerSubscription>> subscriptions = new LinkedHashMap<>();
+
+    public ElementObservableList() {
+        this(FXCollections.observableArrayList());
+    }
 
     public ElementObservableList(@Nonnull ObservableList<E> delegate) {
         super(delegate);
