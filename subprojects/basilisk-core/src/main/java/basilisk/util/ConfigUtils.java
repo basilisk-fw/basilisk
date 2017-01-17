@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -47,10 +48,32 @@ public final class ConfigUtils {
     }
 
     /**
+     * Converts a {@code ResourceBundle} instance into a {@code Properties} instance.
+     *
+     * @param resourceBundle the {@code ResourceBundle} to be converted. Must not be null.
+     *
+     * @return a newly created {@code Properties} with all key/value pairs from the given {@code ResourceBundle}.
+     *
+     * @since 1.0.0
+     */
+    @Nonnull
+    public static Properties toProperties(@Nonnull ResourceBundle resourceBundle) {
+        requireNonNull(resourceBundle, "Argument 'resourceBundle' must not be null");
+
+        Properties properties = new Properties();
+        for (String key : resourceBundle.keySet()) {
+            properties.put(key, resourceBundle.getObject(key));
+        }
+
+        return properties;
+    }
+
+    /**
      * Returns true if there's a non-null value for the specified key.
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return true if there's a value for the specified key, false otherwise
      */
     @SuppressWarnings("unchecked")
@@ -83,6 +106,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return true if there's a value for the specified key, false otherwise
      */
     @SuppressWarnings("unchecked")
@@ -130,6 +154,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return true if there's a value for the specified key, false otherwise
      */
     @SuppressWarnings("unchecked")
@@ -154,7 +179,7 @@ public final class ConfigUtils {
                 return false;
             }
         }
-        if (config == null) return false;
+        if (config == null) { return false; }
         Object value = config.get(keys[keys.length - 1]);
         return value != null;
     }
@@ -164,6 +189,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return true if there's a value for the specified key, false otherwise
      */
     @SuppressWarnings("unchecked")
@@ -209,7 +235,7 @@ public final class ConfigUtils {
                 return false;
             }
         }
-        if (map == null) return false;
+        if (map == null) { return false; }
         Object value = map.get(keys[keys.length - 1]);
         return value != null;
     }
@@ -220,6 +246,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -245,7 +272,7 @@ public final class ConfigUtils {
                 return defaultValue;
             }
         }
-        if (config == null) return defaultValue;
+        if (config == null) { return defaultValue; }
         Object value = config.get(keys[keys.length - 1]);
         return value != null ? (T) value : defaultValue;
     }
@@ -256,6 +283,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -298,7 +326,7 @@ public final class ConfigUtils {
                 return defaultValue;
             }
         }
-        if (map == null) return defaultValue;
+        if (map == null) { return defaultValue; }
         Object value = map.get(keys[keys.length - 1]);
         return value != null ? (T) value : defaultValue;
     }
@@ -308,6 +336,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -349,6 +378,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -415,6 +445,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code false} if no match.
      */
     public static boolean getConfigValueAsBoolean(@Nonnull Map<String, Object> config, @Nonnull String key) {
@@ -427,6 +458,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     public static boolean getConfigValueAsBoolean(@Nonnull Map<String, Object> config, @Nonnull String key, boolean defaultValue) {
@@ -439,6 +471,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code 0} if no match.
      */
     public static int getConfigValueAsInt(@Nonnull Map<String, Object> config, @Nonnull String key) {
@@ -451,6 +484,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     public static int getConfigValueAsInt(@Nonnull Map<String, Object> config, @Nonnull String key, int defaultValue) {
@@ -463,6 +497,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code 0L} if no match.
      */
     public static long getConfigValueAsLong(@Nonnull Map<String, Object> config, @Nonnull String key) {
@@ -475,6 +510,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     public static long getConfigValueAsLong(@Nonnull Map<String, Object> config, @Nonnull String key, long defaultValue) {
@@ -487,6 +523,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code 0d} if no match.
      */
     public static double getConfigValueAsDouble(@Nonnull Map<String, Object> config, @Nonnull String key) {
@@ -499,6 +536,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     public static double getConfigValueAsDouble(@Nonnull Map<String, Object> config, @Nonnull String key, double defaultValue) {
@@ -511,6 +549,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code 0f} if no match.
      */
     public static float getConfigValueAsFloat(@Nonnull Map<String, Object> config, @Nonnull String key) {
@@ -523,6 +562,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     public static float getConfigValueAsFloat(@Nonnull Map<String, Object> config, @Nonnull String key, float defaultValue) {
@@ -535,6 +575,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code null} if no match.
      */
     @Nullable
@@ -548,6 +589,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -561,6 +603,7 @@ public final class ConfigUtils {
      *
      * @param config the configuration object to be searched upon
      * @param key    the key to be searched
+     *
      * @return the value of the key. Returns {@code ""} if no match.
      */
     @Nullable
@@ -574,6 +617,7 @@ public final class ConfigUtils {
      * @param config       the configuration object to be searched upon
      * @param key          the key to be searched
      * @param defaultValue the value to send back if no match is found
+     *
      * @return the value of the key or the default value if no match is found
      */
     @Nullable
@@ -589,6 +633,7 @@ public final class ConfigUtils {
      * e.g. "mypath/myfile.txt" -> "txt".
      *
      * @param path the file path (may be <code>null</code>)
+     *
      * @return the extracted filename extension, or <code>null</code> if none
      */
     public static String getFilenameExtension(String path) {
@@ -611,6 +656,7 @@ public final class ConfigUtils {
      * e.g. "mypath/myfile.txt" -> "mypath/myfile".
      *
      * @param path the file path (may be <code>null</code>)
+     *
      * @return the path with stripped filename extension,
      * or <code>null</code> if none
      */
