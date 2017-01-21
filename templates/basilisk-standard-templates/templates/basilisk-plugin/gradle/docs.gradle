@@ -10,10 +10,10 @@ javadoc {
     options.docTitle = "\$project.name \$project.version API"
     options.footer = javadocFooter
     options.links = ['http://www.slf4j.org/apidocs/',
-                     'http://junit.org/javadoc/latest/',
+                     'http://junit.org/junit4/javadoc/latest/',
                      'http://docs.oracle.com/javase/7/docs/api/',
-                     'http://jsr-305.googlecode.com/svn/trunk/javadoc/',
-                     'http://atinject.googlecode.com/svn/trunk/javadoc/',
+                     'http://aalmiray.github.io/jsr-305/apidocs/',
+                     'http://javax-inject.github.io/javax-inject/api/',
                      'http://basilisk-framework.org/guide/latest/api/']
 
     doLast { task ->
@@ -41,10 +41,10 @@ if (plugins.hasPlugin('groovy')) {
         includePrivate = false
         link 'http://www.slf4j.org/apidocs/', 'org.slf4j.'
         link 'http://docs.oracle.com/javase/7/docs/api/', 'java.', 'org.xml.', 'javax.', 'org.w3c.'
-        link 'http://jsr-305.googlecode.com/svn/trunk/javadoc/', 'javax.annotation.'
+        link 'http://aalmiray.github.io/jsr-305/apidocs/', 'javax.annotation.'
         link 'http://basilisk-framework.org/guide/latest/api/', 'basilisk.', 'org.kordamp.basilisk.'
-        link 'http://junit.org/javadoc/latest/', 'org.junit.', 'junit.'
-        link 'http://atinject.googlecode.com/svn/trunk/javadoc/', 'javax.inject.'
+        link 'http://junit.org/junit4/javadoc/latest/', 'org.junit.', 'junit.'
+        link 'http://javax-inject.github.io/javax-inject/api/', 'javax.inject.'
 
         doLast { task ->
             copy {

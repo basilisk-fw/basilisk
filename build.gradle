@@ -196,12 +196,12 @@ subprojects { subproj ->
                 options.docTitle = "$subproj.pomDescription $version"
                 options.footer = rootProject.javadocFooter
                 options.links = ['http://www.slf4j.org/apidocs/',
-                                 'http://junit.org/javadoc/latest/',
-                                 'http://jsr-305.googlecode.com/svn/trunk/javadoc/',
-                                 'http://atinject.googlecode.com/svn/trunk/javadoc/',
+                                 'http://junit.org/junit4/javadoc/latest/',
+                                 'http://aalmiray.github.io/jsr-305/apidocs/',
+                                 'http://javax-inject.github.io/javax-inject/api/',
                                  'http://docs.oracle.com/javase/8/docs/api/',
                                  'http://docs.oracle.com/javase/8/javafx/api/',
-                                 'http://google.github.io/guice/api-docs/4.0/javadoc/',
+                                 'http://google.github.io/guice/api-docs/4.1/javadoc/',
                                  'http://aalmiray.github.io/jipsy/apidocs/']
 
                 doLast { task ->
