@@ -20,6 +20,7 @@ import basilisk.core.injection.Module;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
 import basilisk.javafx.JavaFXWindowDisplayHandler;
+import basilisk.javafx.support.ActionMatcher;
 import org.kordamp.basilisk.runtime.core.injection.AbstractModule;
 import org.kordamp.basilisk.runtime.javafx.controller.JavaFXActionManager;
 import org.kordamp.jipsy.ServiceProviderFor;
@@ -58,6 +59,9 @@ public class JavaFXModule extends AbstractModule {
         bind(ActionManager.class)
             .to(JavaFXActionManager.class)
             .asSingleton();
+
+        bind(ActionMatcher.class)
+            .toInstance(ActionMatcher.DEFAULT);
         // end::bindings[]
     }
 }

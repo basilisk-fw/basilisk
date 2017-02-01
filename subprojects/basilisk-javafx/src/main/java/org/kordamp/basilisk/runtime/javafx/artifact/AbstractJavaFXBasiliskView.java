@@ -19,6 +19,7 @@ import basilisk.core.artifact.BasiliskClass;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.exceptions.BasiliskException;
+import basilisk.javafx.support.ActionMatcher;
 import basilisk.javafx.support.JavaFXAction;
 import basilisk.javafx.support.JavaFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +31,7 @@ import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskView;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 
@@ -44,6 +46,9 @@ import static basilisk.util.ConfigUtils.stripFilenameExtension;
  */
 public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
     private static final String FXML_SUFFIX = ".fxml";
+
+    @Inject
+    protected ActionMatcher actionMatcher;
 
     @Nullable
     protected Node loadFromFXML() {
@@ -105,7 +110,7 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
     }
 
     protected void connectActions(@Nonnull Object node, @Nonnull BasiliskController controller) {
-        JavaFXUtils.connectActions(node, controller);
+        JavaFXUtils.connectActions(node, controller, actionMatcher);
     }
 
     protected void connectMessageSource(@Nonnull Object node) {
