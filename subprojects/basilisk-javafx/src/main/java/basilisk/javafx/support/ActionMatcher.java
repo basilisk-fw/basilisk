@@ -46,7 +46,7 @@ public interface ActionMatcher {
      */
     ActionMatcher DEFAULT = new ActionMatcher() {
         @Override
-        public void match(@Nonnull Object node, @Nonnull String actionName, @Nonnull JavaFXAction action) {
+        public void match(@Nonnull Object node, @Nonnull final String actionName, @Nonnull JavaFXAction action) {
             Collection<Object> controls = findElements(node, new Predicate<Object>() {
                 @Override
                 public boolean test(Object arg) {
