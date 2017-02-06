@@ -55,7 +55,13 @@ public abstract class AbstractBasiliskArtifact implements BasiliskArtifact {
     private BasiliskClass basiliskClass;
 
     public AbstractBasiliskArtifact() {
-        log = LoggerFactory.getLogger("basilisk.app." + getArtifactType() + "." + getClass().getName());
+        log = LoggerFactory.getLogger("basilisk.app." + getArtifactType() + "." + getTypeClass().getName());
+    }
+
+    @Override
+    @Nonnull
+    public Class getTypeClass() {
+        return getClass();
     }
 
     @Nonnull
@@ -69,7 +75,7 @@ public abstract class AbstractBasiliskArtifact implements BasiliskArtifact {
     public BasiliskClass getBasiliskClass() {
         synchronized (lock) {
             if (basiliskClass == null) {
-                basiliskClass = application.getArtifactManager().findBasiliskClass(getClass());
+                basiliskClass = application.getArtifactManager().findBasiliskClass(getTypeClass());
             }
             return basiliskClass;
         }

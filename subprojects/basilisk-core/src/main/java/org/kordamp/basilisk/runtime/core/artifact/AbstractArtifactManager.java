@@ -180,7 +180,7 @@ public abstract class AbstractArtifactManager implements ArtifactManager {
     public <A extends BasiliskArtifact> BasiliskClass findBasiliskClass(@Nonnull A artifact) {
         requireNonNull(artifact, ERROR_ARTIFACT_NULL);
         synchronized (lock) {
-            return findBasiliskClass(artifact.getClass());
+            return findBasiliskClass(artifact.getTypeClass());
         }
     }
 
