@@ -19,10 +19,12 @@ import basilisk.core.ApplicationClassLoader
 import basilisk.core.editors.IntegerPropertyEditor
 import basilisk.core.editors.PropertyEditorResolver
 import basilisk.core.editors.StringPropertyEditor
+import basilisk.core.injection.Injector
 import basilisk.core.resources.ResourceHandler
 import basilisk.core.resources.ResourceInjector
 import basilisk.core.resources.ResourceResolver
 import basilisk.util.CompositeResourceBundleBuilder
+import basilisk.util.Instantiator
 import com.google.guiceberry.GuiceBerryModule
 import com.google.guiceberry.junit4.GuiceBerryRule
 import com.google.inject.AbstractModule
@@ -32,9 +34,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.kordamp.basilisk.runtime.core.DefaultApplicationClassLoader
 import org.kordamp.basilisk.runtime.util.DefaultCompositeResourceBundleBuilder
+import org.kordamp.basilisk.runtime.util.DefaultInstantiator
 
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
+
+import static com.google.inject.util.Providers.guicify
+import static org.mockito.Mockito.mock
 
 class DefaultResourceInjectorTests {
     @Rule
@@ -81,6 +88,8 @@ class DefaultResourceInjectorTests {
             bind(ApplicationClassLoader).to(DefaultApplicationClassLoader).in(Singleton)
             bind(ResourceHandler).to(DefaultResourceHandler).in(Singleton)
             bind(CompositeResourceBundleBuilder).to(DefaultCompositeResourceBundleBuilder).in(Singleton)
+            bind(Instantiator).to(DefaultInstantiator).in(Singleton)
+            bind(Injector).toProvider(guicify({ mock(Injector) } as Provider<Injector>))
         }
     }
 }

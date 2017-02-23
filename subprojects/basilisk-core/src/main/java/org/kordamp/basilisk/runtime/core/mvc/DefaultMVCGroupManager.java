@@ -34,6 +34,7 @@ import basilisk.exceptions.PropertyException;
 import basilisk.inject.Contextual;
 import basilisk.inject.MVCMember;
 import basilisk.util.CollectionUtils;
+import basilisk.util.Instantiator;
 import com.googlecode.openbeans.PropertyDescriptor;
 import org.kordamp.basilisk.runtime.core.injection.InjectionUnitOfWork;
 import org.slf4j.Logger;
@@ -84,11 +85,13 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
     private static final String KEY_PARENT_GROUP = "parentGroup";
 
     private final ApplicationClassLoader applicationClassLoader;
+    protected final Instantiator instantiator;
 
     @Inject
-    public DefaultMVCGroupManager(@Nonnull BasiliskApplication application, @Nonnull ApplicationClassLoader applicationClassLoader) {
+    public DefaultMVCGroupManager(@Nonnull BasiliskApplication application, @Nonnull ApplicationClassLoader applicationClassLoader, @Nonnull Instantiator instantiator) {
         super(application);
         this.applicationClassLoader = requireNonNull(applicationClassLoader, "Argument 'applicationClassLoader' must not be null");
+        this.instantiator = requireNonNull(instantiator, "Argument 'instantiator' must not be null");
     }
 
     protected void doInitialize(@Nonnull Map<String, MVCGroupConfiguration> configurations) {
@@ -258,11 +261,10 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
                 } else {
                     Class<?> memberClass = classHolder.regularClass;
                     try {
-                        Object instance = memberClass.newInstance();
-                        getApplication().getInjector().injectMembers(instance);
+                        Object instance = instantiator.instantiate(memberClass);
                         instanceMap.put(memberType, instance);
                         args.put(memberType, instance);
-                    } catch (InstantiationException | IllegalAccessException e) {
+                    } catch (RuntimeException e) {
                         LOG.error("Can't create member {} with {}", memberType, memberClass);
                         throw new NewInstanceException(memberClass, e);
                     }

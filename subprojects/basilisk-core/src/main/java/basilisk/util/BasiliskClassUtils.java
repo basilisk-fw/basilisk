@@ -35,10 +35,13 @@ import com.googlecode.openbeans.PropertyDescriptor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3012,6 +3015,73 @@ public class BasiliskClassUtils {
         } catch (InvocationTargetException e) {
             throw new StaticMethodInvocationException(type, methodName, args, e.getTargetException());
         }
+    }
+
+    public static boolean hasMethodAnnotatedwith(@Nonnull final Object instance, @Nonnull final Class<? extends Annotation> annotation) {
+        Class<?> klass = instance.getClass();
+        while (klass != null) {
+            boolean found = false;
+            for (Method method : klass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(annotation) &&
+                    method.getParameterTypes().length == 0) {
+                    return true;
+                }
+            }
+
+            klass = klass.getSuperclass();
+        }
+
+        return false;
+    }
+
+    public static void invokeAnnotatedMethod(@Nonnull final Object instance, @Nonnull final Class<? extends Annotation> annotation) {
+        List<Method> methods = new ArrayList<>();
+        Class<?> klass = instance.getClass();
+        while (klass != null) {
+            boolean found = false;
+            for (Method method : klass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(annotation) &&
+                    method.getParameterTypes().length == 0) {
+                    if (found) {
+                        throw new InstanceMethodInvocationException(instance, method, buildCause(instance.getClass(), method, methods, annotation));
+                    }
+                    methods.add(method);
+                    found = true;
+                }
+            }
+
+            klass = klass.getSuperclass();
+        }
+
+        for (final Method method : methods) {
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    boolean wasAccessible = method.isAccessible();
+                    try {
+                        method.setAccessible(true);
+                        return method.invoke(instance);
+                    } catch (IllegalAccessException | IllegalArgumentException e) {
+                        throw new InstanceMethodInvocationException(instance, method.getName(), null, e);
+                    } catch (InvocationTargetException e) {
+                        throw new InstanceMethodInvocationException(instance, method.getName(), null, e.getTargetException());
+                    } finally {
+                        method.setAccessible(wasAccessible);
+                    }
+                }
+            });
+        }
+    }
+
+    @Nonnull
+    private static Throwable buildCause(@Nonnull Class<?> clazz, @Nonnull Method method, @Nonnull List<Method> methods, @Nonnull final Class<? extends Annotation> annotation) {
+        StringBuilder b = new StringBuilder("The following methods were found annotated with @" + annotation.getSimpleName() + " on ")
+            .append(clazz);
+        for (Method m : methods) {
+            b.append("\n  ").append(m.toGenericString());
+        }
+        b.append("\n  ").append(method.toGenericString());
+        return new IllegalStateException(b.toString());
     }
 
     private static final String EMPTY_STRING = "";

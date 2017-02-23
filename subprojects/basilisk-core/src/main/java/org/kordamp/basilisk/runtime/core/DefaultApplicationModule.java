@@ -44,6 +44,7 @@ import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
 import basilisk.util.CompositeResourceBundleBuilder;
+import basilisk.util.Instantiator;
 import basilisk.util.PropertiesReader;
 import org.kordamp.basilisk.runtime.core.addon.DefaultAddonManager;
 import org.kordamp.basilisk.runtime.core.artifact.ControllerArtifactHandler;
@@ -73,6 +74,7 @@ import org.kordamp.basilisk.runtime.core.threading.DefaultExecutorServiceProvide
 import org.kordamp.basilisk.runtime.core.threading.DefaultUIThreadManager;
 import org.kordamp.basilisk.runtime.core.view.NoopWindowManager;
 import org.kordamp.basilisk.runtime.util.DefaultCompositeResourceBundleBuilder;
+import org.kordamp.basilisk.runtime.util.DefaultInstantiator;
 import org.kordamp.basilisk.runtime.util.ResourceBundleProvider;
 
 import javax.inject.Named;
@@ -107,6 +109,10 @@ public class DefaultApplicationModule extends AbstractModule {
 
         bind(ContextFactory.class)
             .to(DefaultContextFactory.class)
+            .asSingleton();
+
+        bind(Instantiator.class)
+            .to(DefaultInstantiator.class)
             .asSingleton();
 
         bind(PropertiesReader.class)

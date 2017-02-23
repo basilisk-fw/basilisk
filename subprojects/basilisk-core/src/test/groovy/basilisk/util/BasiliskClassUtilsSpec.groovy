@@ -24,9 +24,12 @@ import basilisk.core.mvc.MVCHandler
 import basilisk.core.resources.ResourceHandler
 import basilisk.core.resources.ResourceResolver
 import basilisk.core.threading.ThreadingHandler
+import basilisk.exceptions.InstanceMethodInvocationException
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 import java.lang.reflect.Method
 
 @Unroll
@@ -421,6 +424,62 @@ class BasiliskClassUtilsSpec extends Specification {
         ]
     }
 
+    void 'Find @PostConstruct annotated method on valid instance'() {
+        given:
+        ValidBean bean = new ValidBean()
+
+        expect:
+        BasiliskClassUtils.hasMethodAnnotatedwith(bean, PostConstruct)
+    }
+
+    void 'Find @PreDestroy annotated method on valid instance'() {
+        given:
+        ValidBean bean = new ValidBean()
+
+        expect:
+        BasiliskClassUtils.hasMethodAnnotatedwith(bean, PreDestroy)
+    }
+
+    void 'Invoke @PostConstruct annotated method on valid instance'() {
+        given:
+        ValidBean bean = new ValidBean()
+
+        expect:
+        !bean.postConstruct
+
+        when:
+        BasiliskClassUtils.invokeAnnotatedMethod(bean, PostConstruct)
+
+        then:
+        bean.postConstruct
+    }
+
+    void 'Invoke @PreDestroy annotated method on valid instance'() {
+        given:
+        ValidBean bean = new ValidBean()
+
+        expect:
+        !bean.preDestroy
+
+        when:
+        BasiliskClassUtils.invokeAnnotatedMethod(bean, PreDestroy)
+
+        then:
+        bean.preDestroy
+    }
+
+    void 'Invoke @PostConstruct annotated method on invalid instance'() {
+        given:
+
+        InvalidBean bean = new InvalidBean()
+
+        when:
+        BasiliskClassUtils.invokeAnnotatedMethod(bean, PostConstruct)
+
+        then:
+        thrown(InstanceMethodInvocationException)
+    }
+
     private static List methodDescriptorsOf(Class<?> type, boolean result) {
         List data = []
         for (Method m : type.methods) {
@@ -470,4 +529,27 @@ class BasiliskClassUtilsSpec extends Specification {
     static interface MySetter {
         void setSomething(String s)
     }
+}
+
+class ValidBean {
+    boolean postConstruct
+    boolean preDestroy
+
+    @PostConstruct
+    void init() {
+        postConstruct = true
+    }
+
+    @PreDestroy
+    void destroy(){
+        preDestroy = true
+    }
+}
+
+class InvalidBean {
+    @PostConstruct
+    void init() {}
+
+    @PostConstruct
+    void start() {}
 }

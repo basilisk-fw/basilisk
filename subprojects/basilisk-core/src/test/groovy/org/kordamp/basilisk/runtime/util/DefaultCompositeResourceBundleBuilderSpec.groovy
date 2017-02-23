@@ -16,8 +16,10 @@
 package org.kordamp.basilisk.runtime.util
 
 import basilisk.core.ApplicationClassLoader
+import basilisk.core.injection.Injector
 import basilisk.core.resources.ResourceHandler
 import basilisk.util.CompositeResourceBundleBuilder
+import basilisk.util.Instantiator
 import basilisk.util.PropertiesReader
 import basilisk.util.ResourceBundleReader
 import com.google.guiceberry.GuiceBerryModule
@@ -30,20 +32,25 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
+
+import static com.google.inject.util.Providers.guicify
+import static org.mockito.Mockito.mock
 
 @Unroll
 class DefaultCompositeResourceBundleBuilderSpec extends Specification {
     @Rule
     final GuiceBerryRule guiceBerry = new GuiceBerryRule(TestModule)
 
+    @Inject private Instantiator instantiator
     @Inject private ResourceHandler resourceHandler
     @Inject private PropertiesReader propertiesReader
     @Inject private ResourceBundleReader resourceBundleReader
 
     def 'Create throws #exception'() {
         given:
-        CompositeResourceBundleBuilder builder = new DefaultCompositeResourceBundleBuilder(resourceHandler, propertiesReader, resourceBundleReader)
+        CompositeResourceBundleBuilder builder = new DefaultCompositeResourceBundleBuilder(instantiator, resourceHandler, propertiesReader, resourceBundleReader)
 
         when:
         builder.create(filename, locale)
@@ -60,7 +67,7 @@ class DefaultCompositeResourceBundleBuilderSpec extends Specification {
 
     def 'Excercise bundle creation with #filename'() {
         given:
-        CompositeResourceBundleBuilder builder = new DefaultCompositeResourceBundleBuilder(resourceHandler, propertiesReader, resourceBundleReader)
+        CompositeResourceBundleBuilder builder = new DefaultCompositeResourceBundleBuilder(instantiator, resourceHandler, propertiesReader, resourceBundleReader)
 
         expect:
         builder.create(filename)
@@ -80,6 +87,8 @@ class DefaultCompositeResourceBundleBuilderSpec extends Specification {
             bind(ResourceHandler).to(DefaultResourceHandler).in(Singleton)
             bind(PropertiesReader).in(Singleton)
             bind(ResourceBundleReader).in(Singleton)
+            bind(Instantiator).to(DefaultInstantiator).in(Singleton)
+            bind(Injector).toProvider(guicify({ mock(Injector) } as Provider<Injector>))
         }
     }
 }

@@ -46,11 +46,11 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import static basilisk.util.AnnotationUtils.sortByDependencies;
+import static basilisk.util.BasiliskClassUtils.invokeAnnotatedMethod;
 import static com.google.inject.util.Providers.guicify;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static org.kordamp.basilisk.runtime.injection.GuiceInjector.moduleFromBindings;
-import static org.kordamp.basilisk.runtime.injection.MethodUtils.invokeAnnotatedMethod;
 
 /**
  * @author Andres Almiray
