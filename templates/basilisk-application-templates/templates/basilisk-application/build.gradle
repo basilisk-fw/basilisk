@@ -61,7 +61,7 @@ apply plugin: 'com.github.ben-manes.versions'
 dependencies {
     compile "org.kordamp.basilisk:basilisk-guice:\${basilisk.version}"
 
-    runtime 'org.slf4j:slf4j-simple:1.7.22'
+    runtime 'org.slf4j:slf4j-simple:1.7.23'
 
     testCompile "org.kordamp.basilisk:basilisk-javafx-test:\${basilisk.version}"
     testCompile "org.codehaus.groovy:groovy-all:\${groovyVersion}"
