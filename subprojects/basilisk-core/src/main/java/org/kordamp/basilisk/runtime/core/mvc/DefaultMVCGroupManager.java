@@ -27,6 +27,7 @@ import basilisk.core.artifact.BasiliskView;
 import basilisk.core.mvc.MVCGroup;
 import basilisk.core.mvc.MVCGroupConfiguration;
 import basilisk.exceptions.BasiliskException;
+import basilisk.exceptions.BasiliskViewInitializationException;
 import basilisk.exceptions.FieldException;
 import basilisk.exceptions.MVCGroupInstantiationException;
 import basilisk.exceptions.NewInstanceException;
@@ -295,10 +296,10 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
                     try {
                         BasiliskView view = (BasiliskView) member;
                         view.initUI();
-                        view.mvcGroupInit(args);
                     } catch (RuntimeException e) {
-                        throw (RuntimeException) sanitize(e);
+                        throw (RuntimeException) sanitize(new BasiliskViewInitializationException(group.getMvcType(), group.getMvcId(), member.getClass().getName(), e));
                     }
+                    ((BasiliskMvcArtifact) member).mvcGroupInit(args);
                 }
             });
         } else if (member instanceof BasiliskMvcArtifact) {
