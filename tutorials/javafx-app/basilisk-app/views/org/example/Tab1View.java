@@ -17,9 +17,9 @@ package org.example;
 
 import basilisk.core.artifact.BasiliskView;
 import basilisk.inject.MVCMember;
+import basilisk.javafx.beans.binding.UIThreadAwareBindings;
 import basilisk.javafx.support.JavaFXAction;
 import basilisk.javafx.support.JavaFXUtils;
-import basilisk.javafx.support.UIThreadAwareBindings;
 import basilisk.metadata.ArtifactProviderFor;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
