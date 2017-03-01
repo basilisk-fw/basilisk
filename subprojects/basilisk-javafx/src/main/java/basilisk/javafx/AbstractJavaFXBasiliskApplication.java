@@ -40,6 +40,7 @@ import basilisk.core.resources.ResourceResolver;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.core.view.WindowManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -337,6 +338,16 @@ public abstract class AbstractJavaFXBasiliskApplication extends Application impl
     }
 
     public boolean shutdown() {
+        boolean implicitExit = Platform.isImplicitExit();
+        Platform.setImplicitExit(false);
+        if (!doShutdown()) {
+            Platform.setImplicitExit(implicitExit);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean doShutdown() {
         // avoids reentrant calls to shutdown()
         // once permission to quit has been granted
         if (getPhase() == ApplicationPhase.SHUTDOWN) { return false; }

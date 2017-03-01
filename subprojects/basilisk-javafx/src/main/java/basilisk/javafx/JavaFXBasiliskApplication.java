@@ -17,6 +17,7 @@ package basilisk.javafx;
 
 import basilisk.core.ApplicationBootstrapper;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.kordamp.basilisk.runtime.core.DefaultApplicationBootstrapper;
 
@@ -108,6 +109,7 @@ public class JavaFXBasiliskApplication extends AbstractJavaFXBasiliskApplication
     }
 
     public void exit() {
+        Platform.exit();
         System.exit(0);
     }
 }
