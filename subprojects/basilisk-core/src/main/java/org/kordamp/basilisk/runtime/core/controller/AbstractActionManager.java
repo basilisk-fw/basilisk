@@ -16,7 +16,7 @@
 package org.kordamp.basilisk.runtime.core.controller;
 
 import basilisk.core.BasiliskApplication;
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.Context;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskControllerClass;

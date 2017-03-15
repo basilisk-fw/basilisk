@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core
+package org.kordamp.basilisk.runtime.core.configuration
 
-import basilisk.core.Configuration
-import basilisk.core.MutableConfiguration
+import basilisk.core.configuration.Configuration
+import basilisk.core.configuration.MutableConfiguration
 import basilisk.core.editors.IntegerPropertyEditor
 import basilisk.core.editors.PropertyEditorResolver
 import com.google.guiceberry.GuiceBerryModule
@@ -24,6 +24,7 @@ import com.google.guiceberry.junit4.GuiceBerryRule
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import org.junit.Rule
+import org.kordamp.basilisk.runtime.core.MapResourceBundle
 import spock.lang.Specification
 import spock.lang.Unroll
 

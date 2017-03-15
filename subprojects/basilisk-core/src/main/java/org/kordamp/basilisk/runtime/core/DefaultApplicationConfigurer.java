@@ -117,6 +117,7 @@ public class DefaultApplicationConfigurer implements ApplicationConfigurer {
 
         initializePropertyEditors();
         initializeResourcesInjector();
+        initializeConfigurationManager();
         runLifecycleHandler(Lifecycle.INITIALIZE);
         applyPlatformTweaks();
         initializeAddonManager();
@@ -200,6 +201,10 @@ public class DefaultApplicationConfigurer implements ApplicationConfigurer {
     protected void applyPlatformTweaks() {
         PlatformHandler platformHandler = application.getInjector().getInstance(PlatformHandler.class);
         platformHandler.handle(application);
+    }
+
+    protected void initializeConfigurationManager() {
+        application.getConfigurationManager();
     }
 
     protected void initializeAddonManager() {

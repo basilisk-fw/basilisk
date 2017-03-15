@@ -21,7 +21,6 @@ import basilisk.core.ApplicationConfigurer;
 import basilisk.core.ApplicationEvent;
 import basilisk.core.BasiliskApplication;
 import basilisk.core.BasiliskExceptionHandler;
-import basilisk.core.Configuration;
 import basilisk.core.Context;
 import basilisk.core.ExecutorServiceManager;
 import basilisk.core.RunnableWithArgs;
@@ -29,6 +28,8 @@ import basilisk.core.ShutdownHandler;
 import basilisk.core.addon.AddonManager;
 import basilisk.core.addon.BasiliskAddon;
 import basilisk.core.artifact.ArtifactManager;
+import basilisk.core.configuration.Configuration;
+import basilisk.core.configuration.ConfigurationManager;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.env.ApplicationPhase;
 import basilisk.core.env.Lifecycle;
@@ -187,7 +188,13 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
     @Nonnull
     @Override
     public Configuration getConfiguration() {
-        return injector.getInstance(Configuration.class);
+        return getConfigurationManager().getConfiguration();
+    }
+
+    @Nonnull
+    @Override
+    public ConfigurationManager getConfigurationManager() {
+        return injector.getInstance(ConfigurationManager.class);
     }
 
     @Nonnull
@@ -396,8 +403,8 @@ public abstract class AbstractBasiliskApplication implements BasiliskApplication
             for (Object groupName : groups) {
                 getMvcGroupManager().createMVC(String.valueOf(groupName).trim());
             }
-        } else if (startupGroups != null && startupGroups instanceof String) {
-            String[] groups = ((String) startupGroups).split(",");
+        } else if (startupGroups != null && startupGroups instanceof CharSequence) {
+            String[] groups = (String.valueOf(startupGroups)).split(",");
             log.info("Initializing all startup groups: {}", Arrays.toString(groups));
 
             for (String groupName : groups) {

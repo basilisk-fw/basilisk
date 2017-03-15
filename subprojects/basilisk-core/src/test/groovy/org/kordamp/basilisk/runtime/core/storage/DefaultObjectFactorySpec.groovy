@@ -16,13 +16,13 @@
 package org.kordamp.basilisk.runtime.core.storage
 
 import basilisk.core.BasiliskApplication
-import basilisk.core.Configuration
+import basilisk.core.configuration.Configuration
 import basilisk.core.event.EventRouter
 import basilisk.core.storage.ObjectFactory
 import basilisk.util.AbstractMapResourceBundle
 import basilisk.util.ExpandableResourceBundle
 import integration.TestBasiliskApplication
-import org.kordamp.basilisk.runtime.core.AbstractConfiguration
+import org.kordamp.basilisk.runtime.core.configuration.AbstractConfiguration
 import org.kordamp.basilisk.runtime.core.event.DefaultEventRouter
 import spock.lang.Specification
 import spock.lang.Unroll

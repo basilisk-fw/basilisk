@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package basilisk.util;
+package basilisk.core.configuration;
 
-import javax.annotation.Nonnull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author Andres Almiray
  * @since 1.0.0
  */
-public interface Instantiator {
-    <T> T instantiate(@Nonnull Class<? extends T> klass);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface Configured {
+    String configuration() default "";
+
+    String value();
+
+    String defaultValue() default "";
+
+    String format() default "";
 }

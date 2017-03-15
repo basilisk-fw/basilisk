@@ -17,6 +17,8 @@ package basilisk.core;
 
 import basilisk.core.addon.AddonManager;
 import basilisk.core.artifact.ArtifactManager;
+import basilisk.core.configuration.Configuration;
+import basilisk.core.configuration.ConfigurationManager;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.env.ApplicationPhase;
 import basilisk.core.event.EventRouter;
@@ -61,6 +63,9 @@ public interface BasiliskApplication {
 
     @Nonnull
     EventRouter getEventRouter();
+
+    @Nonnull
+    ConfigurationManager getConfigurationManager();
 
     @Nonnull
     ArtifactManager getArtifactManager();

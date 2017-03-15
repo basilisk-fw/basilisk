@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
-
-import basilisk.core.Configuration;
+package basilisk.core.configuration;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author Andres Almiray
+ * @since 1.0.0
  */
-public interface ConfigurationDecoratorFactory {
+public interface ConfigurationManager {
     @Nonnull
-    ConfigurationDecorator create(@Nonnull Configuration configuration);
+    Configuration getConfiguration();
+
+    @Nonnull
+    Configuration getConfiguration(@Nonnull String name);
 }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
+package org.kordamp.basilisk.runtime.core.configuration;
 
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
 
 import javax.inject.Inject;
 import javax.inject.Named;

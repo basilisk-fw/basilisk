@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
+package org.kordamp.basilisk.runtime.core.configuration;
 
-import basilisk.core.Configuration;
-import basilisk.core.MutableConfiguration;
+import basilisk.core.configuration.Configuration;
+import basilisk.core.configuration.MutableConfiguration;
 import basilisk.util.AbstractMapResourceBundle;
 import basilisk.util.CompositeResourceBundle;
 import basilisk.util.ConfigUtils;
+import com.googlecode.openbeans.PropertyEditor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +31,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import static basilisk.core.editors.PropertyEditorResolver.findEditor;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static basilisk.util.ConfigUtils.getConfigValue;
 import static java.util.Arrays.asList;
@@ -134,6 +136,20 @@ public class DelegatingMutableConfiguration extends ConfigurationDecorator imple
     public boolean containsKey(@Nonnull String key) {
         requireNonBlank(key, ERROR_KEY_BLANK);
         return ConfigUtils.containsKey(mutableKeyValues, key) || (!removedKeys.contains(key) && delegate.containsKey(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T convertValue(@Nullable Object value, @Nonnull Class<T> type) {
+        if (value != null) {
+            if (type.isAssignableFrom(value.getClass())) {
+                return (T) value;
+            } else {
+                PropertyEditor editor = findEditor(type);
+                editor.setValue(value);
+                return (T) editor.getValue();
+            }
+        }
+        return null;
     }
 
     private static class PrivateMapResourceBundle extends AbstractMapResourceBundle {

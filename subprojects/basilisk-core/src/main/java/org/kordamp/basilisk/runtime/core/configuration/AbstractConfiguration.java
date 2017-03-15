@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
+package org.kordamp.basilisk.runtime.core.configuration;
 
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
+import basilisk.core.editors.ExtendedPropertyEditor;
 import com.googlecode.openbeans.PropertyEditor;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ import javax.annotation.Nullable;
 import java.util.Properties;
 
 import static basilisk.core.editors.PropertyEditorResolver.findEditor;
+import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static basilisk.util.CollectionUtils.toProperties;
 import static basilisk.util.TypeUtils.castToBoolean;
 import static basilisk.util.TypeUtils.castToDouble;
@@ -35,6 +37,9 @@ import static java.util.Objects.requireNonNull;
  * @author Andres Almiray
  */
 public abstract class AbstractConfiguration implements Configuration {
+    private static final String ERROR_TYPE_NULL = "Argument 'type' must not be null";
+    private static final String ERROR_FORMAT_BLANK = "Argument 'format' must not be blank";
+
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
@@ -129,7 +134,7 @@ public abstract class AbstractConfiguration implements Configuration {
     @Nullable
     @Override
     public <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type) {
-        requireNonNull(type, "Argument 'type' must not be null");
+        requireNonNull(type, ERROR_TYPE_NULL);
         return convertValue(get(key), type);
     }
 
@@ -140,6 +145,20 @@ public abstract class AbstractConfiguration implements Configuration {
         return type.cast(value != null ? value : defaultValue);
     }
 
+    @Nullable
+    @Override
+    public <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type, @Nonnull String format) {
+        requireNonNull(type, ERROR_TYPE_NULL);
+        return convertValue(get(key), type, format);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type, @Nonnull String format, @Nullable T defaultValue) {
+        T value = getConverted(key, type, format);
+        return type.cast(value != null ? value : defaultValue);
+    }
+
     @SuppressWarnings("unchecked")
     protected <T> T convertValue(@Nullable Object value, @Nonnull Class<T> type) {
         if (value != null) {
@@ -147,6 +166,24 @@ public abstract class AbstractConfiguration implements Configuration {
                 return (T) value;
             } else {
                 PropertyEditor editor = findEditor(type);
+                editor.setValue(value);
+                return (T) editor.getValue();
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T convertValue(@Nullable Object value, @Nonnull Class<T> type, @Nonnull String format) {
+        if (value != null) {
+            if (type.isAssignableFrom(value.getClass())) {
+                return (T) value;
+            } else {
+                PropertyEditor editor = findEditor(type);
+                if (editor instanceof ExtendedPropertyEditor) {
+                    requireNonBlank(format, ERROR_FORMAT_BLANK);
+                    ((ExtendedPropertyEditor) editor).setFormat(format);
+                }
                 editor.setValue(value);
                 return (T) editor.getValue();
             }

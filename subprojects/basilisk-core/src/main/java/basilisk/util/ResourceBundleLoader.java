@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
-
-import basilisk.core.Configuration;
+package basilisk.util;
 
 import javax.annotation.Nonnull;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Collection;
+import java.util.ResourceBundle;
 
 /**
  * @author Andres Almiray
+ * @since 1.0.0
  */
-public class DefaultConfigurationDecoratorFactory implements ConfigurationDecoratorFactory {
+public interface ResourceBundleLoader {
     @Nonnull
-    @Override
-    public ConfigurationDecorator create(@Nonnull Configuration configuration) {
-        requireNonNull(configuration, "Argument 'configuration' must not be null");
-        return new ConfigurationDecorator(configuration);
-    }
+    Collection<ResourceBundle> load(@Nonnull String name);
 }

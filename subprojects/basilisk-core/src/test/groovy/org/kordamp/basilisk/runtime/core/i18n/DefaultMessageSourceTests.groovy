@@ -21,36 +21,46 @@ import basilisk.core.i18n.MessageSource
 import basilisk.core.i18n.NoSuchMessageException
 import basilisk.core.injection.Injector
 import basilisk.core.resources.ResourceHandler
+import basilisk.util.AnnotationUtils
 import basilisk.util.CompositeResourceBundleBuilder
 import basilisk.util.Instantiator
+import basilisk.util.ResourceBundleLoader
 import com.google.guiceberry.GuiceBerryModule
 import com.google.guiceberry.junit4.GuiceBerryRule
 import com.google.inject.AbstractModule
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.kordamp.basilisk.runtime.core.DefaultApplicationClassLoader
 import org.kordamp.basilisk.runtime.core.resources.DefaultResourceHandler
 import org.kordamp.basilisk.runtime.util.DefaultCompositeResourceBundleBuilder
 import org.kordamp.basilisk.runtime.util.DefaultInstantiator
+import org.kordamp.basilisk.runtime.util.PropertiesResourceBundleLoader
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Provider
 import javax.inject.Singleton
 
 import static com.google.inject.util.Providers.guicify
 import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class DefaultMessageSourceTests {
     @Rule
     public final GuiceBerryRule guiceBerry = new GuiceBerryRule(TestModule)
 
-    @Inject
-    private CompositeResourceBundleBuilder bundleBuilder
+    @Inject private CompositeResourceBundleBuilder bundleBuilder
+    @Inject private MessageSource messageSource
+    @Inject private Provider<Injector> injector
+    @Inject @Named('properties') private ResourceBundleLoader propertiesResourceBundleLoader
 
-    @Inject
-    private MessageSource messageSource
+    @Before
+    void setup() {
+        when(injector.get().getInstances(ResourceBundleLoader)).thenReturn([propertiesResourceBundleLoader])
+    }
 
     @Test
     void testGetAllMessagesByProperties() {
@@ -212,7 +222,8 @@ class DefaultMessageSourceTests {
                 .toProvider(guicify(new MessageSourceProvider('org.kordamp.basilisk.runtime.core.i18n.props')))
                 .in(Singleton)
             bind(Instantiator).to(DefaultInstantiator).in(Singleton)
-            bind(Injector).toProvider(guicify({ mock(Injector) } as Provider<Injector>))
+            bind(ResourceBundleLoader).annotatedWith(AnnotationUtils.named('properties')).to(PropertiesResourceBundleLoader).in(Singleton)
+            bind(Injector).toProvider(guicify({ mock(Injector) } as Provider<Injector>)).in(Singleton)
         }
     }
 

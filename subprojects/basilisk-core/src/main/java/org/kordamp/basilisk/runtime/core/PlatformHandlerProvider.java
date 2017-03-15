@@ -15,7 +15,7 @@
  */
 package org.kordamp.basilisk.runtime.core;
 
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.PlatformHandler;
 import basilisk.exceptions.InstanceNotFoundException;
 import basilisk.exceptions.TypeNotFoundException;

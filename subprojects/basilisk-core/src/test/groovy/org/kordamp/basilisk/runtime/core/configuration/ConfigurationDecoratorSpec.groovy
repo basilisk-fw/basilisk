@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core
+package org.kordamp.basilisk.runtime.core.configuration
 
-import basilisk.core.Configuration
+import basilisk.core.configuration.Configuration
 import basilisk.util.AbstractMapResourceBundle
+import org.kordamp.basilisk.runtime.core.MapResourceBundle
 import spock.lang.Specification
 import spock.lang.Unroll
 

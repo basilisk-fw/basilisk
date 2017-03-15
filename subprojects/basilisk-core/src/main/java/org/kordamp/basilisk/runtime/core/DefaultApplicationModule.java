@@ -17,7 +17,7 @@ package org.kordamp.basilisk.runtime.core;
 
 import basilisk.core.ApplicationClassLoader;
 import basilisk.core.ApplicationConfigurer;
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.Context;
 import basilisk.core.ContextFactory;
 import basilisk.core.ExceptionHandler;
@@ -27,6 +27,7 @@ import basilisk.core.PlatformHandler;
 import basilisk.core.addon.AddonManager;
 import basilisk.core.artifact.ArtifactHandler;
 import basilisk.core.artifact.ArtifactManager;
+import basilisk.core.configuration.ConfigurationManager;
 import basilisk.core.controller.ActionManager;
 import basilisk.core.env.Environment;
 import basilisk.core.env.Lifecycle;
@@ -46,12 +47,17 @@ import basilisk.core.view.WindowManager;
 import basilisk.util.CompositeResourceBundleBuilder;
 import basilisk.util.Instantiator;
 import basilisk.util.PropertiesReader;
+import basilisk.util.ResourceBundleLoader;
 import org.kordamp.basilisk.runtime.core.addon.DefaultAddonManager;
 import org.kordamp.basilisk.runtime.core.artifact.ControllerArtifactHandler;
 import org.kordamp.basilisk.runtime.core.artifact.DefaultArtifactManager;
 import org.kordamp.basilisk.runtime.core.artifact.ModelArtifactHandler;
 import org.kordamp.basilisk.runtime.core.artifact.ServiceArtifactHandler;
 import org.kordamp.basilisk.runtime.core.artifact.ViewArtifactHandler;
+import org.kordamp.basilisk.runtime.core.configuration.ConfigurationDecoratorFactory;
+import org.kordamp.basilisk.runtime.core.configuration.DefaultConfigurationDecoratorFactory;
+import org.kordamp.basilisk.runtime.core.configuration.DefaultConfigurationManager;
+import org.kordamp.basilisk.runtime.core.configuration.ResourceBundleConfigurationProvider;
 import org.kordamp.basilisk.runtime.core.controller.DefaultActionManager;
 import org.kordamp.basilisk.runtime.core.env.EnvironmentProvider;
 import org.kordamp.basilisk.runtime.core.env.MetadataProvider;
@@ -73,9 +79,12 @@ import org.kordamp.basilisk.runtime.core.resources.ResourceResolverProvider;
 import org.kordamp.basilisk.runtime.core.threading.DefaultExecutorServiceProvider;
 import org.kordamp.basilisk.runtime.core.threading.DefaultUIThreadManager;
 import org.kordamp.basilisk.runtime.core.view.NoopWindowManager;
+import org.kordamp.basilisk.runtime.util.ClassResourceBundleLoader;
 import org.kordamp.basilisk.runtime.util.DefaultCompositeResourceBundleBuilder;
 import org.kordamp.basilisk.runtime.util.DefaultInstantiator;
+import org.kordamp.basilisk.runtime.util.PropertiesResourceBundleLoader;
 import org.kordamp.basilisk.runtime.util.ResourceBundleProvider;
+import org.kordamp.basilisk.runtime.util.XmlResourceBundleLoader;
 
 import javax.inject.Named;
 import java.util.ResourceBundle;
@@ -132,6 +141,18 @@ public class DefaultApplicationModule extends AbstractModule {
             .to(DefaultResourceHandler.class)
             .asSingleton();
 
+        bind(ResourceBundleLoader.class)
+            .to(ClassResourceBundleLoader.class)
+            .asSingleton();
+
+        bind(ResourceBundleLoader.class)
+            .to(PropertiesResourceBundleLoader.class)
+            .asSingleton();
+
+        bind(ResourceBundleLoader.class)
+            .to(XmlResourceBundleLoader.class)
+            .asSingleton();
+
         bind(CompositeResourceBundleBuilder.class)
             .to(DefaultCompositeResourceBundleBuilder.class)
             .asSingleton();
@@ -139,6 +160,10 @@ public class DefaultApplicationModule extends AbstractModule {
         bind(ResourceBundle.class)
             .withClassifier(named("applicationResourceBundle"))
             .toProvider(new ResourceBundleProvider("Config"))
+            .asSingleton();
+
+        bind(ConfigurationManager.class)
+            .to(DefaultConfigurationManager.class)
             .asSingleton();
 
         bind(ConfigurationDecoratorFactory.class)

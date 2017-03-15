@@ -17,7 +17,7 @@ package org.kordamp.basilisk.runtime.core.storage;
 
 
 import basilisk.core.BasiliskApplication;
-import basilisk.core.Configuration;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.storage.ObjectFactory;
 
 import javax.annotation.Nonnull;

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core;
+package org.kordamp.basilisk.runtime.core.configuration;
 
-import basilisk.core.Configuration;
-import com.googlecode.openbeans.PropertyEditor;
+import basilisk.core.configuration.Configuration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import static basilisk.core.editors.PropertyEditorResolver.findEditor;
 import static basilisk.util.CollectionUtils.toProperties;
 import static basilisk.util.TypeUtils.castToBoolean;
 import static basilisk.util.TypeUtils.castToDouble;
@@ -154,6 +152,18 @@ public class ConfigurationDecorator implements Configuration {
         return delegate.getConverted(key, type, defaultValue);
     }
 
+    @Override
+    @Nullable
+    public <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type, @Nonnull String format) {
+        return delegate.getConverted(key, type, format);
+    }
+
+    @Override
+    @Nullable
+    public <T> T getConverted(@Nonnull String key, @Nonnull Class<T> type, @Nonnull String format, @Nullable T defaultValue) {
+        return delegate.getConverted(key, type, format, defaultValue);
+    }
+
     @Nonnull
     @Override
     public Properties asProperties() {
@@ -175,19 +185,5 @@ public class ConfigurationDecorator implements Configuration {
     @Override
     public ResourceBundle asResourceBundle() {
         return delegate.asResourceBundle();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T convertValue(@Nullable Object value, @Nonnull Class<T> type) {
-        if (value != null) {
-            if (type.isAssignableFrom(value.getClass())) {
-                return (T) value;
-            } else {
-                PropertyEditor editor = findEditor(type);
-                editor.setValue(value);
-                return (T) editor.getValue();
-            }
-        }
-        return null;
     }
 }
