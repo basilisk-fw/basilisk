@@ -13,475 +13,389 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core.artifact;
+package org.kordamp.basilisk.runtime.core.mvc;
 
-import basilisk.core.BasiliskApplication;
-import basilisk.core.artifact.BasiliskArtifact;
-import basilisk.core.artifact.BasiliskClass;
+import basilisk.core.Context;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskModel;
 import basilisk.core.artifact.BasiliskMvcArtifact;
 import basilisk.core.artifact.BasiliskView;
-import basilisk.core.i18n.NoSuchMessageException;
 import basilisk.core.mvc.MVCFunction;
 import basilisk.core.mvc.MVCGroup;
+import basilisk.core.mvc.MVCGroupConfiguration;
 import basilisk.core.mvc.MVCGroupFunction;
 import basilisk.core.mvc.TypedMVCGroup;
 import basilisk.core.mvc.TypedMVCGroupFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
-import javax.inject.Inject;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+
+import static java.util.Objects.requireNonNull;
 
 /**
- * Base implementation of the BasiliskArtifact interface.
- *
  * @author Andres Almiray
  */
-public abstract class AbstractBasiliskArtifact implements BasiliskArtifact {
-    private final Logger log;
-    private final Object lock = new Object[0];
-    @Inject
-    protected BasiliskApplication application;
-    @GuardedBy("lock")
-    private BasiliskClass basiliskClass;
+public abstract class DelegatingMVCGroup implements MVCGroup {
+    private final MVCGroup delegate;
 
-    public AbstractBasiliskArtifact() {
-        log = LoggerFactory.getLogger("basilisk.app." + getArtifactType() + "." + getTypeClass().getName());
+    public DelegatingMVCGroup(@Nonnull basilisk.core.mvc.MVCGroup delegate) {
+        this.delegate = requireNonNull(delegate, "delegate");
+    }
+
+    @Nonnull
+    public MVCGroup delegate() {
+        return delegate;
     }
 
     @Override
     @Nonnull
-    public Class getTypeClass() {
-        return getClass();
+    public MVCGroupConfiguration getConfiguration() {
+        return delegate.getConfiguration();
     }
 
+    @Override
     @Nonnull
-    public BasiliskApplication getApplication() {
-        return application;
+    public String getMvcType() {
+        return delegate.getMvcType();
     }
 
+    @Override
     @Nonnull
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public BasiliskClass getBasiliskClass() {
-        synchronized (lock) {
-            if (basiliskClass == null) {
-                basiliskClass = application.getArtifactManager().findBasiliskClass(getTypeClass());
-            }
-            return basiliskClass;
-        }
-    }
-
-    @Nonnull
-    @Override
-    public Logger getLog() {
-        return log;
-    }
-
-    @Nonnull
-    protected abstract String getArtifactType();
-
-    @Override
-    public boolean isUIThread() {
-        return application.getUIThreadManager().isUIThread();
-    }
-
-    @Nonnull
-    @Override
-    public <R> Future<R> runFuture(@Nonnull ExecutorService executorService, @Nonnull Callable<R> callable) {
-        return application.getUIThreadManager().runFuture(executorService, callable);
-    }
-
-    @Nonnull
-    @Override
-    public <R> Future<R> runFuture(@Nonnull Callable<R> callable) {
-        return application.getUIThreadManager().runFuture(callable);
+    public String getMvcId() {
+        return delegate.getMvcId();
     }
 
     @Override
-    public void runInsideUISync(@Nonnull Runnable runnable) {
-        application.getUIThreadManager().runInsideUISync(runnable);
-    }
-
-    @Override
-    public void runOutsideUI(@Nonnull Runnable runnable) {
-        application.getUIThreadManager().runOutsideUI(runnable);
-    }
-
-    @Override
-    public void runInsideUIAsync(@Nonnull Runnable runnable) {
-        application.getUIThreadManager().runInsideUIAsync(runnable);
-    }
-
     @Nullable
-    @Override
-    public <R> R runInsideUISync(@Nonnull Callable<R> callable) {
-        return application.getUIThreadManager().runInsideUISync(callable);
+    public BasiliskModel getModel() {
+        return delegate.getModel();
     }
 
+    @Override
+    @Nullable
+    public BasiliskView getView() {
+        return delegate.getView();
+    }
+
+    @Override
+    @Nullable
+    public BasiliskController getController() {
+        return delegate.getController();
+    }
+
+    @Override
+    @Nullable
+    public Object getMember(@Nonnull String name) {
+        return delegate.getMember(name);
+    }
+
+    @Override
     @Nonnull
-    @Override
-    public ClassLoader classloader() {
-        return application.getResourceHandler().classloader();
+    public Map<String, Object> getMembers() {
+        return delegate.getMembers();
     }
 
-    @Nullable
     @Override
-    public URL getResourceAsURL(@Nonnull String name) {
-        return application.getResourceHandler().getResourceAsURL(name);
+    public void destroy() {
+        delegate.destroy();
     }
 
-    @Nullable
     @Override
-    public List<URL> getResources(@Nonnull String name) {
-        return application.getResourceHandler().getResources(name);
+    public boolean isAlive() {
+        return delegate.isAlive();
     }
 
-    @Nullable
     @Override
-    public InputStream getResourceAsStream(@Nonnull String name) {
-        return application.getResourceHandler().getResourceAsStream(name);
+    @Nonnull
+    public Context getContext() {
+        return delegate.getContext();
+    }
+
+    @Override
+    @Nullable
+    public basilisk.core.mvc.MVCGroup getParentGroup() {
+        return delegate.getParentGroup();
+    }
+
+    @Override
+    @Nonnull
+    public Map<String, MVCGroup> getChildrenGroups() {
+        return delegate.getChildrenGroups();
+    }
+
+    @Override
+    public void notifyMVCGroupDestroyed(@Nonnull String mvcId) {
+        delegate.notifyMVCGroupDestroyed(mvcId);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType);
+        return delegate.createMVCGroup(mvcType);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, mvcId);
+        return delegate.createMVCGroup(mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
-        return application.getMvcGroupManager().createMVCGroup(args, mvcType);
+        return delegate.createMVCGroup(args, mvcType);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, args);
+        return delegate.createMVCGroup(mvcType, args);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVCGroup(args, mvcType, mvcId);
+        return delegate.createMVCGroup(args, mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, mvcId, args);
+        return delegate.createMVCGroup(mvcType, mvcId, args);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType);
+        return delegate.createMVCGroup(mvcType);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, mvcId);
+        return delegate.createMVCGroup(mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
-        return application.getMvcGroupManager().createMVCGroup(args, mvcType);
+        return delegate.createMVCGroup(args, mvcType);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, args);
+        return delegate.createMVCGroup(mvcType, args);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVCGroup(args, mvcType, mvcId);
+        return delegate.createMVCGroup(args, mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVCGroup(mvcType, mvcId, args);
+        return delegate.createMVCGroup(mvcType, mvcId, args);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType) {
-        return application.getMvcGroupManager().createMVC(mvcType);
+        return delegate.createMVC(mvcType);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
-        return application.getMvcGroupManager().createMVC(args, mvcType);
+        return delegate.createMVC(args, mvcType);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVC(mvcType, args);
+        return delegate.createMVC(mvcType, args);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVC(mvcType, mvcId);
+        return delegate.createMVC(mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVC(args, mvcType, mvcId);
+        return delegate.createMVC(args, mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVC(mvcType, mvcId, args);
+        return delegate.createMVC(mvcType, mvcId, args);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType) {
-        return application.getMvcGroupManager().createMVC(mvcType);
+        return delegate.createMVC(mvcType);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
-        return application.getMvcGroupManager().createMVC(args, mvcType);
+        return delegate.createMVC(args, mvcType);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVC(mvcType, args);
+        return delegate.createMVC(mvcType, args);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVC(mvcType, mvcId);
+        return delegate.createMVC(mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
-        return application.getMvcGroupManager().createMVC(args, mvcType, mvcId);
+        return delegate.createMVC(args, mvcType, mvcId);
     }
 
     @Override
     @Nonnull
     public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
-        return application.getMvcGroupManager().createMVC(mvcType, mvcId, args);
+        return delegate.createMVC(mvcType, mvcId, args);
     }
 
     @Override
     public void destroyMVCGroup(@Nonnull String mvcId) {
-        application.getMvcGroupManager().destroyMVCGroup(mvcId);
+        delegate.destroyMVCGroup(mvcId);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, handler);
+        delegate.withMVC(mvcType, handler);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, mvcId, handler);
+        delegate.withMVC(mvcType, mvcId, handler);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, mvcId, args, handler);
+        delegate.withMVC(mvcType, mvcId, args, handler);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(args, mvcType, mvcId, handler);
+        delegate.withMVC(args, mvcType, mvcId, handler);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, args, handler);
+        delegate.withMVC(mvcType, args, handler);
     }
 
     @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(args, mvcType, handler);
+        delegate.withMVC(args, mvcType, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, handler);
+        delegate.withMVC(mvcType, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, mvcId, handler);
+        delegate.withMVC(mvcType, mvcId, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, mvcId, args, handler);
+        delegate.withMVC(mvcType, mvcId, args, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(args, mvcType, mvcId, handler);
+        delegate.withMVC(args, mvcType, mvcId, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(mvcType, args, handler);
+        delegate.withMVC(mvcType, args, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
-        application.getMvcGroupManager().withMVC(args, mvcType, handler);
+        delegate.withMVC(args, mvcType, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, handler);
+        delegate.withMVCGroup(mvcType, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, mvcId, handler);
+        delegate.withMVCGroup(mvcType, mvcId, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, mvcId, args, handler);
+        delegate.withMVCGroup(mvcType, mvcId, args, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(args, mvcType, mvcId, handler);
+        delegate.withMVCGroup(args, mvcType, mvcId, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, args, handler);
+        delegate.withMVCGroup(mvcType, args, handler);
     }
 
     @Override
     public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
-        application.getMvcGroupManager().withMVCGroup(args, mvcType, handler);
+        delegate.withMVCGroup(args, mvcType, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, handler);
+        delegate.withMVCGroup(mvcType, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, mvcId, handler);
+        delegate.withMVCGroup(mvcType, mvcId, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, mvcId, args, handler);
+        delegate.withMVCGroup(mvcType, mvcId, args, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(args, mvcType, mvcId, handler);
+        delegate.withMVCGroup(args, mvcType, mvcId, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(mvcType, args, handler);
+        delegate.withMVCGroup(mvcType, args, handler);
     }
 
     @Override
     public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
-        application.getMvcGroupManager().withMVCGroup(args, mvcType, handler);
-    }
-
-    /**
-     * Try to resolve the message.
-     *
-     * @param key Key to lookup, such as 'log4j.appenders.console'
-     *
-     * @return The resolved message at the given key for the default locale
-     *
-     * @throws NoSuchMessageException if no message is found
-     */
-    @Nonnull
-    protected String msg(@Nonnull String key) throws NoSuchMessageException {
-        return getApplication().getMessageSource().getMessage(key);
-    }
-
-    /**
-     * Try to resolve the message.
-     *
-     * @param key  Key to lookup, such as 'log4j.appenders.console'
-     * @param args Arguments that will be filled in for params within the message (params look like "{0}" within a
-     *             message, but this might differ between implementations), or null if none.
-     *
-     * @return The resolved message at the given key for the default locale
-     *
-     * @throws NoSuchMessageException if no message is found
-     */
-    @Nonnull
-    protected String msg(@Nonnull String key, @Nonnull List<?> args) throws NoSuchMessageException {
-        return getApplication().getMessageSource().getMessage(key, args);
-    }
-
-    /**
-     * Try to resolve the message.
-     *
-     * @param key  Key to lookup, such as 'log4j.appenders.console'
-     * @param args Arguments that will be filled in for params within the message (params look like "{0}" within a
-     *             message, but this might differ between implementations), or null if none.
-     *
-     * @return The resolved message at the given key for the default locale
-     *
-     * @throws NoSuchMessageException if no message is found
-     */
-    @Nonnull
-    protected String msg(@Nonnull String key, @Nonnull Object[] args) throws NoSuchMessageException {
-        return getApplication().getMessageSource().getMessage(key, args);
-    }
-
-    /**
-     * Try to resolve the message.
-     *
-     * @param key  Key to lookup, such as 'log4j.appenders.console'
-     * @param args Arguments that will be filled in for params within the message (params look like "{:key}"
-     *             within a message, but this might differ between implementations), or null if none.
-     *
-     * @return The resolved message at the given key for the default locale
-     *
-     * @throws NoSuchMessageException if no message is found
-     */
-    @Nonnull
-    protected String msg(@Nonnull String key, @Nonnull Map<String, Object> args) throws NoSuchMessageException {
-        return getApplication().getMessageSource().getMessage(key, args);
+        delegate.withMVCGroup(args, mvcType, handler);
     }
 }

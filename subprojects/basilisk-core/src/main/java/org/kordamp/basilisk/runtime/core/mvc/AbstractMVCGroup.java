@@ -28,6 +28,8 @@ import basilisk.core.mvc.MVCGroup;
 import basilisk.core.mvc.MVCGroupConfiguration;
 import basilisk.core.mvc.MVCGroupFunction;
 import basilisk.core.mvc.MVCGroupManager;
+import basilisk.core.mvc.TypedMVCGroup;
+import basilisk.core.mvc.TypedMVCGroupFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -184,6 +186,19 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
         requireState(isAlive(), "Group " + getMvcType() + ":" + mvcId + " has been destroyed already.");
     }
 
+
+    @Nonnull
+    @Override
+    public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId) {
+        return manageChildGroup(super.createMVCGroup(mvcType, mvcId, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public MVCGroup createMVCGroup(@Nonnull String mvcType) {
+        return manageChildGroup(super.createMVCGroup(mvcType, injectParentGroup()));
+    }
+
     @Nonnull
     @Override
     public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
@@ -210,6 +225,54 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
 
     @Nonnull
     @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return manageTypedChildGroup(super.createMVCGroup(mvcType, mvcId, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType) {
+        return manageTypedChildGroup(super.createMVCGroup(mvcType, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
+        return manageTypedChildGroup(super.createMVCGroup(injectParentGroup(args), mvcType));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return manageTypedChildGroup(super.createMVCGroup(injectParentGroup(args), mvcType, mvcId));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
+        return manageTypedChildGroup(super.createMVCGroup(mvcType, injectParentGroup(args)));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
+        return manageTypedChildGroup(super.createMVCGroup(mvcType, mvcId, injectParentGroup(args)));
+    }
+
+    @Nonnull
+    @Override
+    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId) {
+        return manageChildGroup(super.createMVC(mvcType, mvcId, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType) {
+        return manageChildGroup(super.createMVC(mvcType, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
         return manageChildGroup(super.createMVC(injectParentGroup(args), mvcType));
     }
@@ -229,6 +292,42 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
     @Nonnull
     @Override
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
+        return manageChildGroup(super.createMVC(mvcType, mvcId, injectParentGroup(args)));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return manageChildGroup(super.createMVC(mvcType, mvcId, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType) {
+        return manageChildGroup(super.createMVC(mvcType, injectParentGroup()));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
+        return manageChildGroup(super.createMVC(injectParentGroup(args), mvcType));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return manageChildGroup(super.createMVC(injectParentGroup(args), mvcType, mvcId));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
+        return manageChildGroup(super.createMVC(mvcType, injectParentGroup(args)));
+    }
+
+    @Nonnull
+    @Override
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
         return manageChildGroup(super.createMVC(mvcType, mvcId, injectParentGroup(args)));
     }
 
@@ -263,6 +362,36 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
     }
 
     @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(injectParentGroup(args), mvcType, new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(injectParentGroup(args), mvcType, mvcId, new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(mvcType, injectParentGroup(args), new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(mvcType, mvcId, injectParentGroup(args), new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(mvcType, injectParentGroup(), new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        super.withMVC(mvcType, mvcId, injectParentGroup(), new MVCFunctionDecorator<>(handler));
+    }
+
+    @Override
     public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
         super.withMVCGroup(injectParentGroup(args), mvcType, new MVCGroupFunctionDecorator(handler));
     }
@@ -292,32 +421,44 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
         super.withMVCGroup(mvcType, mvcId, injectParentGroup(), new MVCGroupFunctionDecorator(handler));
     }
 
-    @Nonnull
     @Override
-    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId) {
-        return manageChildGroup(super.createMVC(mvcType, mvcId, injectParentGroup()));
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(injectParentGroup(args), mvcType, new TypedMVCGroupFunctionDecorator<>(handler));
     }
 
-    @Nonnull
     @Override
-    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType) {
-        return manageChildGroup(super.createMVC(mvcType, injectParentGroup()));
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(injectParentGroup(args), mvcType, mvcId, new TypedMVCGroupFunctionDecorator<>(handler));
     }
 
-    @Nonnull
     @Override
-    public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId) {
-        return manageChildGroup(super.createMVCGroup(mvcType, mvcId, injectParentGroup()));
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(mvcType, injectParentGroup(args), new TypedMVCGroupFunctionDecorator<>(handler));
     }
 
-    @Nonnull
     @Override
-    public MVCGroup createMVCGroup(@Nonnull String mvcType) {
-        return manageChildGroup(super.createMVCGroup(mvcType, injectParentGroup()));
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(mvcType, mvcId, injectParentGroup(args), new TypedMVCGroupFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(mvcType, injectParentGroup(), new TypedMVCGroupFunctionDecorator<>(handler));
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull final TypedMVCGroupFunction<MVC> handler) {
+        super.withMVCGroup(mvcType, mvcId, injectParentGroup(), new TypedMVCGroupFunctionDecorator<>(handler));
     }
 
     @Nonnull
     private MVCGroup manageChildGroup(@Nonnull MVCGroup group) {
+        children.put(group.getMvcId(), group);
+        return group;
+    }
+
+    @Nonnull
+    private <MVC extends TypedMVCGroup> MVC manageTypedChildGroup(@Nonnull MVC group) {
         children.put(group.getMvcId(), group);
         return group;
     }
@@ -366,13 +507,13 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
         @Override
         public void apply(@Nullable M model, @Nullable V view, @Nullable C controller) {
             MVCGroup group = null;
-            if (model != null) group = model.getMvcGroup();
-            if (view != null) group = view.getMvcGroup();
-            if (controller != null) group = controller.getMvcGroup();
+            if (model != null) { group = model.getMvcGroup(); }
+            if (view != null) { group = view.getMvcGroup(); }
+            if (controller != null) { group = controller.getMvcGroup(); }
 
-            if (group != null) children.put(group.getMvcId(), group);
+            if (group != null) { children.put(group.getMvcId(), group); }
             delegate.apply(model, view, controller);
-            if (group != null) children.remove(group.getMvcId());
+            if (group != null) { children.remove(group.getMvcId()); }
         }
     }
 
@@ -385,6 +526,21 @@ public abstract class AbstractMVCGroup extends AbstractMVCHandler implements MVC
 
         @Override
         public void apply(@Nullable MVCGroup group) {
+            children.put(group.getMvcId(), group);
+            delegate.apply(group);
+            children.remove(group.getMvcId());
+        }
+    }
+
+    private final class TypedMVCGroupFunctionDecorator<MVC extends TypedMVCGroup> implements TypedMVCGroupFunction<MVC> {
+        private final TypedMVCGroupFunction<MVC> delegate;
+
+        private TypedMVCGroupFunctionDecorator(TypedMVCGroupFunction<MVC> delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void apply(@Nullable MVC group) {
             children.put(group.getMvcId(), group);
             delegate.apply(group);
             children.remove(group.getMvcId());

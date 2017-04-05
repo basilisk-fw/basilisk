@@ -24,6 +24,8 @@ import basilisk.core.mvc.MVCGroup;
 import basilisk.core.mvc.MVCGroupFunction;
 import basilisk.core.mvc.MVCGroupManager;
 import basilisk.core.mvc.MVCHandler;
+import basilisk.core.mvc.TypedMVCGroup;
+import basilisk.core.mvc.TypedMVCGroupFunction;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -49,115 +51,272 @@ public abstract class AbstractMVCHandler implements MVCHandler {
         return mvcGroupManager;
     }
 
-    @Nonnull
-    public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
-        return mvcGroupManager.createMVCGroup(args, mvcType);
-    }
-
-    @Nonnull
-    public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
-        return mvcGroupManager.createMVCGroup(args, mvcType, mvcId);
-    }
-
+    @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType) {
         return mvcGroupManager.createMVCGroup(mvcType);
     }
 
-    @Nonnull
-    public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args) {
-        return mvcGroupManager.createMVCGroup(mvcType, args);
-    }
-
+    @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId) {
         return mvcGroupManager.createMVCGroup(mvcType, mvcId);
     }
 
+    @Override
+    @Nonnull
+    public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
+        return mvcGroupManager.createMVCGroup(args, mvcType);
+    }
+
+    @Override
+    @Nonnull
+    public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args) {
+        return mvcGroupManager.createMVCGroup(mvcType, args);
+    }
+
+    @Override
+    @Nonnull
+    public MVCGroup createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVCGroup(args, mvcType, mvcId);
+    }
+
+    @Override
     @Nonnull
     public MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
         return mvcGroupManager.createMVCGroup(mvcType, mvcId, args);
     }
 
+    @Override
     @Nonnull
-    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
-        return mvcGroupManager.createMVC(args, mvcType);
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType) {
+        return mvcGroupManager.createMVCGroup(mvcType);
     }
 
+    @Override
     @Nonnull
-    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
-        return mvcGroupManager.createMVC(args, mvcType, mvcId);
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVCGroup(mvcType, mvcId);
     }
 
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
+        return mvcGroupManager.createMVCGroup(args, mvcType);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
+        return mvcGroupManager.createMVCGroup(mvcType, args);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVCGroup(args, mvcType, mvcId);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
+        return mvcGroupManager.createMVCGroup(mvcType, mvcId, args);
+    }
+
+    @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType) {
         return mvcGroupManager.createMVC(mvcType);
     }
 
+    @Override
+    @Nonnull
+    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType) {
+        return mvcGroupManager.createMVC(args, mvcType);
+    }
+
+    @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull Map<String, Object> args) {
         return mvcGroupManager.createMVC(mvcType, args);
     }
 
+    @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId) {
         return mvcGroupManager.createMVC(mvcType, mvcId);
     }
 
+    @Override
+    @Nonnull
+    public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVC(args, mvcType, mvcId);
+    }
+
+    @Override
     @Nonnull
     public List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
         return mvcGroupManager.createMVC(mvcType, mvcId, args);
     }
 
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType) {
+        return mvcGroupManager.createMVC(mvcType);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType) {
+        return mvcGroupManager.createMVC(args, mvcType);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args) {
+        return mvcGroupManager.createMVC(mvcType, args);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVC(mvcType, mvcId);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId) {
+        return mvcGroupManager.createMVC(args, mvcType, mvcId);
+    }
+
+    @Override
+    @Nonnull
+    public <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args) {
+        return mvcGroupManager.createMVC(mvcType, mvcId, args);
+    }
+
+    @Override
     public void destroyMVCGroup(@Nonnull String mvcId) {
         mvcGroupManager.destroyMVCGroup(mvcId);
     }
 
-    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        mvcGroupManager.withMVC(mvcType, mvcId, handler);
-    }
-
-    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCFunction<M, V, C> handler) {
-        mvcGroupManager.withMVC(args, mvcType, handler);
-    }
-
-    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
-        mvcGroupManager.withMVC(args, mvcType, mvcId, handler);
-    }
-
-    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
-        mvcGroupManager.withMVC(mvcType, args, handler);
-    }
-
+    @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull MVCFunction<M, V, C> handler) {
         mvcGroupManager.withMVC(mvcType, handler);
     }
 
+    @Override
+    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, mvcId, handler);
+    }
+
+    @Override
     public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
         mvcGroupManager.withMVC(mvcType, mvcId, args, handler);
     }
 
-    public void withMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
-        mvcGroupManager.withMVCGroup(mvcType, mvcId, handler);
+    @Override
+    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(args, mvcType, mvcId, handler);
     }
 
-    public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
-        mvcGroupManager.withMVCGroup(args, mvcType, handler);
+    @Override
+    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, args, handler);
     }
 
-    public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
-        mvcGroupManager.withMVCGroup(args, mvcType, mvcId, handler);
+    @Override
+    public <M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(args, mvcType, handler);
     }
 
-    public void withMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCGroupFunction handler) {
-        mvcGroupManager.withMVCGroup(mvcType, args, handler);
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, handler);
     }
 
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, mvcId, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, mvcId, args, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(args, mvcType, mvcId, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(mvcType, args, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler) {
+        mvcGroupManager.withMVC(args, mvcType, handler);
+    }
+
+    @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
         mvcGroupManager.withMVCGroup(mvcType, handler);
     }
 
+    @Override
+    public void withMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
+        mvcGroupManager.withMVCGroup(mvcType, mvcId, handler);
+    }
+
+    @Override
     public void withMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCGroupFunction handler) {
         mvcGroupManager.withMVCGroup(mvcType, mvcId, args, handler);
+    }
+
+    @Override
+    public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull String mvcId, @Nonnull MVCGroupFunction handler) {
+        mvcGroupManager.withMVCGroup(args, mvcType, mvcId, handler);
+    }
+
+    @Override
+    public void withMVCGroup(@Nonnull String mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCGroupFunction handler) {
+        mvcGroupManager.withMVCGroup(mvcType, args, handler);
+    }
+
+    @Override
+    public void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCGroupFunction handler) {
+        mvcGroupManager.withMVCGroup(args, mvcType, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(mvcType, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(mvcType, mvcId, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(mvcType, mvcId, args, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(args, mvcType, mvcId, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(mvcType, args, handler);
+    }
+
+    @Override
+    public <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler) {
+        mvcGroupManager.withMVCGroup(args, mvcType, handler);
     }
 }

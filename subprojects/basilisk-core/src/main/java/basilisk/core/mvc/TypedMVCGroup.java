@@ -15,18 +15,25 @@
  */
 package basilisk.core.mvc;
 
-import javax.annotation.Nullable;
+import basilisk.core.artifact.BasiliskController;
+import basilisk.core.artifact.BasiliskModel;
+import basilisk.core.artifact.BasiliskView;
+
+import javax.annotation.Nonnull;
 
 /**
- * An specialized function for working with MVC groups.
- *
  * @author Andres Almiray
  */
-public interface MVCGroupFunction {
-    /**
-     * Applies this function<p>
-     *
-     * @param group the MVC group
-     */
-    void apply(@Nullable MVCGroup group);
+public interface TypedMVCGroup<M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> extends MVCGroup {
+    @Nonnull
+    M model();
+
+    @Nonnull
+    V view();
+
+    @Nonnull
+    C controller();
+
+    @Nonnull
+    MVCGroup delegate();
 }

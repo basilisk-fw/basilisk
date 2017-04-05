@@ -26,14 +26,14 @@ import java.util.Map;
 
 /**
  * Base contract for classes that can manipulate MVC groups.
- * There are 3 types of methods used for instantiating a group:
+ * There are 4 types of methods used for instantiating a group:
  * <ul>
  * <ol>{@code createMVCGroup()} - creates a new group instance returning all members.</ol>
  * <ol>{@code createMVC()} - creates a new group instance returning only Model, View and Controller members.</ol>
  * <ol>{@code withMVCGroup()} - creates a new group instance and destroys it immediately after it has been processed by the callback.</ol>
  * <ol>{@code withMVC()} - creates a new group instance and destroys it immediately after it has been processed by the callback.</ol>
  * </ul>
- * <p>
+ * <p/>
  * It's worth mentioning that the value of the {@code mvcId} parameter must be unique otherwise a collision will occur.
  * When that happens the application will report and exception and terminate. This behavior can be configured to be more
  * lenient, by defining a configuration flag {@code basilisk.mvcid.collision} in {@code Config}. <br/>
@@ -52,27 +52,25 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.<p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be created as follows
-     * <p>
+     * <p/>
      * <pre>
-     * Map<String, Object> fooGroup = createMVCGroup('foo')
-     * assert (fooGroup.controller instanceof FooController)
+     * MVCGroup fooGroup = createMVCGroup("foo");
+     * assert (fooGroup.getController() instanceof FooController.class);
      * </pre>
      *
      * @param mvcType the type of group to build.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -85,30 +83,28 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.<p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be created as follows
-     * <p>
+     * <p/>
      * <pre>
-     * MVCGroup fooGroup = createMVCGroup('foo', 'foo' + System.currentTimeMillis())
-     * assert (fooGroup.controller instanceof FooController)
+     * MVCGroup fooGroup = createMVCGroup("foo", "foo-" + System.currentTimeMillis());
+     * assert (fooGroup.getController() instanceof FooController.class);
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -127,37 +123,33 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     *     'bar' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.BarView'
-     *         controller = 'com.acme.BarController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
      * </pre>
-     * <p>
+     * <p/>
      * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
      * instance by creating the groups in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * MVCGroup fooGroup = createMVCGroup('foo')
-     * MVCGroup barGroup = createMVCGroup('bar', model: fooGroup.model)
-     * assert fooGroup.model == barGroup.model
+     * MVCGroup fooGroup = createMVCGroup("foo");
+     * MVCGroup barGroup = createMVCGroup("bar", model: fooGroup.model)
+     * assert fooGroup.getModel() == barGroup.getModel();
      * </pre>
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -176,37 +168,33 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     *     'bar' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.BarView'
-     *         controller = 'com.acme.BarController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
      * </pre>
-     * <p>
+     * <p/>
      * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
      * instance by creating the groups in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * MVCGroup fooGroup = createMVCGroup('foo')
-     * MVCGroup barGroup = createMVCGroup('bar', model: fooGroup.model)
-     * assert fooGroup.model == barGroup.model
+     * MVCGroup fooGroup = createMVCGroup("foo");
+     * MVCGroup barGroup = createMVCGroup("bar", model: fooGroup.model)
+     * assert fooGroup.getModel() == barGroup.getModel();
      * </pre>
      *
      * @param mvcType the type of group to build.
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -225,34 +213,32 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * We can create two instances of the same group that share the same model instance in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * MVCGroup fooGroup1 = createMVCGroup('foo', 'foo1')
-     * MVCGroup fooGroup2 = createMVCGroup('bar', 'foo2', model: fooGroup1.model)
+     * MVCGroup fooGroup1 = createMVCGroup("foo", "foo1");
+     * MVCGroup fooGroup2 = createMVCGroup("foo", "foo2", model: fooGroup1.model)
      * assert fooGroup1.model == fooGroup2.model
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -271,34 +257,32 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * We can create two instances of the same group that share the same model instance in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * MVCGroup fooGroup1 = createMVCGroup('foo', 'foo1')
-     * MVCGroup fooGroup2 = createMVCGroup('bar', 'foo2', model: fooGroup1.model)
+     * MVCGroup fooGroup1 = createMVCGroup("foo", "foo1");
+     * MVCGroup fooGroup2 = createMVCGroup("foo", "foo2", model: fooGroup1.model)
      * assert fooGroup1.model == fooGroup2.model
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
+     *
      * @return an MVCGroup instance of the desired type
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -306,32 +290,273 @@ public interface MVCHandler {
     MVCGroup createMVCGroup(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args);
 
     /**
+     * Instantiates an MVC group of the specified type.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be created as follows
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup = createMVCGroup(FooMVCGroup.class);
+     * assert (fooGroup.getController() instanceof FooController.class);
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be created as follows
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup = createMVCGroup(FooMVCGroup.class, "foo-" + System.currentTimeMillis());
+     * assert (fooGroup.getController() instanceof FooController.class);
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId);
+
+    /**
+     * Instantiates an MVC group of the specified type with additional variables.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
+     * </pre>
+     * <p/>
+     * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
+     * instance by creating the groups in the following way:
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup = createMVCGroup(FooMVCGroup.class);
+     * BarMVCGroup barGroup = createMVCGroup(BarMVCGroup.class, model: fooGroup.model)
+     * assert fooGroup.getModel() == barGroup.getModel();
+     * </pre>
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType);
+
+    /**
+     * Instantiates an MVC group of the specified type with additional variables.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
+     * </pre>
+     * <p/>
+     * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
+     * instance by creating the groups in the following way:
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup = createMVCGroup(FooMVCGroup.class);
+     * BarMVCGroup barGroup = createMVCGroup(BarMVCGroup.class, model: fooGroup.model)
+     * assert fooGroup.getModel() == barGroup.getModel();
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * We can create two instances of the same group that share the same model instance in the following way:
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup1 = createMVCGroup(FooMVCGroup.class, "foo1");
+     * FooMVCGroup fooGroup2 = createMVCGroup(FooMVCGroup.class, "foo2", model: fooGroup1.model)
+     * assert fooGroup1.model == fooGroup2.model
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * We can create two instances of the same group that share the same model instance in the following way:
+     * <p/>
+     * <pre>
+     * FooMVCGroup fooGroup1 = createMVCGroup(FooMVCGroup.class, "foo1");
+     * FooMVCGroup fooGroup2 = createMVCGroup(FooMVCGroup.class, "foo2", model: fooGroup1.model)
+     * assert fooGroup1.model == fooGroup2.model
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     *
+     * @return an MVCGroup instance of the desired type
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> MVC createMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args);
+
+    /**
      * Instantiates an MVC group of the specified type returning only the MVC parts.<p>
      * MVC groups must be previously configured with the application's metadata
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.<p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be created as follows
-     * <p>
+     * <p/>
      * <pre>
-     * def (m, v, c) = createMVC('foo')
-     * assert (c instanceof FooController)
+     * def (m, v, c) = createMVC("foo");
+     * assert (c instanceof FooController.class);
      * </pre>
      *
      * @param mvcType the type of group to build.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -350,37 +575,33 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     *     'bar' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.BarView'
-     *         controller = 'com.acme.BarController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
      * </pre>
-     * <p>
+     * <p/>
      * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
      * instance by creating the groups in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * def (m1, v1, c1) = createMVC('foo')
-     * def (m2, v2, c2) = createMVC('bar', model: m1)
+     * def (m1, v1, c1) = createMVC("foo");
+     * def (m2, v2, c2) = createMVC("bar", model: m1)
      * assert fm1 == m2
      * </pre>
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -399,37 +620,33 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     *     'bar' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.BarView'
-     *         controller = 'com.acme.BarController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
      * </pre>
-     * <p>
+     * <p/>
      * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
      * instance by creating the groups in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * def (m1, v1, c1) = createMVC('foo')
-     * def (m2, v2, c2) = createMVC('bar', model: m1)
+     * def (m1, v1, c1) = createMVC("foo");
+     * def (m2, v2, c2) = createMVC("bar", model: m1)
      * assert fm1 == m2
      * </pre>
      *
      * @param mvcType the type of group to build.
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -442,30 +659,28 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.<p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *      }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be created as follows
-     * <p>
+     * <p/>
      * <pre>
-     * def (m, v, c) = createMVC('foo', 'foo' + System.currenttimeMillis())
-     * assert (c instanceof FooController)
+     * def (m, v, c) = createMVC("foo", "foo-" + System.currentTimeMillis());
+     * assert (c instanceof FooController.class);
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -484,34 +699,32 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * We can create two instances of the same group that share the same model instance in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * def (m1, v1, c1) = createMVC('foo', 'foo1')
-     * def (m2, v2, c2) = createMVC('foo', 'foo2', model: m1)
+     * def (m1, v1, c1) = createMVC("foo", "foo1");
+     * def (m2, v2, c2) = createMVC("foo", "foo2", model: m1)
      * assert fm1 == m2
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
@@ -530,39 +743,280 @@ public interface MVCHandler {
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
      * </ul>
-     * <p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * We can create two instances of the same group that share the same model instance in the following way:
-     * <p>
+     * <p/>
      * <pre>
-     * def (m1, v1, c1) = createMVC('foo', 'foo1')
-     * def (m2, v2, c2) = createMVC('foo', 'foo2', model: m1)
+     * def (m1, v1, c1) = createMVC("foo", "foo1");
+     * def (m2, v2, c2) = createMVC("foo", "foo2", model: m1)
      * assert fm1 == m2
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
+     *
      * @return a List with the canonical MVC members of the group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration or if a group with the same mvcId exists already.
      */
     @Nonnull
     List<? extends BasiliskMvcArtifact> createMVC(@Nonnull String mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args);
+
+    /**
+     * Instantiates an MVC group of the specified type returning only the MVC parts.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be created as follows
+     * <p/>
+     * <pre>
+     * def (m, v, c) = createMVC(FooMVCGroup.class);
+     * assert (c instanceof FooController.class);
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType);
+
+    /**
+     * Instantiates an MVC group of the specified type with additional variables.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
+     * </pre>
+     * <p/>
+     * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
+     * instance by creating the groups in the following way:
+     * <p/>
+     * <pre>
+     * def (m1, v1, c1) = createMVC(FooMVCGroup.class);
+     * def (m2, v2, c2) = createMVC(BarMVCGroup.class, model: m1)
+     * assert fm1 == m2
+     * </pre>
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType);
+
+    /**
+     * Instantiates an MVC group of the specified type with additional variables.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * mvcGroups.bar.model      = com.acme.FooModel
+     * mvcGroups.bar.view       = com.acme.BarView
+     * mvcGroups.bar.controller = com.acme.BarController
+     * </pre>
+     * <p/>
+     * Notice that groups "foo" and "bar share the same model type, We can make them share the same model
+     * instance by creating the groups in the following way:
+     * <p/>
+     * <pre>
+     * def (m1, v1, c1) = createMVC(FooMVCGroup.class);
+     * def (m2, v2, c2) = createMVC(BarMVCGroup.class, model: m1)
+     * assert fm1 == m2
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be created as follows
+     * <p/>
+     * <pre>
+     * def (m, v, c) = createMVC(FooMVCGroup.class, "foo-" + System.currentTimeMillis());
+     * assert (c instanceof FooController.class);
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * We can create two instances of the same group that share the same model instance in the following way:
+     * <p/>
+     * <pre>
+     * def (m1, v1, c1) = createMVC(FooMVCGroup.class, "foo1");
+     * def (m2, v2, c2) = createMVC(FooMVCGroup.class, "foo2", model: m1)
+     * assert fm1 == m2
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId);
+
+    /**
+     * Instantiates an MVC group of the specified type with a particular name.<p>
+     * MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.<p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * </ul>
+     * <p/>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * We can create two instances of the same group that share the same model instance in the following way:
+     * <p/>
+     * <pre>
+     * def (m1, v1, c1) = createMVC(FooMVCGroup.class, "foo1");
+     * def (m2, v2, c2) = createMVC(FooMVCGroup.class, "foo2", model: m1)
+     * assert fm1 == m2
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     *
+     * @return a List with the canonical MVC members of the group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration or if a group with the same mvcId exists already.
+     */
+    @Nonnull
+    <MVC extends TypedMVCGroup> List<? extends BasiliskMvcArtifact> createMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args);
 
     /**
      * Destroys an MVC group identified by a particular name.<p>
@@ -581,22 +1035,18 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.</p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
-     * withMVC("foo", new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *     public void call(FooModel m, FooView v, FooController c) {
      *         m.setSomeProperty(someValue);
      *         c.invokeAnAction();
@@ -606,6 +1056,7 @@ public interface MVCHandler {
      *
      * @param mvcType the type of group to build.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -619,34 +1070,31 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.</p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
-     * withMVC("foo", "foo1", new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", "foo1", new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *     public void call(FooModel m, FooView v, FooController c) {
      *         m.setSomeProperty(someValue);
      *         c.invokeAnAction();
      *     }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -665,30 +1113,26 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVC("foo", "foo1", map, new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", "foo1", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *    public void call(FooModel m, FooView v, FooController c) {
      *        m.setSomeProperty(someValue);
      *        c.invokeAnAction();
      *    }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
@@ -696,6 +1140,7 @@ public interface MVCHandler {
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -714,30 +1159,26 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVC("foo", "foo1", map, new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", "foo1", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *    public void call(FooModel m, FooView v, FooController c) {
      *        m.setSomeProperty(someValue);
      *        c.invokeAnAction();
      *    }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
@@ -745,6 +1186,7 @@ public interface MVCHandler {
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -763,23 +1205,19 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVC("foo", map, new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *    public void call(FooModel m, FooView v, FooController c) {
      *        m.setSomeProperty(someValue);
      *        c.invokeAnAction();
@@ -791,6 +1229,7 @@ public interface MVCHandler {
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -809,23 +1248,19 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVC("foo", map, new MVCCallable&lt;FooModel, FooView, FooController&gt;() {
+     * withMVC("foo", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
      *    public void call(FooModel m, FooView v, FooController c) {
      *        m.setSomeProperty(someValue);
      *        c.invokeAnAction();
@@ -837,6 +1272,7 @@ public interface MVCHandler {
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -850,22 +1286,269 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.</p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
-     * withMVC("foo", new MVCGroupCallable() {
+     * withMVC(FooMVCGroup.class, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *     public void call(FooModel m, FooView v, FooController c) {
+     *         m.setSomeProperty(someValue);
+     *         c.invokeAnAction();
+     *     }
+     * });
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * withMVC(FooMVCGroup.class, "foo1", new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *     public void call(FooModel m, FooView v, FooController c) {
+     *         m.setSomeProperty(someValue);
+     *         c.invokeAnAction();
+     *     }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVC(FooMVCGroup.class, "foo1", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *    public void call(FooModel m, FooView v, FooController c) {
+     *        m.setSomeProperty(someValue);
+     *        c.invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVC(FooMVCGroup.class, "foo1", map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *    public void call(FooModel m, FooView v, FooController c) {
+     *        m.setSomeProperty(someValue);
+     *        c.invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVC(FooMVCGroup.class, map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *    public void call(FooModel m, FooView v, FooController c) {
+     *        m.setSomeProperty(someValue);
+     *        c.invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVC(FooMVCGroup.class, map, new MVCFunction&lt;FooModel, FooView, FooController&gt;() {
+     *    public void call(FooModel m, FooView v, FooController c) {
+     *        m.setSomeProperty(someValue);
+     *        c.invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup, M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> void withMVC(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull MVCFunction<M, V, C> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * withMVCGroup("foo", new MVCGroupFunction() {
      *     public void call(MVCGroup group) {
      *         group.getModel().setSomeProperty(someValue);
      *         group.getController().invokeAnAction();
@@ -875,6 +1558,7 @@ public interface MVCHandler {
      *
      * @param mvcType the type of group to build.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -888,34 +1572,31 @@ public interface MVCHandler {
      * before they can be used. This registration process usually takes place automatically
      * at boot time. The type of the group can be normally found in the application's
      * configuration file.</p>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
-     * withMVCGroup("foo", "foo1", new MVCGroupCallable() {
+     * withMVCGroup("foo", "foo1", new MVCGroupFunction() {
      *     public void call(MVCGroup group) {
      *         group.getModel().setSomeProperty(someValue);
      *         group.getController().invokeAnAction();
      *     }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -934,30 +1615,26 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVCGroup("foo", "foo1", map, new MVCGroupCallable() {
+     * withMVCGroup("foo", "foo1", map, new MVCGroupFunction() {
      *    public void call(MVCGroup group) {
      *        group.getModel().setSomeProperty(someValue);
      *        group.getController().invokeAnAction();
      *    }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param mvcType the type of group to build.
@@ -965,6 +1642,7 @@ public interface MVCHandler {
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -983,30 +1661,26 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *     }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVCGroup("foo", "foo1", map, new MVCGroupCallable() {
+     * withMVCGroup("foo", "foo1", map, new MVCGroupFunction() {
      *    public void call(MVCGroup group) {
      *        group.getModel().setSomeProperty(someValue);
      *        group.getController().invokeAnAction();
      *    }
      * });
      * </pre>
-     * <p>
+     * <p/>
      * MVC groups must have an unique name.
      *
      * @param args    any useful values that can be set as properties on each MVC member or that
@@ -1014,6 +1688,7 @@ public interface MVCHandler {
      * @param mvcType the type of group to build.
      * @param mvcId   the name to assign to the built group.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -1032,23 +1707,19 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVCGroup("foo", map, new MVCGroupCallable() {
+     * withMVCGroup("foo", map, new MVCGroupFunction() {
      *    public void call(MVCGroup group) {
      *        group.getModel().setSomeProperty(someValue);
      *        group.getController().invokeAnAction();
@@ -1060,6 +1731,7 @@ public interface MVCHandler {
      * @param args    any useful values that can be set as properties on each MVC member or that
      *                identify a member that can be shared with other groups.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
@@ -1078,23 +1750,19 @@ public interface MVCHandler {
      * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
      * <li>The key does not match a member definition, the value is assumed to be a property that can be set
      * on any MVC member of the group.</li>
-     * For example, with the following entry available in {@code Application.groovy}
-     * <p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
      * <pre>
-     * mvcGroups {
-     *     'foo' {
-     *         model      = 'com.acme.FooModel'
-     *         view       = 'com.acme.FooView'
-     *         controller = 'com.acme.FooController'
-     *    }
-     * }
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
      * </pre>
-     * <p>
+     * <p/>
      * An instance of the "foo" group can be used as follows
-     * <p>
+     * <p/>
      * <pre>
      * Map<String, Object> map = ... // initialized elsewhere
-     * withMVCGroup("foo", map, new MVCGroupCallable() {
+     * withMVCGroup("foo", map, new MVCGroupFunction() {
      *    public void call(MVCGroup group) {
      *        group.getModel().setSomeProperty(someValue);
      *        group.getController().invokeAnAction();
@@ -1106,8 +1774,260 @@ public interface MVCHandler {
      *                identify a member that can be shared with other groups.
      * @param mvcType the type of group to build.
      * @param handler a code block used to configure and manage the instantiated group
+     *
      * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
      *                                                            configuration
      */
     void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull String mvcType, @Nonnull MVCGroupFunction handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * withMVCGroup(FooMVCGroup.class, new TypedMVCGroupFunction<>() {
+     *     public void call(MVC group) {
+     *         group.getModel().setSomeProperty(someValue);
+     *         group.getController().invokeAnAction();
+     *     }
+     * });
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * withMVCGroup(FooMVCGroup.class, "foo1", new TypedMVCGroupFunction<>() {
+     *     public void call(MVC group) {
+     *         group.getModel().setSomeProperty(someValue);
+     *         group.getController().invokeAnAction();
+     *     }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVCGroup(FooMVCGroup.class, "foo1", map, new TypedMVCGroupFunction<>() {
+     *    public void call(MVC group) {
+     *        group.getModel().setSomeProperty(someValue);
+     *        group.getController().invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVCGroup(FooMVCGroup.class, "foo1", map, new TypedMVCGroupFunction<>() {
+     *    public void call(MVC group) {
+     *        group.getModel().setSomeProperty(someValue);
+     *        group.getController().invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     * <p/>
+     * MVC groups must have an unique name.
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param mvcId   the name to assign to the built group.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull String mvcId, @Nonnull TypedMVCGroupFunction<MVC> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVCGroup(FooMVCGroup.class, map, new TypedMVCGroupFunction<>() {
+     *    public void call(MVC group) {
+     *        group.getModel().setSomeProperty(someValue);
+     *        group.getController().invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     *
+     * @param mvcType the type of group to build.
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Class<? extends MVC> mvcType, @Nonnull Map<String, Object> args, @Nonnull TypedMVCGroupFunction<MVC> handler);
+
+    /**
+     * Instantiates an MVC group of the specified type then destroys it after it has been handled.<p>
+     * <p>This method is of particular interest when working with short lived MVC groups such as
+     * those used to build dialogs.<p/>
+     * <p>MVC groups must be previously configured with the application's metadata
+     * before they can be used. This registration process usually takes place automatically
+     * at boot time. The type of the group can be normally found in the application's
+     * configuration file.</p>
+     * The <tt>args</tt> Map can contain any value that will be used in one of the following
+     * scenarios <ul>
+     * <li>The key matches a member definition; the value will be used as the instance of such member.</li>
+     * <li>The key does not match a member definition, the value is assumed to be a property that can be set
+     * on any MVC member of the group.</li>
+     * For example, with the following entry available in {@code Config.properties}
+     * <p/>
+     * <pre>
+     * mvcGroups.foo.model      = com.acme.FooModel
+     * mvcGroups.foo.view       = com.acme.FooView
+     * mvcGroups.foo.controller = com.acme.FooController
+     * </pre>
+     * <p/>
+     * An instance of the "foo" group can be used as follows
+     * <p/>
+     * <pre>
+     * Map<String, Object> map = ... // initialized elsewhere
+     * withMVCGroup(FooMVCGroup.class, map, new TypedMVCGroupFunction<>() {
+     *    public void call(MVC group) {
+     *        group.getModel().setSomeProperty(someValue);
+     *        group.getController().invokeAnAction();
+     *    }
+     * });
+     * </pre>
+     *
+     * @param args    any useful values that can be set as properties on each MVC member or that
+     *                identify a member that can be shared with other groups.
+     * @param mvcType the type of group to build.
+     * @param handler a code block used to configure and manage the instantiated group
+     *
+     * @throws basilisk.exceptions.MVCGroupInstantiationException - if the type specified is not found in the application's
+     *                                                            configuration
+     */
+    <MVC extends TypedMVCGroup> void withMVCGroup(@Nonnull Map<String, Object> args, @Nonnull Class<? extends MVC> mvcType, @Nonnull TypedMVCGroupFunction<MVC> handler);
 }
