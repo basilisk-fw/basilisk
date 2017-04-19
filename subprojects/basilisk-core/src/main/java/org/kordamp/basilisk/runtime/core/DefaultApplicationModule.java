@@ -17,7 +17,6 @@ package org.kordamp.basilisk.runtime.core;
 
 import basilisk.core.ApplicationClassLoader;
 import basilisk.core.ApplicationConfigurer;
-import basilisk.core.configuration.Configuration;
 import basilisk.core.Context;
 import basilisk.core.ContextFactory;
 import basilisk.core.ExceptionHandler;
@@ -27,8 +26,11 @@ import basilisk.core.PlatformHandler;
 import basilisk.core.addon.AddonManager;
 import basilisk.core.artifact.ArtifactHandler;
 import basilisk.core.artifact.ArtifactManager;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.configuration.ConfigurationManager;
+import basilisk.core.controller.ActionFactory;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadataFactory;
 import basilisk.core.env.Environment;
 import basilisk.core.env.Lifecycle;
 import basilisk.core.env.Metadata;
@@ -58,7 +60,9 @@ import org.kordamp.basilisk.runtime.core.configuration.ConfigurationDecoratorFac
 import org.kordamp.basilisk.runtime.core.configuration.DefaultConfigurationDecoratorFactory;
 import org.kordamp.basilisk.runtime.core.configuration.DefaultConfigurationManager;
 import org.kordamp.basilisk.runtime.core.configuration.ResourceBundleConfigurationProvider;
+import org.kordamp.basilisk.runtime.core.controller.DefaultActionFactory;
 import org.kordamp.basilisk.runtime.core.controller.DefaultActionManager;
+import org.kordamp.basilisk.runtime.core.controller.DefaultActionMetadataFactory;
 import org.kordamp.basilisk.runtime.core.env.EnvironmentProvider;
 import org.kordamp.basilisk.runtime.core.env.MetadataProvider;
 import org.kordamp.basilisk.runtime.core.env.RunModeProvider;
@@ -240,6 +244,14 @@ public class DefaultApplicationModule extends AbstractModule {
 
         bind(ActionManager.class)
             .to(DefaultActionManager.class)
+            .asSingleton();
+
+        bind(ActionFactory.class)
+            .to(DefaultActionFactory.class)
+            .asSingleton();
+
+        bind(ActionMetadataFactory.class)
+            .to(DefaultActionMetadataFactory.class)
             .asSingleton();
 
         bind(ArtifactManager.class)

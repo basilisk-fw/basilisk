@@ -17,12 +17,16 @@ package org.kordamp.basilisk.runtime.core.artifact;
 
 import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskControllerClass;
-import basilisk.util.BasiliskClassUtils;
+import basilisk.core.controller.ControllerAction;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static basilisk.util.AnnotationUtils.isAnnotatedWith;
+import static basilisk.util.BasiliskClassUtils.isEventHandler;
+import static basilisk.util.BasiliskClassUtils.isPlainMethod;
 
 /**
  * @author Andres Almiray
@@ -44,10 +48,13 @@ public class DefaultBasiliskControllerClass extends DefaultBasiliskClass impleme
         if (actionsCache.isEmpty()) {
             for (Method method : getClazz().getMethods()) {
                 String methodName = method.getName();
-                if (!actionsCache.contains(methodName) &&
-                    BasiliskClassUtils.isPlainMethod(method) &&
-                    !BasiliskClassUtils.isEventHandler(methodName) &&
-                    method.getReturnType() == Void.TYPE) {
+                if (actionsCache.contains(methodName)) {
+                    continue;
+                }
+
+                if (isPlainMethod(method) &&
+                    !isEventHandler(methodName) &&
+                    (isAnnotatedWith(method, ControllerAction.class, true) || method.getReturnType() == Void.TYPE)) {
                     actionsCache.add(methodName);
                 }
             }

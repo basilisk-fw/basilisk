@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kordamp.basilisk.runtime.core.controller;
+package org.kordamp.basilisk.runtime.javafx.controller;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionFactory;
-import basilisk.core.controller.ActionMetadataFactory;
+import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
+import basilisk.core.threading.UIThreadManager;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 /**
  * @author Andres Almiray
+ * @since 2.11.0
  */
-public class DefaultActionManager extends AbstractActionManager {
+public class JavaFXActionFactory implements ActionFactory {
     @Inject
-    public DefaultActionManager(@Nonnull BasiliskApplication application, @Nonnull ActionFactory actionFactory, @Nonnull ActionMetadataFactory actionMetadataFactory) {
-        super(application, actionFactory, actionMetadataFactory);
-    }
+    private UIThreadManager uiThreadManager;
 
+    @Inject
+    private ActionManager actionManager;
+
+    @Nonnull
     @Override
-    protected void doConfigureAction(@Nonnull Action action, @Nonnull BasiliskController controller, @Nonnull String normalizeNamed, @Nonnull String keyPrefix) {
-
+    public Action create(@Nonnull BasiliskController controller, @Nonnull ActionMetadata actionMetadata) {
+        return new JavaFXBasiliskControllerAction(uiThreadManager, actionManager, controller, actionMetadata);
     }
-
 }

@@ -28,6 +28,14 @@ public interface Action {
     String KEY_NAME = "name";
     String KEY_ENABLED = "enabled";
 
+    /**
+     * Returns the metadata of this action.
+     *
+     * @since 1.0.0
+     */
+    @Nonnull
+    ActionMetadata getActionMetadata();
+
     @Nonnull
     String getActionName();
 

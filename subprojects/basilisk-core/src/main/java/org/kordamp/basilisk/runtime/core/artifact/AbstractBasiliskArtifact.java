@@ -120,6 +120,11 @@ public abstract class AbstractBasiliskArtifact implements BasiliskArtifact {
     }
 
     @Override
+    public void runOutsideUIAsync(@Nonnull Runnable runnable) {
+        application.getUIThreadManager().runOutsideUIAsync(runnable);
+    }
+
+    @Override
     public void runInsideUIAsync(@Nonnull Runnable runnable) {
         application.getUIThreadManager().runInsideUIAsync(runnable);
     }

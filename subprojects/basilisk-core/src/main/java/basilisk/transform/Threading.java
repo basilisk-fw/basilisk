@@ -55,12 +55,12 @@ import java.lang.annotation.Target;
  *
  * class Sample {
  *     void doSomethingOutside(String arg) {
- *         UIThreadManager.instance.executeOutside {
+ *         UIThreadManager.instance.runOutsideUI {
  *             println "Outside $arg"
  *         }
  *     }
  *     void doSomethingInside(String arg) {
- *         UIThreadManager.instance.executeSync {
+ *         UIThreadManager.instance.runInsideUISync {
  *             println "Inside $arg"
  *         }
  *     }
@@ -81,6 +81,7 @@ public @interface Threading {
      * <ul>
      * <li>{@code SKIP} - no threading management will be performed.</li>
      * <li>{@code OUTSIDE_UITHREAD} - code should be invoked outside of the UI thread.</li>
+     * <li>{@code OUTSIDE_UITHREAD_ASYNC} - code should be invoked on a background thread, always.</li>
      * <li>{@code INSIDE_UITHREAD_SYNC} - code should be invoked inside the UI thread using a synchronous call.</li>
      * <li>{@code INSIDE_UITHREAD_ASYNC} - code should be invoked inside the UI thread using an asynchronous call.</li>
      * </ul>
@@ -94,15 +95,19 @@ public @interface Threading {
          */
         SKIP,
         /**
-         * Inject execOutside wrapper
+         * Inject runOutsideUI wrapper
          */
         OUTSIDE_UITHREAD,
         /**
-         * Inject execSync wrapper
+         * Inject runOutsideUIAsync wrapper
+         */
+        OUTSIDE_UITHREAD_ASYNC,
+        /**
+         * Inject runInsideUISync wrapper
          */
         INSIDE_UITHREAD_SYNC,
         /**
-         * Inject execAsync wrapper
+         * Inject runInsideUIAsync wrapper
          */
         INSIDE_UITHREAD_ASYNC
     }

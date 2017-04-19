@@ -18,6 +18,7 @@ package org.kordamp.basilisk.runtime.core.controller;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +27,6 @@ import javafx.beans.property.StringProperty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -41,14 +41,20 @@ public abstract class AbstractAction implements Action {
 
     private final ActionManager actionManager;
     private final BasiliskController controller;
-    private final String actionName;
+    private final ActionMetadata actionMetadata;
     private boolean initialized;
     private final Object lock = new Object[0];
 
-    public AbstractAction(@Nonnull ActionManager actionManager, @Nonnull BasiliskController controller, @Nonnull String actionName) {
+    public AbstractAction(@Nonnull ActionManager actionManager, @Nonnull BasiliskController controller, @Nonnull ActionMetadata actionMetadata) {
         this.actionManager = requireNonNull(actionManager, "Argument 'actionManager' must not be null");
         this.controller = requireNonNull(controller, "Argument 'controller' must not be null");
-        this.actionName = requireNonBlank(actionName, "Argument 'actionName' must not be blank");
+        this.actionMetadata = requireNonNull(actionMetadata, "Argument 'actionMetadata' must not be blank");
+    }
+
+    @Nonnull
+    @Override
+    public ActionMetadata getActionMetadata() {
+        return actionMetadata;
     }
 
     @Nonnull
@@ -63,13 +69,13 @@ public abstract class AbstractAction implements Action {
 
     @Nonnull
     public String getActionName() {
-        return actionName;
+        return actionMetadata.getActionName();
     }
 
     @Nonnull
     @Override
     public String getFullyQualifiedName() {
-        return getController().getClass().getName() + "." + getActionName();
+        return actionMetadata.getFullyQualifiedName();
     }
 
     @Nonnull

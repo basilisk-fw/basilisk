@@ -17,6 +17,7 @@ package org.kordamp.basilisk.runtime.javafx.controller;
 
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.javafx.support.JavaFXAction;
 import com.googlecode.openbeans.PropertyEditor;
@@ -59,15 +60,15 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
     private BooleanProperty selected;
     private BooleanProperty visible;
 
-    public JavaFXBasiliskControllerAction(@Nonnull final UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
-        super(actionManager, controller, actionName);
+    public JavaFXBasiliskControllerAction(@Nonnull final UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final ActionMetadata actionMetadata) {
+        super(actionManager, controller, actionMetadata);
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
-        toolkitAction = createAction(actionManager, controller, actionName);
+        toolkitAction = createAction(actionManager, controller, actionMetadata.getActionName());
         toolkitAction.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                actionManager.invokeAction(controller, actionName, actionEvent);
+                actionManager.invokeAction(controller, actionMetadata.getActionName(), actionEvent);
             }
         });
 
@@ -417,6 +418,7 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         return toolkitAction;
     }
 
+    @Override
     protected void doExecute(Object... args) {
         ActionEvent event = null;
         if (args != null && args.length == 1 && args[0] instanceof ActionEvent) {

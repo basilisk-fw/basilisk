@@ -61,9 +61,11 @@ public abstract class AbstractUIThreadManager implements UIThreadManager {
      * Executes a code block as a Future on an ExecutorService.
      *
      * @param callable a code block to be executed
+     *
      * @return a Future that contains the result of the execution
      */
     @Nonnull
+    @Override
     public <R> Future<R> runFuture(@Nonnull Callable<R> callable) {
         requireNonNull(callable, ERROR_CALLABLE_NULL);
         return runFuture(executorService, callable);
@@ -74,15 +76,18 @@ public abstract class AbstractUIThreadManager implements UIThreadManager {
      *
      * @param executorService the ExecutorService to use. Will use the default ExecutorService if null.
      * @param callable        a code block to be executed
+     *
      * @return a Future that contains the result of the execution
      */
     @Nonnull
+    @Override
     public <R> Future<R> runFuture(@Nonnull ExecutorService executorService, @Nonnull Callable<R> callable) {
         requireNonNull(executorService, "Argument 'executorService' must not be null");
         requireNonNull(callable, ERROR_CALLABLE_NULL);
         return executorService.submit(callable);
     }
 
+    @Override
     public void runOutsideUI(@Nonnull final Runnable runnable) {
         requireNonNull(runnable, ERROR_RUNNABLE_NULL);
         if (!isUIThread()) {
@@ -98,6 +103,21 @@ public abstract class AbstractUIThreadManager implements UIThreadManager {
                 }
             });
         }
+    }
+
+    @Override
+    public void runOutsideUIAsync(@Nonnull final Runnable runnable) {
+        requireNonNull(runnable, ERROR_RUNNABLE_NULL);
+
+        executorService.submit(new Runnable() {
+            public void run() {
+                try {
+                    runnable.run();
+                } catch (Throwable throwable) {
+                    exceptionHandler.uncaughtException(Thread.currentThread(), throwable);
+                }
+            }
+        });
     }
 
     @Nullable

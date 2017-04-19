@@ -21,6 +21,7 @@ import basilisk.core.controller.ActionExecutionStatus;
 import basilisk.core.controller.ActionHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
@@ -42,8 +43,10 @@ public class AbstractActionHandler implements ActionHandler {
         return args;
     }
 
+    @Nullable
     @Override
-    public void after(@Nonnull ActionExecutionStatus status, @Nonnull Action action, @Nonnull Object[] args) {
+    public Object after(@Nonnull ActionExecutionStatus status, @Nonnull Action action, @Nonnull Object[] args, @Nullable Object result) {
+        return result;
     }
 
     @Override

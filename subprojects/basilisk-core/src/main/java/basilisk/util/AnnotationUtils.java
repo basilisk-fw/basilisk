@@ -54,8 +54,10 @@ import static java.util.Objects.requireNonNull;
 public class AnnotationUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationUtils.class);
     private static final String ERROR_CLASS_NULL = "Argument 'class' must not be null";
+    private static final String ERROR_METHOD_NULL = "Argument 'method' must not be null";
     private static final String ERROR_SUFFIX_NULL = "Argument 'suffix' must not be null";
     private static final String ERROR_INSTANCE_NULL = "Argument 'instance' must not be null";
+    private static final String ERROR_ANNOTATION_NULL = "Argument 'annotation' must not be null";
     private static final String ERROR_ANNOTATION_TYPE_NULL = "Argument 'annotationType' must not be null";
     private static final String ERROR_FIELD_NULL = "Argument 'field' must not be null";
     private static final String ERROR_SETTER_METHOD_NULL = "Argument 'setterMethod' must not be null";
@@ -91,11 +93,16 @@ public class AnnotationUtils {
 
     @Nullable
     public static <A extends Annotation> A findAnnotation(@Nonnull Class<?> klass, @Nonnull Class<A> annotationType) {
+        return findAnnotation(klass, annotationType, false);
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Class<?> klass, @Nonnull Class<A> annotationType, boolean deep) {
         requireNonNull(klass, ERROR_CLASS_NULL);
         requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
 
         while (klass != null) {
-            Annotation annotation = findAnnotation(klass.getAnnotations(), annotationType);
+            Annotation annotation = findAnnotation(klass.getAnnotations(), annotationType, deep);
             if (annotation != null) { return (A) annotation; }
             klass = klass.getSuperclass();
         }
@@ -103,13 +110,51 @@ public class AnnotationUtils {
     }
 
     @Nullable
-    public static <A extends Annotation> A findAnnotation(@Nonnull Annotation[] annotations, @Nonnull Class<A> annotationType) {
-        requireNonNull(annotations, "Argument 'annotations' must not be null");
+    public static <A extends Annotation> A findAnnotation(@Nonnull Method method, @Nonnull Class<A> annotationType) {
+        return findAnnotation(method, annotationType, false);
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Method method, @Nonnull Class<A> annotationType, boolean deep) {
+        requireNonNull(method, ERROR_METHOD_NULL);
         requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
-        for (Annotation annotation : annotations) {
-            if (annotationType.isAssignableFrom(annotation.getClass())) {
+
+        for (Annotation annotation : method.getAnnotations()) {
+            if (annotationType.equals(annotation.annotationType())) {
                 return (A) annotation;
             }
+            if (deep) {
+                A a = findAnnotation(annotation.annotationType().getAnnotations(), annotationType, deep);
+                if (a != null) {
+                    return a;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Annotation[] annotations, @Nonnull Class<A> annotationType) {
+        return findAnnotation(annotations, annotationType, false);
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Annotation[] annotations, @Nonnull Class<A> annotationType, boolean deep) {
+        requireNonNull(annotations, "Argument 'annotations' must not be null");
+        requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
+
+        for (Annotation annotation : annotations) {
+            if (annotationType.isAssignableFrom(annotation.annotationType())) {
+                return (A) annotation;
+            }
+            /*
+            if (deep) {
+                A a = findAnnotation(annotation.annotationType().getAnnotations(), annotationType, deep);
+                if (a != null) {
+                    return a;
+                }
+            }*/
         }
         return null;
     }
@@ -118,11 +163,53 @@ public class AnnotationUtils {
         return isAnnotatedWith(requireNonNull(instance, ERROR_INSTANCE_NULL).getClass(), annotationType);
     }
 
+    public static boolean isAnnotatedWith(@Nonnull Method method, @Nonnull Class<? extends Annotation> annotationType) {
+        return isAnnotatedWith(method, annotationType, false);
+    }
+
+    public static boolean isAnnotatedWith(@Nonnull Method method, @Nonnull Class<? extends Annotation> annotationType, boolean deep) {
+        requireNonNull(method, ERROR_METHOD_NULL);
+        requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
+
+        for (Annotation annotation : method.getAnnotations()) {
+            if (annotationType.equals(annotation.annotationType())) {
+                return true;
+            }
+            if (deep) {
+                if (isAnnotatedWith(annotation, annotationType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAnnotatedWith(@Nonnull Annotation annotation, @Nonnull Class<? extends Annotation> annotationType) {
+        return isAnnotatedWith(annotation, annotationType, false);
+    }
+
+    public static boolean isAnnotatedWith(@Nonnull Annotation annotation, @Nonnull Class<? extends Annotation> annotationType, boolean deep) {
+        requireNonNull(annotation, ERROR_ANNOTATION_NULL);
+        requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
+
+        for (Annotation a : annotation.annotationType().getAnnotations()) {
+            if (annotationType.equals(a.annotationType())) {
+                return true;
+            }
+
+            if (deep) {
+                if (isAnnotatedWith(a, annotationType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean isAnnotatedWith(@Nonnull Class<?> clazz, @Nonnull Class<? extends Annotation> annotationType) {
         requireNonNull(clazz, ERROR_CLASS_NULL);
         requireNonNull(annotationType, ERROR_ANNOTATION_TYPE_NULL);
 
-        //noinspection ConstantConditions
         while (clazz != null) {
             for (Annotation annotation : clazz.getAnnotations()) {
                 if (annotationType.equals(annotation.annotationType())) {
@@ -253,6 +340,7 @@ public class AnnotationUtils {
         }
     }
 
+    @Nonnull
     public static String[] namesFor(@Nonnull Method setterMethod) {
         requireNonNull(setterMethod, ERROR_SETTER_METHOD_NULL);
 
@@ -459,6 +547,7 @@ public class AnnotationUtils {
 
     /**
      * @author Andres Almiray
+     * @since 2.0.0
      */
     @SuppressWarnings("ClassExplicitlyAnnotation")
     private static class NamedImpl implements Named, Serializable {

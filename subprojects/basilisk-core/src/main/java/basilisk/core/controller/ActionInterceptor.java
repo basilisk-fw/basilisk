@@ -53,7 +53,9 @@ public interface ActionInterceptor {
      * @param controller the controller that owns the action
      * @param actionName the action's name
      * @param args       the action's arguments
+     *
      * @return arguments to be sent to the action
+     *
      * @throws AbortActionExecution if action execution should be aborted.
      */
     @Nonnull
@@ -82,6 +84,7 @@ public interface ActionInterceptor {
      * @param controller the controller that owns the action
      * @param actionName the action's name
      * @param args       the arguments sent to the action during execution
+     *
      * @return <code>true</code> if the exception was handled successfully,
      * <code>false</code> otherwise.
      */

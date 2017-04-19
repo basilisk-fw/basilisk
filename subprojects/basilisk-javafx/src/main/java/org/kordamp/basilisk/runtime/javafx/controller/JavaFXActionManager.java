@@ -18,6 +18,8 @@ package org.kordamp.basilisk.runtime.javafx.controller;
 import basilisk.core.BasiliskApplication;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
+import basilisk.core.controller.ActionFactory;
+import basilisk.core.controller.ActionMetadataFactory;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.kordamp.basilisk.runtime.core.controller.AbstractActionManager;
@@ -60,14 +62,8 @@ public class JavaFXActionManager extends AbstractActionManager {
     private static final String FALSE = "false";
 
     @Inject
-    public JavaFXActionManager(@Nonnull BasiliskApplication application) {
-        super(application);
-    }
-
-    @Nonnull
-    @Override
-    protected Action createControllerAction(@Nonnull BasiliskController controller, @Nonnull String actionName) {
-        return new JavaFXBasiliskControllerAction(getUiThreadManager(), this, controller, actionName);
+    public JavaFXActionManager(@Nonnull BasiliskApplication application, @Nonnull ActionFactory actionFactory, @Nonnull ActionMetadataFactory actionMetadataFactory) {
+        super(application, actionFactory, actionMetadataFactory);
     }
 
     @Override

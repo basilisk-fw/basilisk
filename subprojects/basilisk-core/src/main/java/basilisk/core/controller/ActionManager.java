@@ -93,6 +93,7 @@ public interface ActionManager {
      * Register an {@code ActionInterceptor} with this instance.
      *
      * @param actionInterceptor the interceptor to be added to this ActionManager
+     *
      * @deprecated use {@code addActionHandler} instead.
      */
     @Deprecated

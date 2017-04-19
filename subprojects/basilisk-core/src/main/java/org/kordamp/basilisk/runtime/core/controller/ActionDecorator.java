@@ -18,6 +18,7 @@ package org.kordamp.basilisk.runtime.core.controller;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +33,12 @@ public class ActionDecorator implements Action {
 
     public ActionDecorator(@Nonnull Action delegate) {
         this.delegate = requireNonNull(delegate, "Argument 'delegate' must not be null");
+    }
+
+    @Nonnull
+    @Override
+    public ActionMetadata getActionMetadata() {
+        return delegate.getActionMetadata();
     }
 
     @Nonnull

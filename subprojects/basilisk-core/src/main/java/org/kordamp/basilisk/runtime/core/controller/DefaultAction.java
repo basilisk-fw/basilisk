@@ -17,6 +17,7 @@ package org.kordamp.basilisk.runtime.core.controller;
 
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
 import basilisk.core.threading.UIThreadManager;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,14 +32,14 @@ import static java.util.Objects.requireNonNull;
 public class DefaultAction extends AbstractAction {
     private final DefaultToolkitAction toolkitAction;
 
-    public DefaultAction(@Nonnull final UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final String actionName) {
-        super(actionManager, controller, actionName);
+    public DefaultAction(@Nonnull final UIThreadManager uiThreadManager, @Nonnull final ActionManager actionManager, @Nonnull final BasiliskController controller, @Nonnull final ActionMetadata actionMetadata) {
+        super(actionManager, controller, actionMetadata);
         requireNonNull(uiThreadManager, "Argument 'uiThreadManager' must not be null");
 
         toolkitAction = new DefaultToolkitAction(new Runnable() {
             @Override
             public void run() {
-                actionManager.invokeAction(controller, actionName);
+                actionManager.invokeAction(controller, actionMetadata.getActionName());
             }
         });
         nameProperty().addListener(new ChangeListener<String>() {

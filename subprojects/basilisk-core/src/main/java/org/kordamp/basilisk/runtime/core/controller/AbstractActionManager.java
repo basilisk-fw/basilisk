@@ -16,33 +16,34 @@
 package org.kordamp.basilisk.runtime.core.controller;
 
 import basilisk.core.BasiliskApplication;
-import basilisk.core.configuration.Configuration;
 import basilisk.core.Context;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.artifact.BasiliskControllerClass;
+import basilisk.core.configuration.Configuration;
 import basilisk.core.controller.AbortActionExecution;
 import basilisk.core.controller.Action;
 import basilisk.core.controller.ActionExecutionStatus;
+import basilisk.core.controller.ActionFactory;
 import basilisk.core.controller.ActionHandler;
 import basilisk.core.controller.ActionInterceptor;
 import basilisk.core.controller.ActionManager;
+import basilisk.core.controller.ActionMetadata;
+import basilisk.core.controller.ActionMetadataFactory;
+import basilisk.core.controller.ActionParameter;
+import basilisk.core.controller.ControllerAction;
 import basilisk.core.i18n.MessageSource;
 import basilisk.core.i18n.NoSuchMessageException;
 import basilisk.core.mvc.MVCGroup;
 import basilisk.core.threading.UIThreadManager;
 import basilisk.exceptions.BasiliskException;
 import basilisk.exceptions.InstanceMethodInvocationException;
-import basilisk.inject.Contextual;
 import basilisk.transform.Threading;
-import basilisk.util.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.inject.Named;
-import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -56,11 +57,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static basilisk.core.BasiliskExceptionHandler.sanitize;
+import static basilisk.util.AnnotationUtils.findAnnotation;
+import static basilisk.util.AnnotationUtils.isAnnotatedWith;
 import static basilisk.util.BasiliskClassUtils.EMPTY_ARGS;
 import static basilisk.util.BasiliskClassUtils.invokeExactInstanceMethod;
 import static basilisk.util.BasiliskClassUtils.invokeInstanceMethod;
 import static basilisk.util.BasiliskNameUtils.capitalize;
-import static basilisk.util.BasiliskNameUtils.isBlank;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static basilisk.util.BasiliskNameUtils.uncapitalize;
 import static basilisk.util.CollectionUtils.reverse;
@@ -82,15 +84,21 @@ public abstract class AbstractActionManager implements ActionManager {
     private static final String ERROR_ACTION_NAME_BLANK = "Argument 'actionName' must not be blank";
     private static final String ERROR_ACTION_HANDLER_NULL = "Argument 'actionHandler' must not be null";
     private static final String ERROR_ACTION_NULL = "Argument 'action' must not be null";
+    private static final String ERROR_METHOD_NULL = "Argument 'method' must not be null";
+
     private final ActionCache actionCache = new ActionCache();
     private final Map<String, Threading.Policy> threadingPolicies = new ConcurrentHashMap<>();
     private final List<ActionHandler> handlers = new CopyOnWriteArrayList<>();
 
     private final BasiliskApplication application;
+    private final ActionFactory actionFactory;
+    private final ActionMetadataFactory actionMetadataFactory;
 
     @Inject
-    public AbstractActionManager(@Nonnull BasiliskApplication application) {
+    public AbstractActionManager(@Nonnull BasiliskApplication application, @Nonnull ActionFactory actionFactory, @Nonnull ActionMetadataFactory actionMetadataFactory) {
         this.application = requireNonNull(application, "Argument 'application' must not be null");
+        this.actionFactory = requireNonNull(actionFactory, "Argument 'actionFactory' must not be null");
+        this.actionMetadataFactory = requireNonNull(actionMetadataFactory, "Argument 'actionMetadataFactory' must not be null");
     }
 
     @Nullable
@@ -99,7 +107,7 @@ public abstract class AbstractActionManager implements ActionManager {
             if (actionName.equals(method.getName()) &&
                 isPublic(method.getModifiers()) &&
                 !isStatic(method.getModifiers()) &&
-                method.getReturnType() == Void.TYPE) {
+                (isAnnotatedWith(method, ControllerAction.class, true) || method.getReturnType() == Void.TYPE)) {
                 return method;
             }
         }
@@ -129,7 +137,7 @@ public abstract class AbstractActionManager implements ActionManager {
     @Nonnull
     public Map<String, Action> actionsFor(@Nonnull BasiliskController controller) {
         requireNonNull(controller, ERROR_CONTROLLER_NULL);
-        Map<String, ActionWrapper> actions = actionCache.get(controller);
+        Map<String, Action> actions = actionCache.get(controller);
         if (actions.isEmpty()) {
             LOG.trace("No actions defined for controller {}", controller);
         }
@@ -151,7 +159,7 @@ public abstract class AbstractActionManager implements ActionManager {
                 throw new BasiliskException(controller.getTypeClass().getCanonicalName() + " does not define an action named " + actionName);
             }
 
-            ActionWrapper action = wrapAction(createAndConfigureAction(controller, actionName), method);
+            Action action = createAndConfigureAction(controller, actionName, method);
 
             final String qualifiedActionName = action.getFullyQualifiedName();
             for (ActionHandler handler : handlers) {
@@ -159,7 +167,7 @@ public abstract class AbstractActionManager implements ActionManager {
                 handler.configure(action, method);
             }
 
-            Map<String, ActionWrapper> actions = actionCache.get(controller);
+            Map<String, Action> actions = actionCache.get(controller);
             if (actions.isEmpty()) {
                 actions = new TreeMap<>();
                 actionCache.set(controller, actions);
@@ -168,11 +176,6 @@ public abstract class AbstractActionManager implements ActionManager {
             LOG.trace("Action for {} stored as {}", qualifiedActionName, actionKey);
             actions.put(actionKey, action);
         }
-    }
-
-    @Nonnull
-    private ActionWrapper wrapAction(@Nonnull Action action, @Nonnull Method method) {
-        return new ActionWrapper(action, method);
     }
 
     @Override
@@ -215,6 +218,7 @@ public abstract class AbstractActionManager implements ActionManager {
         Runnable runnable = new Runnable() {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             public void run() {
+                Object result = null;
                 Object[] updatedArgs = args;
                 List<ActionHandler> copy = new ArrayList<>(handlers);
                 List<ActionHandler> invokedHandlers = new ArrayList<>();
@@ -252,7 +256,7 @@ public abstract class AbstractActionManager implements ActionManager {
                 boolean exceptionWasHandled = false;
                 if (status == ActionExecutionStatus.OK) {
                     try {
-                        doInvokeAction(controller, actionName, updatedArgs);
+                        result = doInvokeAction(controller, actionName, updatedArgs);
                     } catch (RuntimeException e) {
                         status = ActionExecutionStatus.EXCEPTION;
                         exception = (RuntimeException) sanitize(e);
@@ -270,7 +274,7 @@ public abstract class AbstractActionManager implements ActionManager {
 
                 for (ActionHandler handler : reverse(invokedHandlers)) {
                     LOG.trace("Calling {}.after() on {}", handler, qualifiedActionName);
-                    handler.after(status, action, updatedArgs);
+                    result = handler.after(status, action, updatedArgs, result);
                 }
 
                 if (exception != null && !exceptionWasHandled) {
@@ -284,13 +288,6 @@ public abstract class AbstractActionManager implements ActionManager {
 
     @Nonnull
     private Object[] injectFromContext(@Nonnull Action action, @Nonnull Object[] args) {
-        ActionWrapper wrappedAction = null;
-        if (action instanceof ActionWrapper) {
-            wrappedAction = (ActionWrapper) action;
-        } else {
-            wrappedAction = wrapAction(action, findActionAsMethod(action.getController(), action.getActionName()));
-        }
-
         MVCGroup group = action.getController().getMvcGroup();
         if (group == null) {
             // This case only occurs during testing, when an artifact is
@@ -299,15 +296,16 @@ public abstract class AbstractActionManager implements ActionManager {
         }
 
         Context context = group.getContext();
-        if (wrappedAction.hasContextualArgs) {
-            Object[] newArgs = new Object[wrappedAction.argumentsInfo.size()];
+        ActionMetadata actionMetadata = action.getActionMetadata();
+        if (actionMetadata.hasContextualArgs()) {
+            Object[] newArgs = new Object[actionMetadata.getParameters().length];
             for (int i = 0; i < newArgs.length; i++) {
-                ArgInfo argInfo = wrappedAction.argumentsInfo.get(i);
-                newArgs[i] = argInfo.contextual ? context.get(argInfo.name) : args[i];
-                if (argInfo.contextual && newArgs[i] != null) { context.put(argInfo.name, newArgs[i]); }
-                if (argInfo.contextual && !argInfo.nullable && newArgs[i] == null) {
+                ActionParameter param = actionMetadata.getParameters()[i];
+                newArgs[i] = param.isContextual() ? context.get(param.getName()) : args[i];
+                if (param.isContextual() && newArgs[i] != null) { context.put(param.getName(), newArgs[i]); }
+                if (param.isContextual() && !param.isNullable() && newArgs[i] == null) {
                     throw new IllegalStateException("Could not find an instance of type " +
-                        argInfo.type.getName() + " under key '" + argInfo.name +
+                        param.getType().getName() + " under key '" + param.getName() +
                         "' in the context of MVCGroup[" + group.getMvcType() + ":" + group.getMvcId() +
                         "] to be injected as argument " + i +
                         " at " + action.getFullyQualifiedName() + "(). Argument does not accept null values.");
@@ -325,15 +323,16 @@ public abstract class AbstractActionManager implements ActionManager {
         invokeAction(actionFor(controller, actionName), args);
     }
 
-    protected void doInvokeAction(@Nonnull BasiliskController controller, @Nonnull String actionName, @Nonnull Object[] updatedArgs) {
+    @Nullable
+    protected Object doInvokeAction(@Nonnull BasiliskController controller, @Nonnull String actionName, @Nonnull Object[] updatedArgs) {
         try {
-            invokeInstanceMethod(controller, actionName, updatedArgs);
+            return invokeInstanceMethod(controller, actionName, updatedArgs);
         } catch (InstanceMethodInvocationException imie) {
             if (imie.getCause() instanceof NoSuchMethodException) {
                 // try again but this time remove the 1st arg if it's
                 // descendant of java.util.EventObject
                 if (updatedArgs.length == 1 && updatedArgs[0] != null && EventObject.class.isAssignableFrom(updatedArgs[0].getClass())) {
-                    invokeExactInstanceMethod(controller, actionName, EMPTY_ARGS);
+                    return invokeExactInstanceMethod(controller, actionName, EMPTY_ARGS);
                 } else {
                     throw imie;
                 }
@@ -361,6 +360,9 @@ public abstract class AbstractActionManager implements ActionManager {
             case OUTSIDE_UITHREAD:
                 getUiThreadManager().runOutsideUI(runnable);
                 break;
+            case OUTSIDE_UITHREAD_ASYNC:
+                getUiThreadManager().runOutsideUIAsync(runnable);
+                break;
             case INSIDE_UITHREAD_SYNC:
                 getUiThreadManager().runInsideUISync(runnable);
                 break;
@@ -374,10 +376,10 @@ public abstract class AbstractActionManager implements ActionManager {
     }
 
     @Nonnull
-    private Threading.Policy resolveThreadingPolicy(@Nonnull BasiliskController controller, @Nonnull String actionName) {
+    protected Threading.Policy resolveThreadingPolicy(@Nonnull BasiliskController controller, @Nonnull String actionName) {
         Method method = findActionAsMethod(controller, actionName);
         if (method != null) {
-            Threading annotation = method.getAnnotation(Threading.class);
+            Threading annotation = findAnnotation(method, Threading.class, true);
             return annotation == null ? resolveThreadingPolicy(controller) : annotation.value();
         }
 
@@ -385,13 +387,13 @@ public abstract class AbstractActionManager implements ActionManager {
     }
 
     @Nonnull
-    private Threading.Policy resolveThreadingPolicy(@Nonnull BasiliskController controller) {
-        Threading annotation = AnnotationUtils.findAnnotation(controller.getTypeClass(), Threading.class);
+    protected Threading.Policy resolveThreadingPolicy(@Nonnull BasiliskController controller) {
+        Threading annotation = findAnnotation(controller.getTypeClass(), Threading.class, true);
         return annotation == null ? resolveThreadingPolicy() : annotation.value();
     }
 
     @Nonnull
-    private Threading.Policy resolveThreadingPolicy() {
+    protected Threading.Policy resolveThreadingPolicy() {
         Object value = getConfiguration().get(KEY_THREADING_DEFAULT);
         if (value == null) {
             return Threading.Policy.OUTSIDE_UITHREAD;
@@ -417,6 +419,11 @@ public abstract class AbstractActionManager implements ActionManager {
             case "outside uithread":
             case "outside_uithread":
                 return Threading.Policy.OUTSIDE_UITHREAD;
+            case "background":
+            case "outside async":
+            case "outside uithread async":
+            case "outside_uithread_async":
+                return Threading.Policy.OUTSIDE_UITHREAD_ASYNC;
             case "skip":
                 return Threading.Policy.SKIP;
             default:
@@ -424,7 +431,7 @@ public abstract class AbstractActionManager implements ActionManager {
         }
     }
 
-    private boolean isThreadingDisabled(@Nonnull String actionName) {
+    protected boolean isThreadingDisabled(@Nonnull String actionName) {
         if (getConfiguration().getAsBoolean(KEY_DISABLE_THREADING_INJECTION, false)) {
             return true;
         }
@@ -454,10 +461,12 @@ public abstract class AbstractActionManager implements ActionManager {
     }
 
     @Nonnull
-    protected Action createAndConfigureAction(@Nonnull BasiliskController controller, @Nonnull String actionName) {
+    protected Action createAndConfigureAction(@Nonnull BasiliskController controller, @Nonnull String actionName, @Nonnull Method method) {
         requireNonNull(controller, ERROR_CONTROLLER_NULL);
         requireNonBlank(actionName, ERROR_ACTION_NAME_BLANK);
-        Action action = createControllerAction(controller, actionName);
+        requireNonNull(method, ERROR_METHOD_NULL);
+
+        Action action = createControllerAction(controller, actionName, method);
 
         String normalizeNamed = capitalize(normalizeName(actionName));
         String keyPrefix = controller.getTypeClass().getName() + ".action.";
@@ -472,7 +481,10 @@ public abstract class AbstractActionManager implements ActionManager {
     protected abstract void doConfigureAction(@Nonnull Action action, @Nonnull BasiliskController controller, @Nonnull String normalizeNamed, @Nonnull String keyPrefix);
 
     @Nonnull
-    protected abstract Action createControllerAction(@Nonnull BasiliskController controller, @Nonnull String actionName);
+    protected Action createControllerAction(@Nonnull BasiliskController controller, @Nonnull String actionName, @Nonnull Method method) {
+        ActionMetadata actionMetadata = actionMetadataFactory.create(controller, actionName, method);
+        return actionFactory.create(controller, actionMetadata);
+    }
 
     @Nonnull
     public String normalizeName(@Nonnull String actionName) {
@@ -492,58 +504,13 @@ public abstract class AbstractActionManager implements ActionManager {
         }
     }
 
-    private static class ActionWrapper extends ActionDecorator {
-        private final List<ArgInfo> argumentsInfo = new ArrayList<>();
-        private boolean hasContextualArgs;
-
-        public ActionWrapper(@Nonnull Action delegate, @Nonnull Method method) {
-            super(delegate);
-
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-            hasContextualArgs = method.getAnnotation(Contextual.class) != null;
-            for (int i = 0; i < parameterTypes.length; i++) {
-                ArgInfo argInfo = new ArgInfo();
-                argInfo.type = parameterTypes[i];
-                argInfo.name = argInfo.type.getCanonicalName();
-
-                Annotation[] annotations = parameterAnnotations[i];
-                if (annotations != null) {
-                    for (Annotation annotation : annotations) {
-                        if (Contextual.class.isAssignableFrom(annotation.annotationType())) {
-                            hasContextualArgs = true;
-                            argInfo.contextual = true;
-                        }
-                        if (Nonnull.class.isAssignableFrom(annotation.annotationType())) {
-                            argInfo.nullable = false;
-                        }
-                        if (Named.class.isAssignableFrom(annotation.annotationType())) {
-                            Named named = (Named) annotation;
-                            if (!isBlank(named.value())) {
-                                argInfo.name = named.value();
-                            }
-                        }
-                    }
-                }
-                argumentsInfo.add(argInfo);
-            }
-        }
-    }
-
-    private static class ArgInfo {
-        private Class<?> type;
-        private String name;
-        private boolean nullable = true;
-        private boolean contextual = false;
-    }
-
     private static class ActionCache {
-        private final Map<WeakReference<BasiliskController>, Map<String, ActionWrapper>> cache = new ConcurrentHashMap<>();
+        private final Map<WeakReference<BasiliskController>, Map<String, Action>> cache = new ConcurrentHashMap<>();
 
         @Nonnull
-        public Map<String, ActionWrapper> get(@Nonnull BasiliskController controller) {
+        public Map<String, Action> get(@Nonnull BasiliskController controller) {
             synchronized (cache) {
-                for (Map.Entry<WeakReference<BasiliskController>, Map<String, ActionWrapper>> entry : cache.entrySet()) {
+                for (Map.Entry<WeakReference<BasiliskController>, Map<String, Action>> entry : cache.entrySet()) {
                     BasiliskController test = entry.getKey().get();
                     if (test == controller) {
                         return entry.getValue();
@@ -553,7 +520,7 @@ public abstract class AbstractActionManager implements ActionManager {
             return Collections.emptyMap();
         }
 
-        public void set(@Nonnull BasiliskController controller, @Nonnull Map<String, ActionWrapper> actions) {
+        public void set(@Nonnull BasiliskController controller, @Nonnull Map<String, Action> actions) {
             WeakReference<BasiliskController> existingController = null;
             synchronized (cache) {
                 for (WeakReference<BasiliskController> key : cache.keySet()) {
@@ -576,7 +543,7 @@ public abstract class AbstractActionManager implements ActionManager {
             List<Action> actions = new ArrayList<>();
 
             synchronized (cache) {
-                for (Map<String, ActionWrapper> map : cache.values()) {
+                for (Map<String, Action> map : cache.values()) {
                     actions.addAll(map.values());
                 }
             }
