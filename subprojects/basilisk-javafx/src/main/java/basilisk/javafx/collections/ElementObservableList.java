@@ -119,8 +119,8 @@ public class ElementObservableList<E> extends DelegatingObservableList<E> {
     }
 
     @Nonnull
-    private ListChangeListener.Change<? extends E> changeFor(@Nonnull final E contact) {
-        final int position = indexOf(contact);
+    private ListChangeListener.Change<? extends E> changeFor(@Nonnull final E element) {
+        final int position = indexOf(element);
         final int[] permutations = new int[0];
 
         return new ListChangeListener.Change<E>(this) {
@@ -167,17 +167,70 @@ public class ElementObservableList<E> extends DelegatingObservableList<E> {
         };
     }
 
-    private void unregisterListeners(@Nonnull E contact) {
-        List<ListenerSubscription> registeredSubscriptions = subscriptions.remove(contact);
+    private void unregisterListeners(@Nonnull E element) {
+        List<ListenerSubscription> registeredSubscriptions = subscriptions.remove(element);
         if (registeredSubscriptions != null) {
-            for (ListenerSubscription subscription : registeredSubscriptions) {
-                subscription.unsubscribe();
-            }
+            registeredSubscriptions.forEach(new Consumer<ListenerSubscription>() {
+                @Override
+                public void accept(ListenerSubscription listenerSubscription) {
+                    listenerSubscription.unsubscribe();
+                }
+            });
         }
     }
 
-
     private interface ListenerSubscription {
         void unsubscribe();
+    }
+
+    private static class DefaultPropertyExtractor<T> implements PropertyExtractor<T> {
+        private static final Logger LOG = LoggerFactory.getLogger(DefaultPropertyExtractor.class);
+
+        private final Map<Class<?>, List<Method>> propertyMetadata = new LinkedHashMap<>();
+
+        @Nonnull
+        @Override
+        public Property<?>[] properties(@Nullable T instance) {
+            if (instance == null) {
+                return new Property[0];
+            }
+
+            if (instance instanceof PropertyContainer) {
+                return ((PropertyContainer) instance).properties();
+            }
+
+            Class<?> klass = instance.getClass();
+            List<Method> metadata = propertyMetadata.get(klass);
+            if (metadata == null) {
+                metadata = harvestMetadata(klass);
+                propertyMetadata.put(klass, metadata);
+            }
+
+            Property[] properties = new Property[metadata.size()];
+            for (int i = 0; i < properties.length; i++) {
+                try {
+                    properties[i] = (Property) metadata.get(i).invoke(instance);
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                } catch (InvocationTargetException e) {
+                    throw new IllegalStateException(e.getTargetException());
+                }
+            }
+            return properties;
+        }
+
+        private List<Method> harvestMetadata(@Nonnull Class<?> klass) {
+            List<Method> metadata = new ArrayList<>();
+
+            for (Method method : klass.getMethods()) {
+                if (Property.class.isAssignableFrom(method.getReturnType()) &&
+                    method.getName().endsWith("Property") &&
+                    method.getParameterCount() == 0) {
+                    metadata.add(method);
+                }
+            }
+
+            return metadata;
+        }
     }
 }
