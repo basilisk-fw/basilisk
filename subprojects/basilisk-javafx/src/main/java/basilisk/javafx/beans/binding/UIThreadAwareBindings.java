@@ -57,9 +57,31 @@ public final class UIThreadAwareBindings {
     private static final String ERROR_CONSUMER_NULL = "Argument 'consumer' must not be null";
     private static final String ERROR_RUNNABLE_NULL = "Argument 'runnable' must not be null";
     private static final String ERROR_OBSERVABLE_NULL = "Argument 'observable' must not be null";
+    private static final String ERROR_PROPERTY_NULL = "Argument 'property' must not be null";
 
     private UIThreadAwareBindings() {
         // prevent instantiation
+    }
+
+    /**
+     * Registers a {@code ChangeListener} on the supplied observable that will notify the target property.
+     *
+     * @param property   the property that will be notified of value changes.
+     * @param observable the observable on which the listener will be registered.
+     *
+     * @return the wrapped change listener.
+     *
+     * @since 1.0.0
+     */
+    public static <T> ChangeListener<T> uiThreadAwareBind(@Nonnull final Property<T> property, @Nonnull final ObservableValue<T> observable) {
+        requireNonNull(property, ERROR_PROPERTY_NULL);
+        ChangeListener<T> listener = new ChangeListener<T>() {
+            @Override
+            public void changed(ObservableValue<? extends T> v, T o, T n) {
+                property.setValue(n);
+            }
+        };
+        return uiThreadAwareChangeListener(observable, listener);
     }
 
     /**
@@ -67,10 +89,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param listener   the wrapped change listener.
+     *
+     * @return a {@code ChangeListener}.
      */
-    public static <T> void uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull ChangeListener<T> listener) {
+    public static <T> ChangeListener<T> uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull ChangeListener<T> listener) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareChangeListener(listener));
+        ChangeListener<T> uiListener = uiThreadAwareChangeListener(listener);
+        observable.addListener(uiListener);
+        return uiListener;
     }
 
     /**
@@ -91,10 +117,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param consumer   the consumer of the {@code newValue} argument.
+     *
+     * @return a {@code ChangeListener}.
      */
-    public static <T> void uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull final Consumer<T> consumer) {
+    public static <T> ChangeListener<T> uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull final Consumer<T> consumer) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareChangeListener(consumer));
+        ChangeListener<T> listener = uiThreadAwareChangeListener(consumer);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -120,10 +150,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param runnable   the code to be executed when the listener is notified.
+     *
+     * @return a {@code ChangeListener}.
      */
-    public static <T> void uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull final Runnable runnable) {
+    public static <T> ChangeListener<T> uiThreadAwareChangeListener(@Nonnull final ObservableValue<T> observable, @Nonnull final Runnable runnable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareChangeListener(runnable));
+        ChangeListener<T> listener = uiThreadAwareChangeListener(runnable);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -149,10 +183,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param listener   the wrapped invalidation listener.
+     *
+     * @return an {@code InvalidationListener}.
      */
-    public static void uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull InvalidationListener listener) {
+    public static InvalidationListener uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull InvalidationListener listener) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareInvalidationListener(listener));
+        InvalidationListener uiListener = uiThreadAwareInvalidationListener(listener);
+        observable.addListener(uiListener);
+        return uiListener;
     }
 
     /**
@@ -173,10 +211,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param consumer   the consumer of the {@code observable} argument.
+     *
+     * @return a {@code InvalidationListener}.
      */
-    public static void uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull final Consumer<Observable> consumer) {
+    public static InvalidationListener uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull final Consumer<Observable> consumer) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareInvalidationListener(consumer));
+        InvalidationListener listener = uiThreadAwareInvalidationListener(consumer);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -202,10 +244,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param runnable   the code to be executed when the listener is notified.
+     *
+     * @return a {@code InvalidationListener}.
      */
-    public static void uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull final Runnable runnable) {
+    public static InvalidationListener uiThreadAwareInvalidationListener(@Nonnull final Observable observable, @Nonnull final Runnable runnable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareInvalidationListener(runnable));
+        InvalidationListener listener = uiThreadAwareInvalidationListener(runnable);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -231,10 +277,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param listener   the wrapped list change listener.
+     *
+     * @return a {@code ListChangeListener}.
      */
-    public static <E> void uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull ListChangeListener<E> listener) {
+    public static <E> ListChangeListener<E> uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull ListChangeListener<E> listener) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareListChangeListener(listener));
+        ListChangeListener<E> uiListener = uiThreadAwareListChangeListener(listener);
+        observable.addListener(uiListener);
+        return listener;
     }
 
     /**
@@ -255,10 +305,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param consumer   the consumer of the {@code newValue} argument.
+     *
+     * @return a {@code ListChangeListener}.
      */
-    public static <E> void uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull final Consumer<ListChangeListener.Change<? extends E>> consumer) {
+    public static <E> ListChangeListener<E> uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull final Consumer<ListChangeListener.Change<? extends E>> consumer) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareListChangeListener(consumer));
+        ListChangeListener<E> listener = uiThreadAwareListChangeListener(consumer);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -284,10 +338,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param runnable   the code to be executed when the listener is notified.
+     *
+     * @return a {@code ListChangeListener}.
      */
-    public static <E> void uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull final Runnable runnable) {
+    public static <E> ListChangeListener<E> uiThreadAwareListChangeListener(@Nonnull final ObservableList<E> observable, @Nonnull final Runnable runnable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareListChangeListener(runnable));
+        ListChangeListener<E> listener = uiThreadAwareListChangeListener(runnable);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -313,10 +371,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param listener   the wrapped map change listener.
+     *
+     * @return a {@code MapChangeListener}.
      */
-    public static <K, V> void uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull MapChangeListener<K, V> listener) {
+    public static <K, V> MapChangeListener<K, V> uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull MapChangeListener<K, V> listener) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareMapChangeListener(listener));
+        MapChangeListener<K, V> uiListener = uiThreadAwareMapChangeListener(listener);
+        observable.addListener(uiListener);
+        return listener;
     }
 
     /**
@@ -337,10 +399,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param consumer   the consumer of the {@code newValue} argument.
+     *
+     * @return a {@code MapChangeListener}.
      */
-    public static <K, V> void uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull final Consumer<MapChangeListener.Change<? extends K, ? extends V>> consumer) {
+    public static <K, V> MapChangeListener<K, V> uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull final Consumer<MapChangeListener.Change<? extends K, ? extends V>> consumer) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareMapChangeListener(consumer));
+        MapChangeListener<K, V> listener = uiThreadAwareMapChangeListener(consumer);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -366,10 +432,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param runnable   the code to be executed when the listener is notified.
+     *
+     * @return a {@code MapChangeListener}.
      */
-    public static <K, V> void uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull final Runnable runnable) {
+    public static <K, V> MapChangeListener<K, V> uiThreadAwareMapChangeListener(@Nonnull final ObservableMap<K, V> observable, @Nonnull final Runnable runnable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareMapChangeListener(runnable));
+        MapChangeListener<K, V> listener = uiThreadAwareMapChangeListener(runnable);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -395,10 +465,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param listener   the wrapped set change listener.
+     *
+     * @return a {@code SetChangeListener}.
      */
-    public static <E> void uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull SetChangeListener<E> listener) {
+    public static <E> SetChangeListener<E> uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull SetChangeListener<E> listener) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareSetChangeListener(listener));
+        SetChangeListener<E> uiListener = uiThreadAwareSetChangeListener(listener);
+        observable.addListener(uiListener);
+        return listener;
     }
 
     /**
@@ -419,10 +493,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param consumer   the consumer of the {@code newValue} argument.
+     *
+     * @return a {@code SetChangeListener}.
      */
-    public static <E> void uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull final Consumer<SetChangeListener.Change<? extends E>> consumer) {
+    public static <E> SetChangeListener<E> uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull final Consumer<SetChangeListener.Change<? extends E>> consumer) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareSetChangeListener(consumer));
+        SetChangeListener<E> listener = uiThreadAwareSetChangeListener(consumer);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**
@@ -448,10 +526,14 @@ public final class UIThreadAwareBindings {
      *
      * @param observable the observable on which the listener will be registered.
      * @param runnable   the code to be executed when the listener is notified.
+     *
+     * @return a {@code SetChangeListener}.
      */
-    public static <E> void uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull final Runnable runnable) {
+    public static <E> SetChangeListener<E> uiThreadAwareSetChangeListener(@Nonnull final ObservableSet<E> observable, @Nonnull final Runnable runnable) {
         requireNonNull(observable, ERROR_OBSERVABLE_NULL);
-        observable.addListener(uiThreadAwareSetChangeListener(runnable));
+        SetChangeListener<E> listener = uiThreadAwareSetChangeListener(runnable);
+        observable.addListener(listener);
+        return listener;
     }
 
     /**

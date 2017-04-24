@@ -21,68 +21,92 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
- * @since 2.10.0
+ * @since 1.0.0
  */
-public class ElementObservableList<E extends ElementObservableList.PropertyContainer> extends DelegatingObservableList<E> {
+public class ElementObservableList<E> extends DelegatingObservableList<E> {
     public interface PropertyContainer {
+        @Nonnull
         Property<?>[] properties();
     }
 
+    public interface PropertyExtractor<E> {
+        @Nonnull
+        Property<?>[] properties(@Nullable E instance);
+    }
+
     private final Map<E, List<ListenerSubscription>> subscriptions = new LinkedHashMap<>();
+    private final PropertyExtractor<E> propertyExtractor;
 
     public ElementObservableList() {
-        this(FXCollections.<E>observableArrayList());
+        this(FXCollections.<E>observableArrayList(), new DefaultPropertyExtractor<E>());
+    }
+
+    public ElementObservableList(@Nonnull PropertyExtractor<E> propertyExtractor) {
+        this(FXCollections.<E>observableArrayList(), propertyExtractor);
     }
 
     public ElementObservableList(@Nonnull ObservableList<E> delegate) {
+        this(delegate, new DefaultPropertyExtractor<E>());
+    }
+
+    public ElementObservableList(@Nonnull ObservableList<E> delegate, @Nonnull PropertyExtractor<E> propertyExtractor) {
         super(delegate);
+        this.propertyExtractor = requireNonNull(propertyExtractor, "Argument 'propertyExtractor' must not be null");
     }
 
     @Override
     protected void sourceChanged(@Nonnull ListChangeListener.Change<? extends E> c) {
         while (c.next()) {
             if (c.wasAdded()) {
-                for (E e : c.getAddedSubList()) {
-                    registerListeners(e);
+                for (E element : c.getAddedSubList()) {
+                    registerListeners(element);
                 }
             } else if (c.wasRemoved()) {
-                for (E e : c.getRemoved()) {
-                    unregisterListeners(e);
+                for (E element : c.getRemoved()) {
+                    unregisterListeners(element);
                 }
             }
         }
         fireChange(c);
     }
 
-    private void registerListeners(@Nonnull E contact) {
-        if (subscriptions.containsKey(contact)) {
+    private void registerListeners(@Nonnull E element) {
+        if (subscriptions.containsKey(element)) {
             return;
         }
 
         List<ListenerSubscription> elementSubscriptions = new ArrayList<>();
-        for (Property<?> property : contact.properties()) {
-            elementSubscriptions.add(createChangeListener(contact, property));
+        for (Property<?> property : propertyExtractor.properties(element)) {
+            elementSubscriptions.add(createChangeListener(element, property));
         }
-        subscriptions.put(contact, elementSubscriptions);
+        subscriptions.put(element, elementSubscriptions);
     }
 
     @Nonnull
     @SuppressWarnings("unchecked")
-    private ListenerSubscription createChangeListener(@Nonnull final E contact, @Nonnull final Property<?> property) {
+    private ListenerSubscription createChangeListener(@Nonnull final E element, @Nonnull final Property<?> property) {
         final ChangeListener listener = new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                ElementObservableList.this.fireChange(ElementObservableList.this.changeFor(contact));
+                ElementObservableList.this.fireChange(ElementObservableList.this.changeFor(element));
             }
         };
         property.addListener(listener);
