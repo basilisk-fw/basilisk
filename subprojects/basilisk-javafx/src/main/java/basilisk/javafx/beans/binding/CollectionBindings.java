@@ -534,7 +534,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -556,7 +556,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -578,7 +578,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -600,7 +600,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -622,7 +622,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -644,7 +644,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -665,7 +665,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <T> NumberBinding sumOfList(@Nonnull final ObservableList<T> items, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding sumOfList(@Nonnull final ObservableList<T> items, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -686,7 +686,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -710,7 +710,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding minInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -734,7 +734,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -758,7 +758,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding maxInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -782,7 +782,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -806,7 +806,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding averageInList(@Nonnull final ObservableList<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -829,7 +829,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <T> NumberBinding sumOfList(@Nonnull final ObservableList<T> items, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding sumOfList(@Nonnull final ObservableList<T> items, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -1025,7 +1025,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1047,7 +1047,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1069,7 +1069,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1091,7 +1091,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1113,7 +1113,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1135,7 +1135,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1156,7 +1156,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <T> NumberBinding sumOfSet(@Nonnull final ObservableSet<T> items, @Nonnull final ToDoubleFunction<? super T> mapper) {
+    public static <T> NumberBinding sumOfSet(@Nonnull final ObservableSet<T> items, @Nonnull final ToDoubleFunction<? super T> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -1177,7 +1177,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1201,7 +1201,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding minInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1225,7 +1225,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1249,7 +1249,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding maxInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1273,7 +1273,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1297,7 +1297,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding averageInSet(@Nonnull final ObservableSet<T> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1320,7 +1320,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <T> NumberBinding sumOfSet(@Nonnull final ObservableSet<T> items, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
+    public static <T> NumberBinding sumOfSet(@Nonnull final ObservableSet<T> items, @Nonnull final ObservableValue<ToDoubleFunction<? super T>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -1516,7 +1516,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1538,7 +1538,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1560,7 +1560,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1582,7 +1582,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1604,7 +1604,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1626,7 +1626,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1647,7 +1647,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <K, V> NumberBinding sumOfMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ToDoubleFunction<? super V> mapper) {
+    public static <K, V> NumberBinding sumOfMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ToDoubleFunction<? super V> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
@@ -1668,7 +1668,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1692,7 +1692,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding minInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1716,7 +1716,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1740,7 +1740,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding maxInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1764,7 +1764,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Number defaultValue, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(defaultValue, ERROR_DEFAULT_VALUE_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1788,7 +1788,7 @@ public final class CollectionBindings {
      * @return a number binding
      */
     @Nonnull
-    public <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding averageInMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final Supplier<? extends Number> supplier, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(supplier, ERROR_SUPPLIER_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
@@ -1811,7 +1811,7 @@ public final class CollectionBindings {
      * @return a number binding.
      */
     @Nonnull
-    public <K, V> NumberBinding sumOfMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
+    public static <K, V> NumberBinding sumOfMap(@Nonnull final ObservableMap<K, V> items, @Nonnull final ObservableValue<ToDoubleFunction<? super V>> mapper) {
         requireNonNull(items, ERROR_ITEMS_NULL);
         requireNonNull(mapper, ERROR_MAPPER_NULL);
         return createDoubleBinding(new Callable<Double>() {
