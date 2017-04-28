@@ -75,6 +75,7 @@ public final class UIThreadAwareBindings {
      */
     public static <T> ChangeListener<T> uiThreadAwareBind(@Nonnull final Property<T> property, @Nonnull final ObservableValue<T> observable) {
         requireNonNull(property, ERROR_PROPERTY_NULL);
+        property.setValue(observable.getValue());
         ChangeListener<T> listener = new ChangeListener<T>() {
             @Override
             public void changed(ObservableValue<? extends T> v, T o, T n) {
