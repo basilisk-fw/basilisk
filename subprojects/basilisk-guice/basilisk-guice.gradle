@@ -22,6 +22,7 @@ dependencies {
     compile("com.google.inject:guice:${guiceVersion}:no_aop") {
         exclude group: 'org.sonatype.sisu.inject', module: 'cglib'
     }
+    compile "com.google.guava:guava:$guavaVersion"
 
     compileOnly project(':basilisk-core-compile')
 }
