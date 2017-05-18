@@ -46,7 +46,12 @@ public abstract class TransformationSet<E, F> extends ObservableSetBase<E> imple
 
     public SetChangeListener<F> getListener() {
         if (sourceListener == null) {
-            sourceListener = TransformationSet.this::sourceChanged;
+            sourceListener = new SetChangeListener<F>() {
+                @Override
+                public void onChanged(Change<? extends F> c) {
+                    TransformationSet.this.sourceChanged(c);
+                }
+            };
         }
         return sourceListener;
     }

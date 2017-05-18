@@ -46,7 +46,12 @@ public abstract class TransformationMap<K, V, F> extends ObservableMapBase<K, V>
 
     public MapChangeListener<K, F> getListener() {
         if (sourceListener == null) {
-            sourceListener = TransformationMap.this::sourceChanged;
+            sourceListener = new MapChangeListener<K, F>() {
+                @Override
+                public void onChanged(Change<? extends K, ? extends F> c) {
+                    TransformationMap.this.sourceChanged(c);
+                }
+            };
         }
         return sourceListener;
     }
