@@ -36,6 +36,7 @@ buildscript {
         classpath 'org.kordamp.gradle:clirr-gradle-plugin:0.2.3'
         classpath 'net.nemerosa:versioning:2.6.0'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.3'
+        classpath 'org.kordamp.gradle:jdeps-gradle-plugin:0.1.0'
     }
 }
 
@@ -175,6 +176,11 @@ subprojects { subproj ->
         if (subproj.publishJars.toBoolean()) {
             if (subproj.name.startsWith('basilisk-')) {
                 subproj.apply plugin: 'org.kordamp.gradle.clirr'
+                subproj.apply plugin: 'org.kordamp.jdeps'
+
+                subproj.jdeps {
+                    failOnError = false
+                }
 
                 subproj.clirr {
                     failOnErrors = false
