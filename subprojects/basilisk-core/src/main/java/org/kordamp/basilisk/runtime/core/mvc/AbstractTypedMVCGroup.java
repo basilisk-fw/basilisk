@@ -23,12 +23,38 @@ import basilisk.core.mvc.TypedMVCGroup;
 
 import javax.annotation.Nonnull;
 
+import static basilisk.util.BasiliskClassUtils.requireState;
+
 /**
  * @author Andres Almiray
  */
 public abstract class AbstractTypedMVCGroup<M extends BasiliskModel, V extends BasiliskView, C extends BasiliskController> extends DelegatingMVCGroup implements TypedMVCGroup<M, V, C> {
     public AbstractTypedMVCGroup(@Nonnull MVCGroup delegate) {
         super(delegate);
+
+        BasiliskModel model = getModel();
+        requireState(model != null, "MVC member 'model' must not be null");
+        try {
+            M m = (M) model;
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("Expected 'model' is not of the right type for " + getClass().getName());
+        }
+
+        BasiliskView view = getView();
+        requireState(view != null, "MVC member 'view' must not be null");
+        try {
+            V v = (V) view;
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("Expected 'view' is not of the right type for " + getClass().getName());
+        }
+
+        BasiliskController controller = getController();
+        requireState(controller != null, "MVC member 'controller' must not be null");
+        try {
+            C c = (C) controller;
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("Expected 'controller' is not of the right type for " + getClass().getName());
+        }
     }
 
     @Nonnull
