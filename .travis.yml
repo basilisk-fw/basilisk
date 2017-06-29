@@ -1,21 +1,48 @@
 language: java
+# we test at Ubuntu Trusty (Ubuntu 14.04 LTS)
+# see https://docs.travis-ci.com/user/trusty-ci-environment/
+sudo: required
+dist: trusty
 install: true
 jdk: oraclejdk8
+# cache gradle dependencies
+# https://docs.travis-ci.com/user/languages/java#Caching
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
-  - $HOME/.m2
-  - $HOME/.gradle
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 env:
   matrix:
   - TERM=dumb
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - sudo apt-get update -qq
-  - sudo apt-get install oracle-java8-installer
+  - sleep 3 # give xvfb some time to start
 before_script:
-  - ./gradlew --version
-script: ./gradlew -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport codeCoverageReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
+  - ./gradlew --no-daemon --version
+  # Integration tests often fail with "Process 'Gradle Test Executor 4' finished with non-zero exit value 137"
+  # They should run, but the result is ignored
+  # no need for databases for the integrationTest -> save memory
+  - sudo service mysql stop
+  - sudo service postgresql stop
+  # following services identified by "sudo service --status-all" do not need to run, too
+  # excluded: rsyslog (feels wrong), udev (feels wrong), friendly-recovery ("Unkonwn instance" error)
+  - sudo service acpid stop
+  - sudo service atd stop
+  - sudo service cron stop
+  - sudo service memcached stop
+  - sudo service ntp stop
+  - sudo service rabbitmq-server stop
+  - sudo service resolvconf stop
+  - sudo service sshguard stop
+  - sudo service ssh stop
+script: ./gradlew --console=plain --no-daemon -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport codeCoverageReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
 after_success:
   - for report in `find ./subprojects -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
