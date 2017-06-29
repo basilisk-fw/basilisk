@@ -42,7 +42,7 @@ before_script:
   - sudo service resolvconf stop
   - sudo service sshguard stop
   - sudo service ssh stop
-script: ./gradlew --console=plain --no-daemon -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport codeCoverageReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
+script: ./gradlew --console=plain --no-daemon -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport jacocoRootReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
 after_success:
   - for report in `find ./subprojects -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
