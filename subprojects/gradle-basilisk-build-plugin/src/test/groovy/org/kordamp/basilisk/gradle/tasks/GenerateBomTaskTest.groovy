@@ -56,12 +56,32 @@ class GenerateBomTaskTest {
         Task task = rootProject.tasks.create(name: 'generateBom', type: GenerateBomTask) {
             outputDir = taskOutputDir
             additionalDependencies = ['commons-lang:commons-lang:2.6']
+            pomConfig {
+                description = 'description'
+                url         = 'url'
+                scm {
+                    url = 'scm'
+                }
+                licenses {
+                    license {
+                        name         = 'The Apache Software License, Version 2.0'
+                        url          = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id   = 'aalmiray'
+                        name = 'Andres Almiray'
+                    }
+                }
+            }
         }
 
         // when:
         task.generate()
 
-        File expectedBom = new File('src/test/resources/expected-bom.xml')
+        File expectedBom = new File('src/test/files/expected-bom.xml')
         File actualBom = new File(taskOutputDir, "${rootProject.name}-${rootProject.version}.pom")
 
         // then:

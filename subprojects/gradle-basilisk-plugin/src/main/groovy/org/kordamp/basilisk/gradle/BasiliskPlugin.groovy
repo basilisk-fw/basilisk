@@ -15,7 +15,6 @@
  */
 package org.kordamp.basilisk.gradle
 
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.BuildAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -76,23 +75,18 @@ class BasiliskPlugin implements Plugin<Project> {
     }
 
     private void processResources(Project project, SourceSet sourceSet, BasiliskExtension extension) {
-        def filePatterns = [
-            '**/*.properties',
-            '**/*.groovy',
-            '**/*.html',
-            '**/*.xml',
-            '**/*.txt'
-        ]
         project.tasks."${sourceSet.processResourcesTaskName}" {
-            from(sourceSet.resources.srcDirs) {
-                exclude filePatterns
-            }
-            from(sourceSet.resources.srcDirs) {
-                include filePatterns
-                filter(ReplaceTokens, tokens: [
-                    'application.name'   : resolveApplicationName(project),
-                    'application.version': project.version,
-                    'basilisk.version'   : extension.version
+            filesMatching([
+                '**/*.properties',
+                '**/*.groovy',
+                '**/*.html',
+                '**/*.xml',
+                '**/*.txt'
+            ]) {
+                expand([
+                    'application_name'   : resolveApplicationName(project),
+                    'application_version': project.version,
+                    'basilisk_version'   : extension.version
                 ] + extension.applicationProperties)
             }
         }

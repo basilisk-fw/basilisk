@@ -64,6 +64,13 @@ ext {
     projectsWithClirr = []
     depProjects = []
     fullBuild = !travis && !appveyor
+    resourceFilePatterns = [
+        '**/*.properties',
+        '**/*.groovy',
+        '**/*.html',
+        '**/*.xml',
+        '**/*.txt'
+    ]
 }
 
 allprojects {
@@ -130,34 +137,27 @@ subprojects { subproj ->
         }
 
         processResources {
-            from(sourceSets.main.resources.srcDirs) {
-                exclude '**/*.properties'
-                exclude '**/*.xml'
-            }
-            from(sourceSets.main.resources.srcDirs) {
-                include '**/*.properties'
-                include '**/*.xml'
-                filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-                    'application.name'   : project.name,
-                    'application.version': project.version,
-                    'basilisk.version'   : project.version
-                ])
+            filesMatching(resourceFilePatterns) {
+                expand(
+                    'application_name'   : project.name,
+                    'application_version': project.version,
+                    'griffon_version'    : project.version,
+                    'built_by'           : buildBy,
+                    'created_by'         : buildCreatedBy,
+                    'build_date'         : buildDate,
+                    'build_time'         : buildTime,
+                    'build_revision'     : versioning.info.commit
+                )
             }
         }
 
         processTestResources {
-            from(sourceSets.test.resources.srcDirs) {
-                exclude '**/*.properties'
-                exclude '**/*.xml'
-            }
-            from(sourceSets.test.resources.srcDirs) {
-                include '**/*.properties'
-                include '**/*.xml'
-                filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-                    'application.name'   : project.name,
-                    'application.version': project.version,
-                    'basilisk.version'   : project.version
-                ])
+            filesMatching(resourceFilePatterns) {
+                expand(
+                    'application_name'   : project.name,
+                    'application_version': project.version,
+                    'griffon_version'    : project.version
+                )
             }
         }
 
@@ -194,8 +194,6 @@ subprojects { subproj ->
 
                 projectsWithClirr << subproj
             }
-
-            projectsWithCoverage << subproj
 
             test {
                 testLogging {
@@ -276,25 +274,24 @@ subprojects { subproj ->
 
 evaluationDependsOnChildren()
 
-task codeCoverageReport(type: JacocoReport) {
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     dependsOn = projectsWithCoverage.test + projectsWithIntegrationCoverage.integrationTest + projectsWithFunctionalCoverage.functionalTest
     group = 'Reporting'
     description = 'Aggregate Jacoco coverage reports.'
 
     additionalSourceDirs = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(projectsWithCoverage.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(projectsWithCoverage .sourceSets.main.allSource.srcDirs)
     classDirectories = files(projectsWithCoverage.sourceSets.main.output)
     executionData = files([
         projectsWithCoverage.jacocoTestReport +
-            projectsWithIntegrationCoverage.jacocoIntegrationTestReport +
-            projectsWithFunctionalCoverage.jacocoFunctionalTestReport
+        projectsWithIntegrationCoverage.jacocoIntegrationTestReport +
+        projectsWithFunctionalCoverage.jacocoFunctionalTestReport
     ].unique().executionData)
-
     reports {
         xml.enabled true
         html.enabled true
-        xml.destination "${buildDir}/reports/jacoco/report.xml"
-        html.destination "${buildDir}/reports/jacoco/html"
+        xml.destination = file("${buildDir}/reports/jacoco/report.xml")
+        html.destination = file("${buildDir}/reports/jacoco/html")
     }
 }
 

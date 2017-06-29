@@ -38,7 +38,7 @@ idea {
 }
 
 task functionalTest(type: Test, dependsOn: jar) {
-    testClassesDir = sourceSets.functionalTest.output.classesDir
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath
     reports.html.enabled = false
 }
@@ -62,7 +62,7 @@ task jacocoFunctionalTestReport(dependsOn: functionalTest, type: JacocoReport) {
         csv.enabled = false
         xml.enabled = true
         html.enabled = true
-        html.destination = "${buildDir}/reports/jacoco/functional-test/html"
-        xml.destination = "${buildDir}/reports/jacoco/functional-test/jacocoFunctionalTestReport.xml"
+        html.destination = file("${buildDir}/reports/jacoco/functional-test/html")
+        xml.destination = file("${buildDir}/reports/jacoco/functional-test/jacocoFunctionalTestReport.xml")
     }
 }

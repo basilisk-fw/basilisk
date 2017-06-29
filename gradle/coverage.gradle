@@ -27,15 +27,15 @@ jacocoTestReport {
     List cd = []
     Set csd = [] as Set
     project.depProjects.each { String projectName ->
-        cd << project(projectName).sourceSets.main.output.classesDir.path
+        cd.addAll project(projectName).sourceSets.main.output.classesDirs*.path
         csd << project(projectName).sourceSets.main.allSource.srcDirs
     }
-    cd << sourceSets.main.output.classesDir.path
+    cd.addAll sourceSets.main.output.classesDirs*.path
     csd << sourceSets.main.allSource.srcDirs
 
     additionalSourceDirs = project.files(csd)
     sourceDirectories = project.files(csd)
-    classDirectories = project.files(cd)
+    classDirectories =  project.files(cd)
 
     reports {
         xml.enabled = true
@@ -43,3 +43,5 @@ jacocoTestReport {
         html.enabled = true
     }
 }
+
+projectsWithCoverage << project
