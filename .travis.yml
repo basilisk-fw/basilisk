@@ -48,3 +48,10 @@ after_success:
   - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - ./gradlew coveralls
   - bash <(curl -s https://codecov.io/bash)
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/0881ddf72b587dabad11
+    on_success: change
+    on_failure: always
+    on_start: never
