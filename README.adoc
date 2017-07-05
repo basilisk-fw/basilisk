@@ -1,21 +1,18 @@
-= Basilisk
 :github-branch: development
 
-image:https://ci.appveyor.com/api/projects/status/s1n73p7bpfu2832s/branch/{github-branch}?svg=true[Build Status (appveyor)", link="https://ci.appveyor.com/project/aalmiray/basilisk/branch/{github-branch}"]
-image:http://img.shields.io/travis/basilisk-fw/basilisk/{github-branch}.svg["Build Status (travis)", link="https://travis-ci.org/basilisk-fw/basilisk"]
+image::src/media/banners/medium.png[Basilisk]
 
-image:http://img.shields.io/coveralls/basilisk-fw/basilisk/{github-branch}.svg["Coverage Status (coveralls)", link="https://coveralls.io/r/basilisk-fw/basilisk"]
+image:https://img.shields.io/travis/basilisk-fw/basilisk/{github-branch}.svg["Build Status (travis)", link="https://travis-ci.org/basilisk-fw/basilisk"]
+image:https://img.shields.io/coveralls/basilisk-fw/basilisk/{github-branch}.svg["Coverage Status (coveralls)", link="https://coveralls.io/r/basilisk-fw/basilisk"]
 image:https://img.shields.io/codecov/c/github/basilisk-fw/basilisk/{github-branch}.svg["Coverage Status (codecov)", link="https://codecov.io/github/basilisk-fw/basilisk"]
 
-image:http://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
-image:https://api.bintray.com/packages/basilisk/basilisk/basilisk-core/images/download.svg[Download, link="https://bintray.com/basilisk/basilisk"]
+image:https://img.shields.io/maven-central/v/org.kordamp.basilisk/basilisk-core.svg[Download, link="https://search.maven.org/#search|ga|1|basilisk-core"]
+image:https://img.shields.io/bintray/v/basilisk/basilisk/basilisk-core.svg[Download, link="https://bintray.com/basilisk/basilisk"]
 
----
-
+image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
+image:https://img.shields.io/maintenance/yes!/2017.svg[]
 image:https://img.shields.io/gitter/room/basilisk-fw/basilisk.svg[link="https://gitter.im/basilisk-fw/basilisk]
-image:https://img.shields.io/badge/donations-Patreon-orange.svg[link="https://www.patreon.com/user?u=6609318"]
-
----
+image:https://img.shields.io/badge/donations-Patreon-f96854.svg[link="https://www.patreon.com/user?u=6609318"]
 
 Basilisk is desktop/mobile application development platform
 for the JVM. Inspired by http://griffon-framework.org[Griffon], Basilisk leverages JavaFX
@@ -27,7 +24,6 @@ Griffon's features and commands are shared with Basilisk.
 Seasoned Java developers will also be able to pick up the pace quickly, as the
 framework relieves you of the burden of maintaining an application structure,
 allowing you to concentrate on getting the code right.
-
 
 == Quickstart
 
