@@ -6,6 +6,9 @@ image:https://img.shields.io/travis/basilisk-fw/basilisk/{github-branch}.svg["Bu
 image:https://img.shields.io/coveralls/basilisk-fw/basilisk/{github-branch}.svg["Coverage Status (coveralls)", link="https://coveralls.io/r/basilisk-fw/basilisk"]
 image:https://img.shields.io/codecov/c/github/basilisk-fw/basilisk/{github-branch}.svg["Coverage Status (codecov)", link="https://codecov.io/github/basilisk-fw/basilisk"]
 
+image:https://sonarcloud.io/api/badges/measure?key=org.kordamp.basilisk:basilisk&metric=sqale_debt_ratio["Technical Debt", link="https://sonarcloud.io/dashboard?id=org.kordamp.basilisk%3Abasilisk"]
+image:https://www.versioneye.com/user/projects/5998530a368b08000f3a7cf4/badge.svg["Dependency Status", link="https://www.versioneye.com/user/projects/5998530a368b08000f3a7cf4"]
+
 image:https://img.shields.io/maven-central/v/org.kordamp.basilisk/basilisk-core.svg[Download, link="https://search.maven.org/#search|ga|1|basilisk-core"]
 image:https://img.shields.io/bintray/v/basilisk/basilisk/basilisk-core.svg[Download, link="https://bintray.com/basilisk/basilisk"]
 

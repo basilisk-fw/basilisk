@@ -46,7 +46,7 @@ script: ./gradlew --console=plain --no-daemon -S check test integrationTest func
 after_success:
   - for report in `find ./subprojects -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
-  - ./gradlew coveralls
+  - ./gradlew --no-daemon coveralls versionEyeUpdate
   - bash <(curl -s https://codecov.io/bash)
 notifications:
   webhooks:

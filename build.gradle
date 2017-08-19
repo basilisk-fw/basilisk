@@ -38,12 +38,16 @@ buildscript {
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.3'
         classpath 'gradle.plugin.net.ossindex:ossindex-gradle-plugin:0.1.1'
         classpath 'org.kordamp.gradle:jdeps-gradle-plugin:0.2.0'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+        classpath 'org.standardout:gradle-versioneye-plugin:1.5.0'
     }
 }
 
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'net.nemerosa.versioning'
+apply plugin: 'org.sonarqube'
+apply plugin: 'org.standardout.versioneye'
 
 jacoco {
     toolVersion = jacocoVersion
@@ -179,6 +183,10 @@ subprojects { subproj ->
         subproj.apply from: rootProject.file('gradle/publish.gradle')
         subproj.apply from: rootProject.file('gradle/code-quality.gradle')
 
+        sonarqube {
+            skipProject = !subproj.publishJars.toBoolean()
+        }
+
         if (subproj.publishJars.toBoolean()) {
             if (subproj.name.startsWith('basilisk-')) {
                 subproj.apply plugin: 'org.kordamp.gradle.clirr'
@@ -293,6 +301,16 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
         xml.destination = file("${buildDir}/reports/jacoco/report.xml")
         html.destination = file("${buildDir}/reports/jacoco/html")
     }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.jacoco.reportPath', file("${buildDir}/reports/jacoco/report.xml").absolutePath
+    }
+}
+
+versioneye {
+    includeSubProjects = true
 }
 
 coveralls {
