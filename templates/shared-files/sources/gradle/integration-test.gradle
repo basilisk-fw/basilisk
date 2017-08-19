@@ -32,7 +32,7 @@ idea {
 }
 
 task integrationTest(type: Test, dependsOn: jar) {
-    testClassesDir = sourceSets.integrationTest.output.classesDir
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     reports.html.enabled = false
 }
@@ -56,7 +56,7 @@ task jacocoIntegrationTestReport(dependsOn: integrationTest, type: JacocoReport)
         csv.enabled = false
         xml.enabled = true
         html.enabled = true
-        html.destination = "${buildDir}/reports/jacoco/integration-test/html"
-        xml.destination = "${buildDir}/reports/jacoco/integration-test/jacocoIntegrationTestReport.xml"
+        html.destination = file("${buildDir}/reports/jacoco/integration-test/html")
+        xml.destination = file("${buildDir}/reports/jacoco/integration-test/jacocoIntegrationTestReport.xml")
     }
 }
