@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Andres Almiray
  */
 public class DefaultBasiliskApplication extends AbstractBasiliskApplication {
-    public CallableWithArgs<?> containerGenerator;
+    private CallableWithArgs<?> containerGenerator;
 
     public DefaultBasiliskApplication() {
         this(EMPTY_ARGS);

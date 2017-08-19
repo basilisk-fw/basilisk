@@ -458,7 +458,7 @@ public final class CollectionUtils {
     }
 
     private static class MapToPropertiesAdapter extends Properties {
-        private final Map<String, Object> map;
+        private final transient Map<String, Object> map;
 
         private MapToPropertiesAdapter(@Nonnull Map<String, Object> map) {
             this.map = map;

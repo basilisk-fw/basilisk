@@ -15,27 +15,17 @@
  */
 package org.kordamp.basilisk.runtime.core.configuration;
 
-import basilisk.core.BasiliskApplication;
 import basilisk.core.configuration.Configuration;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 import static basilisk.util.AnnotationUtils.named;
-import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
  * @since 1.0.0
  */
 public class DefaultConfigurationManager extends AbstractConfigurationManager {
-    private final BasiliskApplication application;
-
-    @Inject
-    public DefaultConfigurationManager(@Nonnull BasiliskApplication application) {
-        this.application = requireNonNull(application, "Argument 'application' must not be null");
-    }
-
     @Nonnull
     @Override
     public Configuration getConfiguration() {

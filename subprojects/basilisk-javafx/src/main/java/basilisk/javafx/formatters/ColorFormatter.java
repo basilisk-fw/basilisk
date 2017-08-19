@@ -109,7 +109,9 @@ public class ColorFormatter extends AbstractFormatter<Color> {
      * <p>Returns a {@code ColorFormatter} given a color pattern.</p>
      *
      * @param pattern the input pattern. Must be one of the 4 supported color patterns.
+     *
      * @return a {@code ColorPattern} instance
+     *
      * @throws IllegalArgumentException if the supplied {@code pattern} is not supported
      */
     @Nonnull
@@ -169,7 +171,9 @@ public class ColorFormatter extends AbstractFormatter<Color> {
      * {@code javafx.scene.paint.Color}.
      *
      * @param str the string representation of a {@code javafx.scene.paint.Color}
+     *
      * @return a {@code javafx.scene.paint.Color} instance matching the supplied RGBA color components
+     *
      * @throws ParseException if the string cannot be parsed by the chosen pattern
      * @see javafx.scene.paint.Color
      */
@@ -242,7 +246,7 @@ public class ColorFormatter extends AbstractFormatter<Color> {
     }
 
     private static int toIntColor(double c) {
-        return new Double(c * 255).intValue();
+        return (int) (c * 255);
     }
 
     private static class ShortColorFormatterDelegate extends AbstractColorFormatterDelegate {

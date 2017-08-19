@@ -87,18 +87,14 @@ public final class ConfigUtils {
 
         String[] keys = key.split("\\.");
         for (int i = 0; i < keys.length - 1; i++) {
-            if (config != null) {
-                Object node = config.get(keys[i]);
-                if (node instanceof Map) {
-                    config = (Map<String, Object>) node;
-                } else {
-                    return false;
-                }
+            Object node = config.get(keys[i]);
+            if (node instanceof Map) {
+                config = (Map<String, Object>) node;
             } else {
                 return false;
             }
         }
-        return config != null && config.containsKey(keys[keys.length - 1]);
+        return config.containsKey(keys[keys.length - 1]);
     }
 
     /**
@@ -135,18 +131,14 @@ public final class ConfigUtils {
 
         Map<String, Object> map = (Map) node;
         for (int i = 1; i < keys.length - 1; i++) {
-            if (map != null) {
-                node = map.get(keys[i]);
-                if (node instanceof Map) {
-                    map = (Map) node;
-                } else {
-                    return false;
-                }
+            node = map.get(keys[i]);
+            if (node instanceof Map) {
+                map = (Map) node;
             } else {
                 return false;
             }
         }
-        return map != null && map.containsKey(keys[keys.length - 1]);
+        return map.containsKey(keys[keys.length - 1]);
     }
 
     /**
@@ -168,20 +160,14 @@ public final class ConfigUtils {
 
         String[] keys = key.split("\\.");
         for (int i = 0; i < keys.length - 1; i++) {
-            if (config != null) {
-                Object node = config.get(keys[i]);
-                if (node instanceof Map) {
-                    config = (Map<String, Object>) node;
-                } else {
-                    return false;
-                }
+            Object node = config.get(keys[i]);
+            if (node instanceof Map) {
+                config = (Map<String, Object>) node;
             } else {
                 return false;
             }
         }
-        if (config == null) { return false; }
-        Object value = config.get(keys[keys.length - 1]);
-        return value != null;
+        return config.get(keys[keys.length - 1]) != null;
     }
 
     /**
@@ -224,20 +210,14 @@ public final class ConfigUtils {
 
         Map<String, Object> map = (Map) node;
         for (int i = 1; i < keys.length - 1; i++) {
-            if (map != null) {
-                node = map.get(keys[i]);
-                if (node instanceof Map) {
-                    map = (Map) node;
-                } else {
-                    return false;
-                }
+            node = map.get(keys[i]);
+            if (node instanceof Map) {
+                map = (Map) node;
             } else {
                 return false;
             }
         }
-        if (map == null) { return false; }
-        Object value = map.get(keys[keys.length - 1]);
-        return value != null;
+        return map.get(keys[keys.length - 1]) != null;
     }
 
     /**
@@ -315,18 +295,13 @@ public final class ConfigUtils {
 
         Map<String, Object> map = (Map) node;
         for (int i = 1; i < keys.length - 1; i++) {
-            if (map != null) {
-                node = map.get(keys[i]);
-                if (node instanceof Map) {
-                    map = (Map) node;
-                } else {
-                    return defaultValue;
-                }
+            node = map.get(keys[i]);
+            if (node instanceof Map) {
+                map = (Map) node;
             } else {
                 return defaultValue;
             }
         }
-        if (map == null) { return defaultValue; }
         Object value = map.get(keys[keys.length - 1]);
         return value != null ? (T) value : defaultValue;
     }
@@ -352,19 +327,12 @@ public final class ConfigUtils {
 
         String[] keys = key.split("\\.");
         for (int i = 0; i < keys.length - 1; i++) {
-            if (config != null) {
-                Object node = config.get(keys[i]);
-                if (node instanceof Map) {
-                    config = (Map) node;
-                } else {
-                    throw missingResource(type, key);
-                }
+            Object node = config.get(keys[i]);
+            if (node instanceof Map) {
+                config = (Map) node;
             } else {
                 throw missingResource(type, key);
             }
-        }
-        if (config == null) {
-            throw missingResource(type, key);
         }
         Object value = config.get(keys[keys.length - 1]);
         if (value != null) {
@@ -414,19 +382,12 @@ public final class ConfigUtils {
 
         Map<String, Object> map = (Map<String, Object>) node;
         for (int i = 1; i < keys.length - 1; i++) {
-            if (map != null) {
-                node = map.get(keys[i]);
-                if (node instanceof Map) {
-                    map = (Map<String, Object>) node;
-                } else {
-                    throw missingResource(type, key);
-                }
+            node = map.get(keys[i]);
+            if (node instanceof Map) {
+                map = (Map<String, Object>) node;
             } else {
                 throw missingResource(type, key);
             }
-        }
-        if (map == null) {
-            throw missingResource(type, key);
         }
 
         Object value = map.get(keys[keys.length - 1]);

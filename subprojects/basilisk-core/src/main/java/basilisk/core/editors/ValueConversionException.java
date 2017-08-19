@@ -21,7 +21,7 @@ package basilisk.core.editors;
 public class ValueConversionException extends IllegalArgumentException {
     private static final long serialVersionUID = 6344566641106178891L;
 
-    private Object value;
+    private transient Object value;
     private Class<?> type;
 
     public ValueConversionException(Object value) {
