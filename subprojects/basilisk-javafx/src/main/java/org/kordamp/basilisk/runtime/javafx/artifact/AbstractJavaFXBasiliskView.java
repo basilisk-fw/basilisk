@@ -19,11 +19,12 @@ import basilisk.core.artifact.BasiliskClass;
 import basilisk.core.artifact.BasiliskController;
 import basilisk.core.controller.Action;
 import basilisk.exceptions.BasiliskException;
+import basilisk.javafx.artifact.JavaFXBasiliskView;
 import basilisk.javafx.support.ActionMatcher;
+import basilisk.javafx.support.BasiliskBuilderFactory;
 import basilisk.javafx.support.JavaFXAction;
 import basilisk.javafx.support.JavaFXUtils;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Callback;
@@ -44,7 +45,7 @@ import static basilisk.util.ConfigUtils.stripFilenameExtension;
  *
  * @author Andres Almiray
  */
-public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
+public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView implements JavaFXBasiliskView {
     private static final String FXML_SUFFIX = ".fxml";
 
     @Inject
@@ -72,7 +73,7 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView {
 
         FXMLLoader fxmlLoader = new FXMLLoader(viewResource);
         fxmlLoader.setResources(getApplication().getMessageSource().asResourceBundle());
-        fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory(getApplication().getApplicationClassLoader().get()));
+        fxmlLoader.setBuilderFactory(new BasiliskBuilderFactory(getApplication(), getMvcGroup()));
         fxmlLoader.setClassLoader(getApplication().getApplicationClassLoader().get());
         fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
             @Override

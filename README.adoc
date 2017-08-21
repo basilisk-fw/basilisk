@@ -10,7 +10,8 @@ image:https://sonarcloud.io/api/badges/measure?key=org.kordamp.basilisk:basilisk
 image:https://www.versioneye.com/user/projects/5998530a368b08000f3a7cf4/badge.svg["Dependency Status", link="https://www.versioneye.com/user/projects/5998530a368b08000f3a7cf4"]
 
 image:https://img.shields.io/maven-central/v/org.kordamp.basilisk/basilisk-core.svg[Download, link="https://search.maven.org/#search|ga|1|basilisk-core"]
-image:https://img.shields.io/bintray/v/basilisk/basilisk/basilisk-core.svg[Download, link="https://bintray.com/basilisk/basilisk"]
+image:https://api.bintray.com/packages/basilisk/basilisk/basilisk-core/images/download.svg[Download, link="https://bintray.com/basilisk/basilisk"]
+
 
 image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2", link="http://www.apache.org/licenses/LICENSE-2.0.txt"]
 image:https://img.shields.io/maintenance/yes!/2017.svg[]
