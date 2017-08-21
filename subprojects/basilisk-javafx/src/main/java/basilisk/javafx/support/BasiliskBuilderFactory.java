@@ -82,7 +82,9 @@ public class BasiliskBuilderFactory implements BuilderFactory {
         @Nonnull
         private Map<String, Object> toMap(@Nonnull List<MvcArg> mvcArgs) {
             Map<String, Object> args = new LinkedHashMap<>();
-            mvcArgs.forEach(arg -> args.put(arg.getName(), arg.getValue()));
+            for (MvcArg arg : mvcArgs) {
+                args.put(arg.getName(), arg.getValue());
+            }
             return args;
         }
     }
