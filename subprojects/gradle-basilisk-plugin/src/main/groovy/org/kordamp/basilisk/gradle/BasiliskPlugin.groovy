@@ -221,10 +221,18 @@ class BasiliskPlugin implements Plugin<Project> {
                 String dependencyCoordinates = ['org.kordamp.basilisk', 'basilisk-' + artifactId, extension.version].join(':')
 
                 if (artifactId.endsWith('-compile')) {
-                    project.logger.info("Adding {} to 'compileOnly' configuration", dependencyCoordinates)
-                    project.dependencies.add('compileOnly', dependencyCoordinates)
-                    project.logger.info("Adding {} to 'testCompileOnly' configuration", dependencyCoordinates)
-                    project.dependencies.add('testCompileOnly', dependencyCoordinates)
+                    ['compileOnly', 'testCompileOnly'].each { conf ->
+                        project.logger.info("Adding {} to '{}' configuration", dependencyCoordinates, conf)
+                        project.dependencies.add(conf, dependencyCoordinates)
+                    }
+                    ['apt', 'testApt'].each { conf ->
+                        if (!project.configurations.findByName(conf)) {
+                            project.logger.info("Configuration '{}' does not exist. Apply the 'gradle-apt-plugin' and try again", conf)
+                            return
+                        }
+                        project.logger.info("Adding {} to '{}' configuration", dependencyCoordinates, conf)
+                        project.dependencies.add(conf, dependencyCoordinates)
+                    }
                 } else if (artifactId.endsWith('-test')) {
                     project.logger.info("Adding {} to 'testCompile' configuration", dependencyCoordinates)
                     project.dependencies.add('testCompile', dependencyCoordinates)
