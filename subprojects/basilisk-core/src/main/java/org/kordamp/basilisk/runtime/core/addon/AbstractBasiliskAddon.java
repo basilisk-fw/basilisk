@@ -17,6 +17,11 @@ package org.kordamp.basilisk.runtime.core.addon;
 
 import basilisk.core.BasiliskApplication;
 import basilisk.core.addon.BasiliskAddon;
+import basilisk.core.artifact.BasiliskController;
+import basilisk.core.artifact.BasiliskModel;
+import basilisk.core.artifact.BasiliskView;
+import basilisk.core.mvc.MVCGroup;
+import basilisk.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +30,9 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static basilisk.util.AnnotationUtils.nameFor;
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Andres Almiray
@@ -68,5 +76,23 @@ public class AbstractBasiliskAddon implements BasiliskAddon {
     @Override
     public void onShutdown(@Nonnull BasiliskApplication application) {
         // empty
+    }
+
+    @Nonnull
+    public static Map<String, Map<String, Object>> mvcgroup(@Nonnull Class<? extends MVCGroup> g,
+                                                            @Nonnull Class<? extends BasiliskModel> m,
+                                                            @Nonnull Class<? extends BasiliskView> v,
+                                                            @Nonnull Class<? extends BasiliskController> c) {
+        requireNonNull(g, "Argument 'g' must not be null");
+        requireNonNull(v, "Argument 'm' must not be null");
+        requireNonNull(c, "Argument 'v' must not be null");
+        requireNonNull(g, "Argument 'c' must not be null");
+
+        return CollectionUtils.<String, Map<String, Object>>map()
+            .e(nameFor(g, true), CollectionUtils.<String, Object>map()
+                .e("model", m.getName())
+                .e("view", v.getName())
+                .e("controller", c.getName())
+            );
     }
 }
