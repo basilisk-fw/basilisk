@@ -71,9 +71,28 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView im
             return null;
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(viewResource);
-        fxmlLoader.setResources(getApplication().getMessageSource().asResourceBundle());
+        FXMLLoader fxmlLoader = createFxmlLoader(viewResource);
+        configureFxmlLoader(fxmlLoader);
+
+        Parent node = fxmlLoader.getRoot();
+
+        URL cssResource = getResourceAsURL(styleName);
+        if (cssResource != null) {
+            String uriToCss = cssResource.toExternalForm();
+            node.getStylesheets().add(uriToCss);
+        }
+
+        return node;
+    }
+
+    @Nonnull
+    protected FXMLLoader createFxmlLoader(URL viewResource) {
+        return new FXMLLoader(viewResource);
+    }
+
+    protected void configureFxmlLoader(@Nonnull FXMLLoader fxmlLoader) {
         fxmlLoader.setBuilderFactory(new BasiliskBuilderFactory(getApplication(), getMvcGroup()));
+        fxmlLoader.setResources(getApplication().getMessageSource().asResourceBundle());
         fxmlLoader.setClassLoader(getApplication().getApplicationClassLoader().get());
         fxmlLoader.setControllerFactory(new Callback<Class<?>, Object>() {
             @Override
@@ -87,16 +106,6 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView im
         } catch (IOException e) {
             throw new BasiliskException(e);
         }
-
-        Parent node = fxmlLoader.getRoot();
-
-        URL cssResource = getResourceAsURL(styleName);
-        if (cssResource != null) {
-            String uriToCss = cssResource.toExternalForm();
-            node.getStylesheets().add(uriToCss);
-        }
-
-        return node;
     }
 
     @Nonnull

@@ -16,7 +16,9 @@
 package basilisk.javafx.support;
 
 import basilisk.core.BasiliskApplication;
+import basilisk.core.artifact.BasiliskView;
 import basilisk.core.mvc.MVCGroup;
+import basilisk.javafx.artifact.ContentProvider;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.util.Builder;
 import javafx.util.BuilderFactory;
@@ -76,6 +78,10 @@ public class BasiliskBuilderFactory implements BuilderFactory {
             }
 
             MVCGroup group = mvcGroup.createMVCGroup(mvcType, mvcId, toMap(getMvcArgs()));
+            BasiliskView view = group.getView();
+            if (view instanceof ContentProvider) {
+                return ((ContentProvider) view).getContent();
+            }
             return group.getContext().get(group.getMvcId() + "-rootNode");
         }
 
