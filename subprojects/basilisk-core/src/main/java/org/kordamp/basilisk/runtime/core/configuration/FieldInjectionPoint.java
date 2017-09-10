@@ -16,6 +16,7 @@
 package org.kordamp.basilisk.runtime.core.configuration;
 
 import basilisk.exceptions.InstanceMethodInvocationException;
+import com.googlecode.openbeans.PropertyEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,8 @@ public class FieldInjectionPoint extends InjectionPoint {
 
     private final Field field;
 
-    public FieldInjectionPoint(@Nonnull Field field, @Nonnull String configuration, @Nonnull String key, @Nonnull String format) {
-        super(configuration, key, format);
+    public FieldInjectionPoint(@Nonnull Field field, @Nonnull String configuration, @Nonnull String key, @Nonnull String format, @Nonnull Class<? extends PropertyEditor> editor) {
+        super(configuration, key, format, editor);
         this.field = requireNonNull(field, "Argument 'field' must not be null");
     }
 
@@ -73,6 +74,7 @@ public class FieldInjectionPoint extends InjectionPoint {
         sb.append(", configuration='").append(getConfiguration()).append('\'');
         sb.append(", key='").append(getKey()).append('\'');
         sb.append(", format='").append(getFormat()).append('\'');
+        sb.append(", editor='").append(getEditor()).append('\'');
         sb.append('}');
         return sb.toString();
     }

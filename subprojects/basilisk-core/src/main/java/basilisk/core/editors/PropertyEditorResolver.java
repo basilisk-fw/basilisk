@@ -48,6 +48,7 @@ public final class PropertyEditorResolver {
     @GuardedBy("LOCK")
     private static final Map<String, PropertyEditorChain> propertyEditorChainRegistry = new LinkedHashMap<>();
     private static final String ERROR_TARGET_TYPE_NULL = "Argument 'targetType' must not be null";
+    public static final PropertyEditor NOOP_PROPERTY_EDITOR = new NoopPropertyEditor();
 
     private PropertyEditorResolver() {
 

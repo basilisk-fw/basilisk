@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package basilisk.core.configuration;
+package integration
 
-import javax.annotation.Nonnull;
+import basilisk.core.mvc.MVCGroup
+import org.kordamp.basilisk.runtime.core.mvc.AbstractTypedMVCGroup
 
-/**
- * @author Andres Almiray
- * @since 1.0.0
- */
-public interface ConfigurationManager {
-    @Nonnull
-    Configuration getConfiguration();
+import javax.annotation.Nonnull
+import javax.inject.Named
 
-    @Nonnull
-    Configuration getConfiguration(@Nonnull String name);
-
-    void injectConfiguration(@Nonnull Object instance);
+@Named('simple')
+class SimpleMVCGroup extends AbstractTypedMVCGroup<SimpleModel, SimpleView, SimpleController> {
+    SimpleMVCGroup(@Nonnull MVCGroup delegate) {
+        super(delegate)
+    }
 }

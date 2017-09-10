@@ -28,18 +28,20 @@ public class Config extends AbstractMapResourceBundle {
     protected void initialize(@Nonnull Map<String, Object> entries) {
         CollectionUtils.map(entries)
             .e("application", CollectionUtils.map()
-                    .e("title", "integration")
-                    .e("startupGroups", asList("integration"))
-                    .e("autoShutdown", true)
+                .e("title", "integration")
+                .e("startupGroups", asList("integration"))
+                .e("autoShutdown", true)
             )
             .e("mvcGroups", CollectionUtils.map()
-                    .e("integration", CollectionUtils.map()
-                            .e("model", "integration.IntegrationModel")
-                            .e("view", "integration.IntegrationView")
-                            .e("controller", "integration.IntegrationController")
-                            .e("config", CollectionUtils.map()
-                                .e("color", "#0000FF"))
-                    )
-            );
+                .e("integration", CollectionUtils.map()
+                    .e("model", "integration.IntegrationModel")
+                    .e("view", "integration.IntegrationView")
+                    .e("controller", "integration.IntegrationController")
+                    .e("config", CollectionUtils.map()
+                        .e("color", "#0000FF"))
+                )
+            )
+            .e("keys", CollectionUtils.map()
+                .e("key1", "value1"));
     }
 }

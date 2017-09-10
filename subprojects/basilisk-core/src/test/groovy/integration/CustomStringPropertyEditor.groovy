@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package basilisk.core.configuration;
+package integration
 
-import javax.annotation.Nonnull;
+import com.googlecode.openbeans.PropertyEditorSupport
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
  */
-public interface ConfigurationManager {
-    @Nonnull
-    Configuration getConfiguration();
+class CustomStringPropertyEditor extends PropertyEditorSupport {
+    @Override
+    String getAsText() {
+        return '*' + super.getAsText() + '*'
+    }
 
-    @Nonnull
-    Configuration getConfiguration(@Nonnull String name);
-
-    void injectConfiguration(@Nonnull Object instance);
+    @Override
+    void setAsText(String text) throws IllegalArgumentException {
+        setValue(text[1..-2].toString())
+    }
 }
