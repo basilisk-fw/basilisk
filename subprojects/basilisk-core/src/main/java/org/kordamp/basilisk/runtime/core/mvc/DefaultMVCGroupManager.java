@@ -31,7 +31,6 @@ import basilisk.exceptions.BasiliskViewInitializationException;
 import basilisk.exceptions.FieldException;
 import basilisk.exceptions.MVCGroupInstantiationException;
 import basilisk.exceptions.NewInstanceException;
-import basilisk.exceptions.PropertyException;
 import basilisk.inject.Contextual;
 import basilisk.inject.MVCMember;
 import basilisk.util.CollectionUtils;
@@ -51,7 +50,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,14 +57,12 @@ import java.util.Map;
 import static basilisk.core.BasiliskExceptionHandler.sanitize;
 import static basilisk.util.AnnotationUtils.annotationsOfMethodParameter;
 import static basilisk.util.AnnotationUtils.findAnnotation;
-import static basilisk.util.AnnotationUtils.nameFor;
 import static basilisk.util.AnnotationUtils.namesFor;
 import static basilisk.util.BasiliskClassUtils.getAllDeclaredFields;
 import static basilisk.util.BasiliskClassUtils.getPropertyDescriptors;
 import static basilisk.util.BasiliskClassUtils.setFieldValue;
 import static basilisk.util.BasiliskClassUtils.setPropertiesOrFieldsNoException;
 import static basilisk.util.BasiliskClassUtils.setPropertyOrFieldValueNoException;
-import static basilisk.util.BasiliskClassUtils.setPropertyValue;
 import static basilisk.util.BasiliskNameUtils.capitalize;
 import static basilisk.util.BasiliskNameUtils.isBlank;
 import static basilisk.util.ConfigUtils.getConfigValueAsBoolean;
@@ -85,7 +81,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
     private static final String CONFIG_KEY_EVENTS_LISTENER = "events.listener";
     private static final String KEY_PARENT_GROUP = "parentGroup";
 
-    private final ApplicationClassLoader applicationClassLoader;
+    protected final ApplicationClassLoader applicationClassLoader;
     protected final Instantiator instantiator;
 
     @Inject
@@ -311,7 +307,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
         // empty
     }
 
-    protected static abstract class InjectionPoint {
+    protected abstract static class InjectionPoint {
         protected final String name;
         protected final boolean nullable;
         protected final Type type;
@@ -481,6 +477,17 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
                 argsCopy.remove(ip.name);
             }
 
+            /*
+            for (Map.Entry<String, Object> e : argsCopy.entrySet()) {
+                try {
+                    setPropertyOrFieldValue(member, e.getKey(), e.getValue());
+                    LOG.warn("Property '" + e.getKey() + "' in " + memberType + " (" + resolveMemberClass(member).getName() +
+                        ") must be annotated with @" + MVCMember.class.getName() + ".");
+                } catch (PropertyException ignored) {
+                    // OK
+                }
+            }
+            */
             setPropertiesOrFieldsNoException(member, argsCopy);
         }
     }
@@ -505,116 +512,6 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
 
     protected boolean isMvcMember(AnnotatedElement element) {
         return element != null && element.getAnnotation(MVCMember.class) != null;
-    }
-
-    protected void fillArtifactMemberProperties(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull BasiliskArtifact member, @Nonnull Map<String, Object> args) {
-        Collection<String> alreadySet = new ArrayList<>();
-        for (PropertyDescriptor descriptor : getPropertyDescriptors(resolveMemberClass(member))) {
-            Method method = descriptor.getWriteMethod();
-            if (method != null && method.getAnnotation(Contextual.class) == null) {
-                String argName = descriptor.getName();
-                Object argValue = args.get(argName);
-
-                if (argValue == null) {
-                    if (findAnnotation(annotationsOfMethodParameter(method, 0), Nonnull.class) != null) {
-                        throw new IllegalStateException("Could not inject argument " + argName +
-                            " on property '" + descriptor.getName() + "' in " + memberType + " (" + resolveMemberClass(member).getName() +
-                            "). Property does not accept null values.");
-                    } else {
-                        alreadySet.add(argName);
-                        continue;
-                    }
-                }
-
-                try {
-                    setPropertyValue(member, argName, argValue);
-                    alreadySet.add(argName);
-                } catch (PropertyException x) {
-                    throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), x);
-                }
-
-            }
-        }
-
-        for (Field field : getAllDeclaredFields(resolveMemberClass(member))) {
-            if (Modifier.isStatic(field.getModifiers())) { continue; }
-            String argName = field.getName();
-            if (alreadySet.contains(argName)) { continue; }
-            Object argValue = args.get(argName);
-            if (field.getType().isPrimitive() && argValue == null) { continue; }
-
-            if (argValue == null) {
-                if (field.getAnnotation(Nonnull.class) != null) {
-                    throw new IllegalStateException("Could not inject argument " + argName +
-                        " on field '" + field.getName() + "' in " + memberType + " (" + resolveMemberClass(member).getName() +
-                        "). Field does not accept null values.");
-                } else {
-                    continue;
-                }
-            }
-
-            try {
-                setFieldValue(member, argName, argValue);
-            } catch (FieldException e) {
-                throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
-            }
-        }
-    }
-
-    protected void fillNonArtifactMemberProperties(@Nonnull MVCGroup group, @Nonnull String memberType, @Nonnull Object member, @Nonnull Map<String, Object> args) {
-        // empty
-    }
-
-    protected void fillContextualMemberProperties(@Nonnull MVCGroup group, @Nonnull String type, @Nonnull Object member) {
-        for (PropertyDescriptor descriptor : getPropertyDescriptors(resolveMemberClass(member))) {
-            Method method = descriptor.getWriteMethod();
-            if (method != null && method.getAnnotation(Contextual.class) != null) {
-                String key = nameFor(method);
-                Object arg = group.getContext().get(key);
-
-                Nonnull nonNull = findAnnotation(annotationsOfMethodParameter(method, 0), Nonnull.class);
-                if (arg == null && nonNull != null) {
-                    throw new IllegalStateException("Could not find an instance of type " +
-                        method.getParameterTypes()[0].getName() + " under key '" + key +
-                        "' in the context of MVCGroup[" + group.getMvcType() + ":" + group.getMvcId() +
-                        "] to be injected on property '" + descriptor.getName() +
-                        "' in " + type + " (" + resolveMemberClass(member).getName() + "). Property does not accept null values.");
-                }
-
-                try {
-                    method.invoke(member, arg);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
-                }
-            }
-        }
-
-        for (Field field : getAllDeclaredFields(resolveMemberClass(member))) {
-            if (Modifier.isStatic(field.getModifiers())) { continue; }
-            if (field.getAnnotation(Contextual.class) != null) {
-                Object value = null;
-                String[] keys = namesFor(field);
-                for (String key : keys) {
-                    if (group.getContext().containsKey(key)) {
-                        value = group.getContext().get(key);
-                    }
-                }
-
-                if (value == null && field.getAnnotation(Nonnull.class) != null) {
-                    throw new IllegalStateException("Could not find an instance of type " +
-                        field.getType().getName() + " under keys '" + Arrays.toString(keys) +
-                        "' in the context of MVCGroup[" + group.getMvcType() + ":" + group.getMvcId() +
-                        "] to be injected on field '" + field.getName() +
-                        "' in " + type + " (" + resolveMemberClass(member).getName() + "). Field does not accept null values.");
-                }
-
-                try {
-                    setFieldValue(member, field.getName(), value);
-                } catch (FieldException e) {
-                    throw new MVCGroupInstantiationException(group.getMvcType(), group.getMvcId(), e);
-                }
-            }
-        }
     }
 
     protected void doAddGroup(@Nonnull MVCGroup group) {
@@ -696,7 +593,7 @@ public class DefaultMVCGroupManager extends AbstractMVCGroupManager {
 
     protected void destroyContextualMemberProperties(@Nonnull String type, @Nonnull BasiliskArtifact member) {
         for (Field field : getAllDeclaredFields(member.getTypeClass())) {
-            if (field.getAnnotation(Contextual.class) != null) {
+            if (isContextual(field)) {
                 try {
                     setFieldValue(member, field.getName(), null);
                 } catch (FieldException e) {
