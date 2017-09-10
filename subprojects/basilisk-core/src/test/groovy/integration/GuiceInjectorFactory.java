@@ -17,10 +17,15 @@ package integration;
 
 import basilisk.core.ApplicationEvent;
 import basilisk.core.BasiliskApplication;
+import basilisk.core.Context;
 import basilisk.core.artifact.BasiliskArtifact;
+import basilisk.core.env.ApplicationPhase;
 import basilisk.core.injection.Binding;
 import basilisk.core.injection.Injector;
 import basilisk.core.injection.InjectorFactory;
+import basilisk.exceptions.FieldException;
+import basilisk.exceptions.NewInstanceException;
+import basilisk.inject.Contextual;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -30,16 +35,32 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import com.googlecode.openbeans.PropertyDescriptor;
 import org.kordamp.basilisk.runtime.core.injection.InjectorProvider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
+import static basilisk.util.AnnotationUtils.annotationsOfMethodParameter;
+import static basilisk.util.AnnotationUtils.findAnnotation;
+import static basilisk.util.AnnotationUtils.namesFor;
+import static basilisk.util.BasiliskClassUtils.getAllDeclaredFields;
+import static basilisk.util.BasiliskClassUtils.getPropertyDescriptors;
 import static basilisk.util.BasiliskClassUtils.invokeAnnotatedMethod;
+import static basilisk.util.BasiliskClassUtils.setFieldValue;
 import static com.google.inject.util.Providers.guicify;
 import static integration.GuiceInjector.moduleFromBindings;
 import static java.util.Arrays.asList;
@@ -72,6 +93,8 @@ public class GuiceInjectorFactory implements InjectorFactory {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             public void afterInjection(Object injectee) {
+                resolveContextualInjections(injectee, application);
+                resolveConfigurationInjections(injectee, application);
                 invokeAnnotatedMethod(injectee, PostConstruct.class);
             }
         };
@@ -119,5 +142,162 @@ public class GuiceInjectorFactory implements InjectorFactory {
 
         com.google.inject.Injector injector = Guice.createInjector(modules);
         return new GuiceInjector(injector);
+    }
+
+    protected void resolveContextualInjections(@Nonnull Object injectee, @Nonnull BasiliskApplication application) {
+        if (application.getPhase() == ApplicationPhase.INITIALIZE || injectee instanceof BasiliskArtifact) {
+            // skip
+            return;
+        }
+
+        Map<String, Field> fields = new LinkedHashMap<>();
+        for (Field field : getAllDeclaredFields(injectee.getClass())) {
+            fields.put(field.getName(), field);
+        }
+
+        Map<String, InjectionPoint> injectionPoints = new LinkedHashMap<>();
+        for (PropertyDescriptor descriptor : getPropertyDescriptors(injectee.getClass())) {
+            Method method = descriptor.getWriteMethod();
+            if (method == null || isInjectable(method)) { continue; }
+            boolean nullable = method.getAnnotation(Nonnull.class) == null && findAnnotation(annotationsOfMethodParameter(method, 0), Nonnull.class) == null;
+            InjectionPoint.Type type = resolveType(method);
+            Field field = fields.get(descriptor.getName());
+            if (field != null && type == InjectionPoint.Type.OTHER) {
+                type = resolveType(field);
+                nullable = field.getAnnotation(Nonnull.class) == null;
+            }
+            injectionPoints.put(descriptor.getName(), new MethodInjectionPoint(descriptor.getName(), nullable, method, type));
+        }
+
+        for (Field field : getAllDeclaredFields(injectee.getClass())) {
+            if (Modifier.isStatic(field.getModifiers()) || isInjectable(field)) { continue; }
+            if (!injectionPoints.containsKey(field.getName())) {
+                boolean nullable = field.getAnnotation(Nonnull.class) == null;
+                InjectionPoint.Type type = resolveType(field);
+                injectionPoints.put(field.getName(), new FieldInjectionPoint(field.getName(), nullable, field, type));
+            }
+        }
+
+        for (InjectionPoint ip : injectionPoints.values()) {
+            ip.apply(application.getContext(), injectee);
+        }
+    }
+
+    @Nonnull
+    protected InjectionPoint.Type resolveType(@Nonnull AnnotatedElement element) {
+        if (isContextual(element)) {
+            return InjectionPoint.Type.CONTEXTUAL;
+        }
+        return InjectionPoint.Type.OTHER;
+    }
+
+    protected boolean isContextual(AnnotatedElement element) {
+        return element != null && element.getAnnotation(Contextual.class) != null;
+    }
+
+    protected boolean isInjectable(AnnotatedElement element) {
+        return element != null && element.getAnnotation(Inject.class) != null;
+    }
+
+    protected void resolveConfigurationInjections(@Nonnull Object injectee, @Nonnull BasiliskApplication application) {
+        if (application.getPhase() == ApplicationPhase.INITIALIZE || injectee instanceof BasiliskArtifact) {
+            // skip
+            return;
+        }
+        application.getConfigurationManager().injectConfiguration(injectee);
+    }
+
+    protected abstract static class InjectionPoint {
+        protected final String name;
+        protected final boolean nullable;
+        protected final Type type;
+
+        protected InjectionPoint(String name, boolean nullable, Type type) {
+            this.name = name;
+            this.nullable = nullable;
+            this.type = type;
+        }
+
+        protected enum Type {
+            CONTEXTUAL,
+            OTHER
+        }
+
+        protected abstract void apply(@Nonnull Context context, @Nonnull Object instance);
+    }
+
+    protected static class FieldInjectionPoint extends InjectionPoint {
+        protected final Field field;
+
+        protected FieldInjectionPoint(String name, boolean nullable, Field field, Type type) {
+            super(name, nullable, type);
+            this.field = field;
+        }
+
+        @Override
+        protected void apply(@Nonnull Context context, @Nonnull Object instance) {
+            if (type == Type.CONTEXTUAL) {
+                String[] keys = namesFor(field);
+                Object argValue = null;
+
+
+                for (String key : keys) {
+                    if (context.containsKey(key)) {
+                        argValue = context.get(key);
+                        break;
+                    }
+                }
+
+                try {
+                    if (argValue == null && !nullable) {
+                        throw new IllegalStateException("Could not find an instance of type " +
+                            field.getType().getName() + " under keys '" + Arrays.toString(keys) +
+                            "' in the application context to be injected on field '" + field.getName() +
+                            "' in " + instance.getClass().getName() + ". Field does not accept null values.");
+                    }
+
+                    setFieldValue(instance, name, argValue);
+                } catch (IllegalStateException | FieldException e) {
+                    throw new NewInstanceException(instance.getClass(), e);
+                }
+            }
+        }
+    }
+
+    protected static class MethodInjectionPoint extends InjectionPoint {
+        protected final Method method;
+
+        protected MethodInjectionPoint(String name, boolean nullable, Method method, Type type) {
+            super(name, nullable, type);
+            this.method = method;
+        }
+
+        @Override
+        protected void apply(@Nonnull Context context, @Nonnull Object instance) {
+            if (type == Type.CONTEXTUAL) {
+                String[] keys = namesFor(method);
+                Object argValue = null;
+
+                for (String key : keys) {
+                    if (context.containsKey(key)) {
+                        argValue = context.get(key);
+                        break;
+                    }
+                }
+
+                try {
+                    if (argValue == null && !nullable) {
+                        throw new IllegalStateException("Could not find an instance of type " +
+                            method.getParameterTypes()[0].getName() + " under keys '" + Arrays.toString(keys) +
+                            "' in the application context to be injected on property '" + name +
+                            "' in " + instance.getClass().getName() + "). Property does not accept null values.");
+                    }
+
+                    method.invoke(instance, argValue);
+                } catch (IllegalStateException | IllegalAccessException | InvocationTargetException e) {
+                    throw new NewInstanceException(instance.getClass(), e);
+                }
+            }
+        }
     }
 }

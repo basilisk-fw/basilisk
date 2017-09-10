@@ -35,6 +35,7 @@ import basilisk.core.env.ApplicationPhase
 import basilisk.core.env.Lifecycle
 import basilisk.core.mvc.MVCFunction
 import basilisk.core.mvc.MVCGroup
+import basilisk.exceptions.InstanceNotFoundException
 import org.kordamp.basilisk.runtime.core.DefaultApplicationBootstrapper
 import spock.lang.Shared
 import spock.lang.Specification
@@ -1012,6 +1013,28 @@ class BasiliskApplicationSpec extends Specification {
         bean.pboolean
         bean.pdate.clearTime() == Date.parse('yyyy/MM/dd', '2000/01/01').clearTime()
         bean.customString == 'custom'
+    }
+
+    def 'Verify contextual injection on non-griffon artifact (success)'() {
+        given:
+        application.context.put('someKey', 'someValue')
+
+        when:
+        ContextualBean contextualBean = application.injector.getInstance(ContextualBean)
+
+        then:
+        contextualBean.someKey == 'someValue'
+    }
+
+    def 'Verify contextual injection on non-griffon artifact (failure)'() {
+        given:
+        application.context.remove('someKey')
+
+        when:
+        application.injector.getInstance(ContextualBean)
+
+        then:
+        thrown(InstanceNotFoundException)
     }
 
     private
