@@ -19,6 +19,7 @@ import basilisk.core.ApplicationBootstrapper
 import basilisk.core.BasiliskApplication
 import basilisk.core.env.ApplicationPhase
 import basilisk.core.mvc.MVCGroup
+import basilisk.exceptions.MVCGroupInstantiationException
 import org.kordamp.basilisk.runtime.core.DefaultApplicationBootstrapper
 import spock.lang.Shared
 import spock.lang.Specification
@@ -567,26 +568,12 @@ class MVCGroupSpec extends Specification {
         !controller.value
     }
 
-    def 'Validate argument injection (all args are available)'() {
-        given:
-        List checks = []
-
-        when:
-        application.mvcGroupManager.withMVCGroup('args', [arg1: 'value1', arg2: 'value2']) { MVCGroup group ->
-            checks << (group.controller.arg1 == 'value1')
-            checks << (group.controller.arg2 == 'value2')
-        }
-
-        then:
-        checks.every { it == true }
-    }
-
     def 'Validate argument injection (missing field argument)'() {
         when:
         application.mvcGroupManager.withMVCGroup('args', [arg2: 'value2']) { MVCGroup group -> }
 
         then:
-        thrown(IllegalStateException)
+        thrown(MVCGroupInstantiationException)
     }
 
     def 'Validate argument injection (missing method argument)'() {
@@ -594,6 +581,48 @@ class MVCGroupSpec extends Specification {
         application.mvcGroupManager.withMVCGroup('args', [arg1: 'value1']) { MVCGroup group -> }
 
         then:
-        thrown(IllegalStateException)
+        thrown(MVCGroupInstantiationException)
+    }
+
+    def 'Validate argument injections with property editor (field success)'() {
+        given:
+        MVCGroup root = application.mvcGroupManager.createMVCGroup('root')
+
+        when:
+        MVCGroup child = root.createMVCGroup(ChildMVCGroup, 'child1', [list1: '1, 2, 3'])
+
+        then:
+        child.controller.list1 == ['1', '2', '3']
+
+        and:
+        root.destroy()
+    }
+
+    def 'Validate argument injections with property editor (method success)'() {
+        given:
+        MVCGroup root = application.mvcGroupManager.createMVCGroup('root')
+
+        when:
+        MVCGroup child = root.createMVCGroup(ChildMVCGroup, 'child1', [list2: '1, 2, 3'])
+
+        then:
+        child.controller.list2 == ['1', '2', '3']
+
+        and:
+        root.destroy()
+    }
+
+    def 'Validate argument injections with property editor (failure)'() {
+        given:
+        MVCGroup root = application.mvcGroupManager.createMVCGroup('root')
+
+        when:
+        root.createMVCGroup(ChildMVCGroup, 'child1', [list3: '1, 2, 3'])
+
+        then:
+        thrown(MVCGroupInstantiationException)
+
+        and:
+        root.destroy()
     }
 }

@@ -15,6 +15,9 @@
  */
 package basilisk.inject;
 
+import basilisk.core.editors.PropertyEditorResolver;
+import com.googlecode.openbeans.PropertyEditor;
+
 import javax.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,4 +34,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface MVCMember {
+    String format() default "";
+
+    Class<? extends PropertyEditor> editor() default PropertyEditorResolver.NoopPropertyEditor.class;
 }
