@@ -2,32 +2,35 @@ boolean travis = (System.env['TRAVIS'] ?: false) as boolean
 boolean appveyor = (System.env['APPVEYOR'] ?: false) as boolean
 boolean fullBuild = !travis && !appveyor
 
-include 'subprojects/basilisk-core'
-include 'subprojects/basilisk-core-compile'
-include 'subprojects/basilisk-core-test'
-include 'subprojects/basilisk-guice'
-include 'subprojects/basilisk-javafx'
-include 'subprojects/basilisk-javafx-test'
-include 'subprojects/gradle-basilisk-plugin'
-include 'subprojects/gradle-basilisk-build-plugin'
-if (!appveyor) {
-    include 'samples/sample-javafx-java'
-}
-if (fullBuild) {
-    include 'templates/basilisk-application-templates'
-    include 'templates/basilisk-standard-templates'
-//    include 'docs/basilisk-guide'
-//    include 'docs/basilisk-site'
+def includeProject = { String projectDirName, String projectName ->
+    File baseDir = new File(settingsDir, projectDirName)
+    File projectDir = new File(baseDir, projectName)
+    String buildFileName = "${projectName}.gradle"
+
+    assert projectDir.isDirectory()
+    assert new File(projectDir, buildFileName).isFile()
+
+    include projectName
+    project(":${projectName}").projectDir    = projectDir
+    project(":${projectName}").buildFileName = buildFileName
 }
 
 rootProject.name = 'basilisk'
-rootProject.children.each { project ->
-    int slash = project.name.indexOf('/')
-    String fileBaseName = project.name[(slash + 1)..-1]
-    String projectDirName = project.name
-    project.name = fileBaseName
-    project.projectDir = new File(settingsDir, projectDirName)
-    project.buildFileName = "${fileBaseName}.gradle"
-    assert project.projectDir.isDirectory()
-    assert project.buildFile.isFile()
+
+includeProject 'subprojects', 'basilisk-core'
+includeProject 'subprojects', 'basilisk-core-compile'
+includeProject 'subprojects', 'basilisk-core-test'
+includeProject 'subprojects', 'basilisk-guice'
+includeProject 'subprojects', 'basilisk-javafx'
+includeProject 'subprojects', 'basilisk-javafx-test'
+includeProject 'subprojects', 'gradle-basilisk-plugin'
+includeProject 'subprojects', 'gradle-basilisk-build-plugin'
+
+if (!appveyor) {
+    includeProject 'samples', 'sample-javafx-java'
+}
+
+if (fullBuild) {
+    includeProject 'templates', 'basilisk-application-templates'
+    includeProject 'templates', 'basilisk-standard-templates'
 }
