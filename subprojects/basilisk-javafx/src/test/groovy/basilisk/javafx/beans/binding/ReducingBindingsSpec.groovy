@@ -38,6 +38,252 @@ import static java.lang.Long.parseLong
 
 @Unroll
 class ReducingBindingsSpec extends Specification {
+    def "Reduce List with default value"() {
+        given:
+        ObservableList items = FXCollections.observableArrayList()
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements        | defaultValue | reducer           | value
+        []              | '<empty>'    | { a, b -> a + b } | '<empty>'
+        ['1', '2', '3'] | '<empty>'    | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce List with supplier"() {
+        given:
+        ObservableList items = FXCollections.observableArrayList()
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements        | supplier      | reducer           | value
+        []              | { '<empty>' } | { a, b -> a + b } | '<empty>'
+        ['1', '2', '3'] | { '<empty>' } | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce List with default value and observable reducer"() {
+        given:
+        ObservableList items = FXCollections.observableArrayList()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements        | defaultValue | reducer1          | value1    | reducer2                | value2
+        []              | '<empty>'    | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        ['1', '2', '3'] | '<empty>'    | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
+    def "Reduce List with supplier and observable reducer"() {
+        given:
+        ObservableList items = FXCollections.observableArrayList()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements        | supplier      | reducer1          | value1    | reducer2                | value2
+        []              | { '<empty>' } | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        ['1', '2', '3'] | { '<empty>' } | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
+    def "Reduce Set with default value"() {
+        given:
+        ObservableSet items = FXCollections.observableSet()
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements        | defaultValue | reducer           | value
+        []              | '<empty>'    | { a, b -> a + b } | '<empty>'
+        ['1', '2', '3'] | '<empty>'    | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce Set with supplier"() {
+        given:
+        ObservableSet items = FXCollections.observableSet()
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements        | supplier      | reducer           | value
+        []              | { '<empty>' } | { a, b -> a + b } | '<empty>'
+        ['1', '2', '3'] | { '<empty>' } | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce Set with default value and observable reducer"() {
+        given:
+        ObservableSet items = FXCollections.observableSet()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements        | defaultValue | reducer1          | value1    | reducer2                | value2
+        []              | '<empty>'    | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        ['1', '2', '3'] | '<empty>'    | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
+    def "Reduce Set with supplier and observable reducer"() {
+        given:
+        ObservableSet items = FXCollections.observableSet()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.addAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements        | supplier      | reducer1          | value1    | reducer2                | value2
+        []              | { '<empty>' } | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        ['1', '2', '3'] | { '<empty>' } | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
+    def "Reduce Map with default value"() {
+        given:
+        ObservableMap items = FXCollections.observableHashMap()
+        items.putAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements                 | defaultValue | reducer           | value
+        [:]                      | '<empty>'    | { a, b -> a + b } | '<empty>'
+        [a: '1', b: '2', c: '3'] | '<empty>'    | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce Map with supplier"() {
+        given:
+        ObservableMap items = FXCollections.observableHashMap()
+        items.putAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, reducer as BinaryOperator)
+
+        then:
+        value == binding.get()
+
+        where:
+        elements                 | supplier      | reducer           | value
+        [:]                      | { '<empty>' } | { a, b -> a + b } | '<empty>'
+        [a: '1', b: '2', c: '3'] | { '<empty>' } | { a, b -> a + b } | '123'
+    }
+
+    def "Reduce Map with default value and observable reducer"() {
+        given:
+        ObservableMap items = FXCollections.observableHashMap()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.putAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, defaultValue, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements                 | defaultValue | reducer1          | value1    | reducer2                | value2
+        [:]                      | '<empty>'    | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        [a: '1', b: '2', c: '3'] | '<empty>'    | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
+    def "Reduce Map with supplier and observable reducer"() {
+        given:
+        ObservableMap items = FXCollections.observableHashMap()
+        ObjectProperty observableReducer = new SimpleObjectProperty(reducer1 as BinaryOperator)
+        items.putAll(elements)
+
+        when:
+        Binding binding = ReducingBindings.reduce(items, supplier as Supplier, observableReducer)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableReducer.set(reducer2 as BinaryOperator)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        elements                 | supplier      | reducer1          | value1    | reducer2                | value2
+        [:]                      | { '<empty>' } | { a, b -> a + b } | '<empty>' | { a, b -> a + ',' + b } | '<empty>'
+        [a: '1', b: '2', c: '3'] | { '<empty>' } | { a, b -> a + b } | '123'     | { a, b -> a + ',' + b } | '1,2,3'
+    }
+
     def "ReduceThenMapTo#type list with functions and default value"() {
         given:
         ObservableList items = FXCollections.observableArrayList()

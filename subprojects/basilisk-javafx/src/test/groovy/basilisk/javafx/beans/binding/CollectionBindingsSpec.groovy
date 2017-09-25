@@ -16,7 +16,8 @@
 package basilisk.javafx.beans.binding
 
 import javafx.beans.binding.Binding
-import javafx.collections.FXCollections
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
 import javafx.collections.ObservableSet
@@ -24,14 +25,174 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.Supplier
+import java.util.function.ToDoubleFunction
 
 import static java.lang.Double.MIN_VALUE
+import static java.lang.Double.MAX_VALUE
+import static java.lang.Double.parseDouble
+import static javafx.collections.FXCollections.observableArrayList
+import static javafx.collections.FXCollections.observableHashMap
+import static javafx.collections.FXCollections.observableMap
+import static javafx.collections.FXCollections.observableSet
 
 @Unroll
 class CollectionBindingsSpec extends Specification {
+    def "#method with defaultValue"() {
+        when:
+        Binding binding = CollectionBindings."${method}"(items, defaultValue, mapper as ToDoubleFunction)
+
+        then:
+        value == binding.get()
+
+        where:
+        items                                 | method      | mapper                     | defaultValue | value
+        observableArrayList()                 | 'minInList' | { parseDouble(it) } | MIN_VALUE    | MIN_VALUE
+        observableArrayList('1', '2', '3')    | 'minInList' | { parseDouble(it) } | MIN_VALUE    | 1d
+        observableSet()                       | 'minInSet'  | { parseDouble(it) } | MIN_VALUE    | MIN_VALUE
+        observableSet('1', '2', '3')          | 'minInSet'  | { parseDouble(it) } | MIN_VALUE    | 1d
+        observableHashMap()                   | 'minInMap'  | { parseDouble(it) } | MIN_VALUE    | MIN_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'minInMap'  | { parseDouble(it) } | MIN_VALUE    | 1d
+        observableArrayList()                 | 'maxInList' | { parseDouble(it) } | MAX_VALUE    | MAX_VALUE
+        observableArrayList('1', '2', '3')    | 'maxInList' | { parseDouble(it) } | MAX_VALUE    | 3d
+        observableSet()                       | 'maxInSet'  | { parseDouble(it) } | MAX_VALUE    | MAX_VALUE
+        observableSet('1', '2', '3')          | 'maxInSet'  | { parseDouble(it) } | MAX_VALUE    | 3d
+        observableHashMap()                   | 'maxInMap'  | { parseDouble(it) } | MAX_VALUE    | MAX_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'maxInMap'  | { parseDouble(it) } | MAX_VALUE    | 3d
+    }
+
+    def "#method with supplier"() {
+        when:
+        Binding binding = CollectionBindings."${method}"(items, supplier as Supplier, mapper as ToDoubleFunction)
+
+        then:
+        value == binding.get()
+
+        where:
+        items                                 | method      | mapper                     | supplier      | value
+        observableArrayList()                 | 'minInList' | { parseDouble(it) } | { MIN_VALUE } | MIN_VALUE
+        observableArrayList('1', '2', '3')    | 'minInList' | { parseDouble(it) } | { MIN_VALUE } | 1d
+        observableSet()                       | 'minInSet'  | { parseDouble(it) } | { MIN_VALUE } | MIN_VALUE
+        observableSet('1', '2', '3')          | 'minInSet'  | { parseDouble(it) } | { MIN_VALUE } | 1d
+        observableHashMap()                   | 'minInMap'  | { parseDouble(it) } | { MIN_VALUE } | MIN_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'minInMap'  | { parseDouble(it) } | { MIN_VALUE } | 1d
+        observableArrayList()                 | 'maxInList' | { parseDouble(it) } | { MAX_VALUE } | MAX_VALUE
+        observableArrayList('1', '2', '3')    | 'maxInList' | { parseDouble(it) } | { MAX_VALUE } | 3d
+        observableSet()                       | 'maxInSet'  | { parseDouble(it) } | { MAX_VALUE } | MAX_VALUE
+        observableSet('1', '2', '3')          | 'maxInSet'  | { parseDouble(it) } | { MAX_VALUE } | 3d
+        observableHashMap()                   | 'maxInMap'  | { parseDouble(it) } | { MAX_VALUE } | MAX_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'maxInMap'  | { parseDouble(it) } | { MAX_VALUE } | 3d
+    }
+
+    def "#method with defaultValue an observable mapper"() {
+        given:
+        ObjectProperty observableMapper = new SimpleObjectProperty(mapper1 as ToDoubleFunction)
+
+        when:
+        Binding binding = CollectionBindings."${method}"(items, defaultValue, observableMapper)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableMapper.set(mapper2 as ToDoubleFunction)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        items                                 | method      | mapper1             | mapper2                  | defaultValue | value1    | value2
+        observableArrayList()                 | 'minInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | MIN_VALUE | MIN_VALUE
+        observableArrayList('1', '2', '3')    | 'minInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | 1d        | 5d
+        observableSet()                       | 'minInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | MIN_VALUE | MIN_VALUE
+        observableSet('1', '2', '3')          | 'minInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | 1d        | 5d
+        observableHashMap()                   | 'minInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | MIN_VALUE | MIN_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'minInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MIN_VALUE    | 1d        | 5d
+        observableArrayList()                 | 'maxInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | MAX_VALUE | MAX_VALUE
+        observableArrayList('1', '2', '3')    | 'maxInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | 3d        | 15d
+        observableSet()                       | 'maxInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | MAX_VALUE | MAX_VALUE
+        observableSet('1', '2', '3')          | 'maxInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | 3d        | 15d
+        observableHashMap()                   | 'maxInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | MAX_VALUE | MAX_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'maxInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | MAX_VALUE    | 3d        | 15d
+    }
+
+    def "#method with supplier an observable mapper"() {
+        given:
+        ObjectProperty observableMapper = new SimpleObjectProperty(mapper1 as ToDoubleFunction)
+
+        when:
+        Binding binding = CollectionBindings."${method}"(items, supplier as Supplier, observableMapper)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableMapper.set(mapper2 as ToDoubleFunction)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        items                                 | method      | mapper1             | mapper2                  | supplier      | value1    | value2
+        observableArrayList()                 | 'minInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | MIN_VALUE | MIN_VALUE
+        observableArrayList('1', '2', '3')    | 'minInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | 1d        | 5d
+        observableSet()                       | 'minInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | MIN_VALUE | MIN_VALUE
+        observableSet('1', '2', '3')          | 'minInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | 1d        | 5d
+        observableHashMap()                   | 'minInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | MIN_VALUE | MIN_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'minInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MIN_VALUE } | 1d        | 5d
+        observableArrayList()                 | 'maxInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | MAX_VALUE | MAX_VALUE
+        observableArrayList('1', '2', '3')    | 'maxInList' | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | 3d        | 15d
+        observableSet()                       | 'maxInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | MAX_VALUE | MAX_VALUE
+        observableSet('1', '2', '3')          | 'maxInSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | 3d        | 15d
+        observableHashMap()                   | 'maxInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | MAX_VALUE | MAX_VALUE
+        observableMap(a: '1', b: '2', c: '3') | 'maxInMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | { MAX_VALUE } | 3d        | 15d
+    }
+
+    def "#method with mapper"() {
+        when:
+        Binding binding = CollectionBindings."${method}"(items, mapper as ToDoubleFunction)
+
+        then:
+        value == binding.get()
+
+        where:
+        items                                 | method      | mapper              | value
+        observableArrayList()                 | 'sumOfList' | { parseDouble(it) } | 0d
+        observableArrayList('1', '2', '3')    | 'sumOfList' | { parseDouble(it) } | 6d
+        observableSet()                       | 'sumOfSet'  | { parseDouble(it) } | 0d
+        observableSet('1', '2', '3')          | 'sumOfSet'  | { parseDouble(it) } | 6d
+        observableHashMap()                   | 'sumOfMap'  | { parseDouble(it) } | 0d
+        observableMap(a: '1', b: '2', c: '3') | 'sumOfMap'  | { parseDouble(it) } | 6d
+    }
+
+    def "#method with observable mapper"() {
+        given:
+        ObjectProperty observableMapper = new SimpleObjectProperty(mapper1 as ToDoubleFunction)
+
+        when:
+        Binding binding = CollectionBindings."${method}"(items, observableMapper)
+
+        then:
+        value1 == binding.get()
+
+        when:
+        observableMapper.set(mapper2 as ToDoubleFunction)
+
+        then:
+        value2 == binding.get()
+
+        where:
+        items                                 | method      | mapper1             | mapper2                  | value1    | value2
+        observableArrayList()                 | 'sumOfList' | { parseDouble(it) } | { parseDouble(it) * 5d } | 0d        | 0d
+        observableArrayList('1', '2', '3')    | 'sumOfList' | { parseDouble(it) } | { parseDouble(it) * 5d } | 6d        | 30d
+        observableSet()                       | 'sumOfSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | 0d        | 0d
+        observableSet('1', '2', '3')          | 'sumOfSet'  | { parseDouble(it) } | { parseDouble(it) * 5d } | 6d        | 30d
+        observableHashMap()                   | 'sumOfMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | 0d        | 0d
+        observableMap(a: '1', b: '2', c: '3') | 'sumOfMap'  | { parseDouble(it) } | { parseDouble(it) * 5d } | 6d        | 30d
+    }
+
     def "MinInList of #type with default value"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.minInList(items, defaultValue)
 
         expect:
@@ -59,7 +220,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MinInList of #type with supplier"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.minInList(items, supplier as Supplier)
 
         expect:
@@ -87,7 +248,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInList of #type with default value"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.maxInList(items, defaultValue)
 
         expect:
@@ -115,7 +276,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInList of #type with supplier"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.maxInList(items, supplier as Supplier)
 
         expect:
@@ -143,7 +304,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInList of #type with default value"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.averageInList(items, defaultValue)
 
         expect:
@@ -171,7 +332,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInList of #type with supplier"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.averageInList(items, supplier as Supplier)
 
         expect:
@@ -199,7 +360,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "SumOfList of #type"() {
         given:
-        ObservableList<Number> items = FXCollections.observableArrayList()
+        ObservableList<Number> items = observableArrayList()
         Binding binding = CollectionBindings.sumOfList(items)
 
         expect:
@@ -227,7 +388,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MinInSet of #type with default value"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.minInSet(items, defaultValue)
 
         expect:
@@ -255,7 +416,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MinInSet of #type with supplier"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.minInSet(items, supplier as Supplier)
 
         expect:
@@ -283,7 +444,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInSet of #type with default value"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.maxInSet(items, defaultValue)
 
         expect:
@@ -311,7 +472,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInSet of #type with supplier"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.maxInSet(items, supplier as Supplier)
 
         expect:
@@ -339,7 +500,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInSet of #type with default value"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.averageInSet(items, defaultValue)
 
         expect:
@@ -367,7 +528,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInSet of #type with supplier"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.averageInSet(items, supplier as Supplier)
 
         expect:
@@ -395,7 +556,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "SumOfSet of #type"() {
         given:
-        ObservableSet<Number> items = FXCollections.observableSet()
+        ObservableSet<Number> items = observableSet()
         Binding binding = CollectionBindings.sumOfSet(items)
 
         expect:
@@ -423,7 +584,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MinInMap of #type with default value"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.minInMap(items, defaultValue)
 
         expect:
@@ -451,7 +612,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MinInMap of #type with supplier"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.minInMap(items, supplier as Supplier)
 
         expect:
@@ -479,7 +640,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInMap of #type with default value"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.maxInMap(items, defaultValue)
 
         expect:
@@ -507,7 +668,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "MaxInMap of #type with supplier"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.maxInMap(items, supplier as Supplier)
 
         expect:
@@ -535,7 +696,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInMap of #type with default value"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.averageInMap(items, defaultValue)
 
         expect:
@@ -563,7 +724,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "AverageInMap of #type with supplier"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.averageInMap(items, supplier as Supplier)
 
         expect:
@@ -591,7 +752,7 @@ class CollectionBindingsSpec extends Specification {
 
     def "SumOfMap of #type"() {
         given:
-        ObservableMap<String, Number> items = FXCollections.observableHashMap()
+        ObservableMap<String, Number> items = observableHashMap()
         Binding binding = CollectionBindings.sumOfMap(items)
 
         expect:
