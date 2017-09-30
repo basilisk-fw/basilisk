@@ -36,7 +36,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static basilisk.util.ConfigUtils.stripFilenameExtension;
 
@@ -113,7 +113,7 @@ public abstract class AbstractJavaFXBasiliskView extends AbstractBasiliskView im
         BasiliskClass basiliskClass = getBasiliskClass();
         String packageName = basiliskClass.getPackageName();
         String baseName = basiliskClass.getLogicalPropertyName();
-        if (!isBlank(packageName)) {
+        if (isNotBlank(packageName)) {
             baseName = packageName + "." + baseName;
         }
         return baseName;

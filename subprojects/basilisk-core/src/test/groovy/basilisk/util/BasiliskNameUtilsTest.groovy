@@ -120,6 +120,15 @@ class BasiliskNameUtilsTest extends GroovyTestCase {
         assert !BasiliskNameUtils.isBlank("test"), "String should not count as blank."
     }
 
+    void testIsNotBlank() {
+        assert !BasiliskNameUtils.isNotBlank(null), "'null' value should count as blank."
+        assert !BasiliskNameUtils.isNotBlank(""), "Empty string should count as blank."
+        assert !BasiliskNameUtils.isNotBlank("  "), "Spaces should count as blank."
+        assert !BasiliskNameUtils.isNotBlank("\t"), "A tab should count as blank."
+        assert BasiliskNameUtils.isNotBlank("\t  h"), "String with whitespace and non-whitespace should not count as blank."
+        assert BasiliskNameUtils.isNotBlank("test"), "String should not count as blank."
+    }
+
     void testQuote() {
         assert " " == BasiliskNameUtils.quote(" ")
         assert "\" a\"" == BasiliskNameUtils.quote(" a")

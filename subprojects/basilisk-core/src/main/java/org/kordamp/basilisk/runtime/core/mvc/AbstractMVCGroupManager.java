@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import static basilisk.core.BasiliskExceptionHandler.sanitize;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableMap;
@@ -184,7 +184,7 @@ public abstract class AbstractMVCGroupManager implements MVCGroupManager {
 
     public void removeConfiguration(@Nonnull String name) {
         requireNonBlank(name, "Argument 'name' must not be blank");
-        if (!isBlank(name)) {
+        if (isNotBlank(name)) {
             synchronized (lock) {
                 configurations.remove(name);
             }

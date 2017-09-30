@@ -79,6 +79,7 @@ import static basilisk.util.BasiliskClassUtils.getPropertyValue;
 import static basilisk.util.BasiliskClassUtils.invokeExactInstanceMethod;
 import static basilisk.util.BasiliskClassUtils.invokeInstanceMethod;
 import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static basilisk.util.BasiliskNameUtils.requireNonBlank;
 import static java.util.Objects.requireNonNull;
 
@@ -555,11 +556,11 @@ public final class JavaFXUtils {
         Collection<Object> elements = findElements(node, new Predicate<Object>() {
             @Override
             public boolean test(@Nonnull Object arg) {
-                return (arg instanceof Labeled && !isBlank(getI18nKey((Labeled) arg))) ||
-                    (arg instanceof Tab && !isBlank(getI18nKey((Tab) arg))) ||
-                    (arg instanceof MenuItem && !isBlank(getI18nKey((MenuItem) arg))) ||
-                    (arg instanceof TableColumn && !isBlank(getI18nKey((TableColumn<?, ?>) arg))) ||
-                    (arg instanceof Axis && !isBlank(getI18nKey((Axis<?>) arg)));
+                return (arg instanceof Labeled && isNotBlank(getI18nKey((Labeled) arg))) ||
+                    (arg instanceof Tab && isNotBlank(getI18nKey((Tab) arg))) ||
+                    (arg instanceof MenuItem && isNotBlank(getI18nKey((MenuItem) arg))) ||
+                    (arg instanceof TableColumn && isNotBlank(getI18nKey((TableColumn<?, ?>) arg))) ||
+                    (arg instanceof Axis && isNotBlank(getI18nKey((Axis<?>) arg)));
             }
         });
         for (Object element : elements) {
@@ -982,7 +983,7 @@ public final class JavaFXUtils {
                 setIcon(control, newValue);
             }
         });
-        if (!isBlank(action.getIcon())) {
+        if (isNotBlank(action.getIcon())) {
             setIcon(control, action.getIcon());
         }
 
@@ -1157,7 +1158,7 @@ public final class JavaFXUtils {
                 setIcon(control, newValue);
             }
         });
-        if (!isBlank(action.getIcon())) {
+        if (isNotBlank(action.getIcon())) {
             setIcon(control, action.getIcon());
         }
 

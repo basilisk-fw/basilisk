@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import javax.inject.Named;
 
 import static basilisk.javafx.test.TestContext.getTestContext;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -37,6 +37,6 @@ public class TestJavaFXWindowManager extends DefaultJavaFXWindowManager {
     @Override
     protected Object resolveStartingWindowFromConfiguration() {
         String startingWindowName = getTestContext().getWindowName();
-        return !isBlank(startingWindowName) ? startingWindowName : super.resolveStartingWindowFromConfiguration();
+        return isNotBlank(startingWindowName) ? startingWindowName : super.resolveStartingWindowFromConfiguration();
     }
 }

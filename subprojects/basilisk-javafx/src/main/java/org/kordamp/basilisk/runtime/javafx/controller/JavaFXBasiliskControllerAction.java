@@ -39,7 +39,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static basilisk.core.editors.PropertyEditorResolver.findEditor;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -435,14 +435,14 @@ public class JavaFXBasiliskControllerAction extends AbstractAction {
         toolkitAction.setSelected(isSelected());
         toolkitAction.setVisible(isVisible());
         String accelerator = getAccelerator();
-        if (!isBlank(accelerator)) { toolkitAction.setAccelerator(accelerator); }
-        if (!isBlank(getStyle())) { toolkitAction.setStyle(getStyle()); }
-        if (!isBlank(getStyleClass())) { toolkitAction.setStyleClass(getStyleClass()); }
+        if (isNotBlank(accelerator)) { toolkitAction.setAccelerator(accelerator); }
+        if (isNotBlank(getStyle())) { toolkitAction.setStyle(getStyle()); }
+        if (isNotBlank(getStyleClass())) { toolkitAction.setStyleClass(getStyleClass()); }
         String icon = getIcon();
-        if (!isBlank(icon)) { toolkitAction.setIcon(icon); }
+        if (isNotBlank(icon)) { toolkitAction.setIcon(icon); }
         if (null != getImage()) { toolkitAction.setImage(convertImage(getImage())); }
         if (null != getGraphic()) { toolkitAction.setGraphic(getGraphic()); }
-        if (!isBlank(getGraphicStyle())) { toolkitAction.setGraphicStyle(getGraphicStyle()); }
-        if (!isBlank(getGraphicStyleClass())) { toolkitAction.setGraphicStyleClass(getGraphicStyleClass()); }
+        if (isNotBlank(getGraphicStyle())) { toolkitAction.setGraphicStyle(getGraphicStyle()); }
+        if (isNotBlank(getGraphicStyleClass())) { toolkitAction.setGraphicStyleClass(getGraphicStyleClass()); }
     }
 }

@@ -40,7 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static basilisk.core.editors.PropertyEditorResolver.findEditor;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
@@ -164,7 +164,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     @Nonnull
     protected Object resolveConfiguration(@Nonnull String name, @Nonnull String key, @Nonnull String defaultValue) {
         Configuration configuration = getConfiguration();
-        if (!isBlank(name)) {
+        if (isNotBlank(name)) {
             configuration = getConfiguration(name);
         }
 

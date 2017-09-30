@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 
 import static basilisk.util.BasiliskApplicationUtils.parseLocale;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -27,12 +27,12 @@ import static basilisk.util.BasiliskNameUtils.isBlank;
 public class LocaleFormatter extends AbstractFormatter<Locale> {
     @Nullable
     public String format(@Nullable Locale locale) {
-        if (locale == null) return null;
+        if (locale == null) { return null; }
         StringBuilder b = new StringBuilder();
         b.append(locale.getLanguage());
-        if (!isBlank(locale.getCountry())) {
+        if (isNotBlank(locale.getCountry())) {
             b.append("_").append(locale.getCountry());
-            if (!isBlank(locale.getVariant())) {
+            if (isNotBlank(locale.getVariant())) {
                 b.append("_").append(locale.getVariant());
             }
         }

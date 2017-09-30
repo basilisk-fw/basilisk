@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -52,7 +53,7 @@ public class MapReader {
     }
 
     public void registerConditionalBlock(@Nullable String blockName, @Nullable String blockValue) {
-        if (!isBlank(blockName)) {
+        if (isNotBlank(blockName)) {
             if (isBlank(blockValue)) {
                 conditionValues.remove(blockName);
             } else {

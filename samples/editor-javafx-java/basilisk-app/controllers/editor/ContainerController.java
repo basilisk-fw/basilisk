@@ -25,7 +25,7 @@ import org.kordamp.basilisk.runtime.core.artifact.AbstractBasiliskController;
 import javax.annotation.Nullable;
 import java.io.File;
 
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 
 @ArtifactProviderFor(BasiliskController.class)
 public class ContainerController extends AbstractBasiliskController {
@@ -63,7 +63,7 @@ public class ContainerController extends AbstractBasiliskController {
 
     @Nullable
     private EditorController resolveEditorController() {
-        if (!isBlank(model.getMvcIdentifier())) {
+        if (isNotBlank(model.getMvcIdentifier())) {
             return getApplication().getMvcGroupManager()
                 .findController(model.getMvcIdentifier(), EditorController.class);
         }

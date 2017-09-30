@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import static basilisk.util.BasiliskClassUtils.requireState;
-import static basilisk.util.BasiliskNameUtils.isBlank;
+import static basilisk.util.BasiliskNameUtils.isNotBlank;
 import static java.lang.System.arraycopy;
 
 /**
@@ -68,7 +68,7 @@ public class DefaultActionParameter implements ActionParameter {
             }
             this.contextual = c;
             this.nullable = !u;
-            this.name = !isBlank(n) ? n : resolveParameterName(actionMetadata, index);
+            this.name = isNotBlank(n) ? n : resolveParameterName(actionMetadata, index);
         } else {
             this.annotations = EMPTY_ARRAY;
             this.contextual = false;
