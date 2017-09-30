@@ -56,7 +56,7 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
     protected final Observable observable;
     protected final List<StreamOp> operations = new ArrayList<>();
 
-    AbstractObservableStream(@Nonnull final Observable observable, @Nonnull List<StreamOp> operations) {
+    AbstractObservableStream(@Nonnull Observable observable, @Nonnull List<StreamOp> operations) {
         this.observable = requireNonNull(observable, ERROR_OBSERVABLE_NULL);
         this.operations.addAll(operations);
     }
@@ -118,7 +118,7 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
             @Nonnull
             @Override
             public Stream apply(@Nonnull Stream stream) {
-                return stream.limit(n.get());
+                return stream.skip(n.get());
             }
 
             @Nullable
@@ -407,7 +407,7 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
         return createObjectBinding(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return (T) AbstractObservableStream.this.stream().min(comparator);
+                return (T) AbstractObservableStream.this.stream().min(comparator).orElse(null);
             }
         }, dependencies());
     }
@@ -419,7 +419,57 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
         return createObjectBinding(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return (T) AbstractObservableStream.this.stream().max(comparator);
+                return (T) AbstractObservableStream.this.stream().max(comparator).orElse(null);
+            }
+        }, dependencies());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> min(@Nullable final T defaultValue, @Nonnull final Comparator<? super T> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return (T) AbstractObservableStream.this.stream().min(comparator).orElse(defaultValue);
+            }
+        }, dependencies());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> max(@Nullable final T defaultValue, @Nonnull final Comparator<? super T> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return (T) AbstractObservableStream.this.stream().max(comparator).orElse(defaultValue);
+            }
+        }, dependencies());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> min(@Nonnull final Supplier<T> supplier, @Nonnull final Comparator<? super T> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return (T) AbstractObservableStream.this.stream().min(comparator).orElseGet(supplier);
+            }
+        }, dependencies());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> max(@Nonnull final Supplier<T> supplier, @Nonnull final Comparator<? super T> comparator) {
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return (T) AbstractObservableStream.this.stream().max(comparator).orElseGet(supplier);
             }
         }, dependencies());
     }
@@ -469,7 +519,7 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
             public T call() throws Exception {
                 Comparator<? super T> c = comparator.getValue();
                 requireNonNull(c, ERROR_COMPARATOR_NULL);
-                return (T) AbstractObservableStream.this.stream().min(c);
+                return (T) AbstractObservableStream.this.stream().min(c).orElse(null);
             }
         }, dependencies(comparator));
     }
@@ -483,7 +533,65 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
             public T call() throws Exception {
                 Comparator<? super T> c = comparator.getValue();
                 requireNonNull(c, ERROR_COMPARATOR_NULL);
-                return (T) AbstractObservableStream.this.stream().max(c);
+                return (T) AbstractObservableStream.this.stream().max(c).orElse(null);
+            }
+        }, dependencies(comparator));
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> min(@Nullable final T defaultValue, @Nonnull final ObservableValue<Comparator<? super T>> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                Comparator<? super T> c = comparator.getValue();
+                requireNonNull(c, ERROR_COMPARATOR_NULL);
+                return (T) AbstractObservableStream.this.stream().min(c).orElse(defaultValue);
+            }
+        }, dependencies(comparator));
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> max(@Nullable final T defaultValue, @Nonnull final ObservableValue<Comparator<? super T>> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                Comparator<? super T> c = comparator.getValue();
+                requireNonNull(c, ERROR_COMPARATOR_NULL);
+                return (T) AbstractObservableStream.this.stream().max(c).orElse(defaultValue);
+            }
+        }, dependencies(comparator));
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> min(@Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<Comparator<? super T>> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                Comparator<? super T> c = comparator.getValue();
+                requireNonNull(c, ERROR_COMPARATOR_NULL);
+                return (T) AbstractObservableStream.this.stream().min(c).orElseGet(supplier);
+            }
+        }, dependencies(comparator));
+    }
+
+    @Nonnull
+    @Override
+    public ObjectBinding<T> max(@Nonnull final Supplier<T> supplier, @Nonnull final ObservableValue<Comparator<? super T>> comparator) {
+        requireNonNull(comparator, ERROR_COMPARATOR_NULL);
+        requireNonNull(supplier, ERROR_SUPPLIER_NULL);
+        return createObjectBinding(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                Comparator<? super T> c = comparator.getValue();
+                requireNonNull(c, ERROR_COMPARATOR_NULL);
+                return (T) AbstractObservableStream.this.stream().max(c).orElseGet(supplier);
             }
         }, dependencies(comparator));
     }
@@ -593,7 +701,7 @@ abstract class AbstractObservableStream<T> implements ObservableStream<T> {
         return createObjectBinding(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return (T) AbstractObservableStream.this.stream().findAny().orElse(null);
+                return (T) AbstractObservableStream.this.stream().findAny().orElseGet(supplier);
             }
         }, dependencies());
     }
