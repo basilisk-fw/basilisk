@@ -141,4 +141,19 @@ public final class BasiliskFXCollections {
             }
         }
     }
+
+    @Nonnull
+    public static <E> ObservableStream<E> observableStream(@Nonnull ObservableList<E> list) {
+        return new ListObservableStream<>(list);
+    }
+
+    @Nonnull
+    public static <E> ObservableStream<E> observableStream(@Nonnull ObservableSet<E> set) {
+        return new SetObservableStream<>(set);
+    }
+
+    @Nonnull
+    public static <K, V> ObservableStream<V> observableStream(@Nonnull ObservableMap<K, V> map) {
+        return new MapObservableStream<>(map);
+    }
 }
