@@ -17,10 +17,14 @@ package basilisk.javafx.collections;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,5 +115,83 @@ public class MappingObservableListTest {
         // then:
         assertThat(source, contains(1, 5));
         assertThat(target, contains(2, 10));
+    }
+
+    @Test
+    public void testOperationsWithObservableBean() {
+        // given:
+        ObservableList<ObservablePerson> source = new ElementObservableList<ObservablePerson>(FXCollections.<ObservablePerson>observableArrayList());
+        Function<ObservablePerson, String> mapper = new Function<ObservablePerson, String>() {
+            @Override
+            public String apply(ObservablePerson observablePerson) {
+                return observablePerson.getName();
+            }
+        };
+        ObservableList<String> target = new MappingObservableList<>(source, mapper);
+
+        // expect:
+        assertThat(target, empty());
+
+        // when:
+        source.addAll(
+            new ObservablePerson("n1", "l1"),
+            new ObservablePerson("n2", "l2"),
+            new ObservablePerson("n3", "l3"));
+
+        // then:
+        assertThat(target, contains("n1", "n2", "n3"));
+
+        // when:
+        source.get(2).setLastname("l33");
+
+        // then:
+        assertThat(target, contains("n1", "n2", "n3"));
+
+        // when:
+        source.get(2).setName("n33");
+
+        // then:
+        assertThat(target, contains("n1", "n2", "n33"));
+    }
+
+    public static class ObservablePerson implements ElementObservableList.ObservableValueContainer {
+        private StringProperty name = new SimpleStringProperty(this, "name");
+        private StringProperty lastname = new SimpleStringProperty(this, "lastname");
+
+
+        public ObservablePerson(String name, String lastname) {
+            setName(name);
+            setLastname(lastname);
+        }
+
+        public String getName() {
+            return name.get();
+        }
+
+        public StringProperty nameProperty() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name.set(name);
+        }
+
+        public String getLastname() {
+            return lastname.get();
+        }
+
+        public StringProperty lastnameProperty() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname.set(lastname);
+        }
+
+        @Nonnull
+        @Override
+        public ObservableValue<?>[] observableValues() {
+            return new StringProperty[]{nameProperty(), lastnameProperty()};
+        }
     }
 }
