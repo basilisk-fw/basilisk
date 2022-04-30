@@ -25,7 +25,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - sleep 3 # give xvfb some time to start
 before_script:
-  - ./gradlew --no-daemon --version
+  - ./gradlew --version
   # Integration tests often fail with "Process 'Gradle Test Executor 4' finished with non-zero exit value 137"
   # They should run, but the result is ignored
   # no need for databases for the integrationTest -> save memory
@@ -42,7 +42,7 @@ before_script:
   - sudo service resolvconf stop
   - sudo service sshguard stop
   - sudo service ssh stop
-script: ./gradlew --console=plain --no-daemon -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport jacocoRootReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
+script: ./gradlew --console=plain -S check test integrationTest functionalTest jacocoTestReport jacocoIntegrationTestReport jacocoFunctionalTestReport jacocoRootReport -x :sample-javafx-java:jfxJar -x :sample-javafx-java:jfxDeploy -x clirr
 after_success:
   - for report in `find ./subprojects -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
   - for report in `find ./samples -name "jacocoTestReport.xml" -print`; do rm -f $report ; done
